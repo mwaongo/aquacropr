@@ -1,0 +1,21 @@
+name	value	description	fmt	width
+var_02	7.0	AquaCrop Version (August 2022)	"""%.1f"""	15
+var_03	0	percentage (%) of ground surface covered by mulches IN growing period	"""%.0f"""	15
+var_04	50	effect (%) of mulches on reduction of soil evaporation	"""%.0f"""	15
+var_05	42	Degree of soil fertility stress (%) - Effect is crop specific	"""%.0f"""	15
+var_06	0.00	height (m) of soil bunds	"""%.2f"""	15
+var_07	0	surface runoff NOT affected by field surface practices	"""%.0f"""	15
+var_08	0	N/A (surface runoff is not affected or completely prevented)	"""%.0f"""	15
+var_09	25	relative cover of weeds at canopy closure (%)	"""%.0f"""	15
+var_10	0	increase of relative cover of weeds in mid-season (+%)	"""%.0f"""	15
+var_11	-0.01	shape factor of the CC expansion function in a weed infested field	"""%.2f"""	15
+var_12	100	replacement (%) by weeds of the self-thinned part of the CC - only for perennials	"""%.0f"""	15
+var_13	0	Multiple cuttings are not considered	"""%.0f"""	15
+var_14	30	Canopy cover (%) after cutting - not considered	"""%.0f"""	15
+var_15	20	Increase (%) of Canopy Growth Coefficient (CGC) after cutting - not considered	"""%.0f"""	15
+var_16	1	First day of window for multiple cuttings (1 = start of growth cycle)	"""%.0f"""	15
+var_17	-9	Number of days in window for multiple cuttings (-9 = total growth cycle)	"""%.0f"""	15
+var_18	-9	Timing of multiple cuttings: Not Applicable	"""%.0f"""	15
+var_19	0	Time criterion: Not Applicable	"""%.0f"""	15
+var_20	0	final harvest at crop maturity is not considered	"""%.0f"""	15
+var_21	-9	Start of the growing cycle is Day 1 in list of cuttings	"""%.0f"""	15

@@ -1,0 +1,64 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# aquacroptools <img src="man/figures/logo.png" align="right" height="139"/>
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+aquacroptools is a set of tools specifically developed to work with AquaCrop v7.0 (August 2022) files.
+AquaCrop is a crop-water productivity model developed by the Food and Agriculture Organization (FAO) of the United Nations.
+It is used to simulate and evaluate the response of various crops to water availability and provides insights into crop water requirements, yield potential, and water productivity.
+
+aquacroptools is designed to make Aquacrop v7.0 files handling much easier and allow users to programmatically :
+
+1.  Generate AquaCrop v7.0 files.
+
+2.  Read,manipulate Aquacrop v7.0 files.
+
+## Installation
+
+You can install the development version of aquacroptools from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("oousmane/aquacroptools")
+```
+
+## Example
+
+This is a basic example which shows you how to use aquacroptools:
+
+``` r
+library(aquacroptools)
+library(fs)
+## basic example code
+data("weather") # load example dataset
+
+head(weather) # check the data sets structure. The column names should be as is.
+
+if(!dir_ls("climate/")) dir_create("climate/") # output directories
+
+write_plu(path = "climate/") # write .PLU file
+write_tnx(path = "climate/") # write .Tnx file
+write_et0(path = "climate/") # write .ETo file
+write_cli(
+  path = "climate/", #path were we have <<station>>.* (PLU,ETo, Tnx)
+  stn ="wakanda", # name of the station <<station>>.* (PLU,ETo, Tnx)
+  scenario ="hist" # climate data scenario : hist, rcpxx or sspxxx,
+  check_files = TRUE
+  )
+```

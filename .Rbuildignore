@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^data-raw$
+^README\.Rmd$
+^docs$
+^pkgdown$
+^_pkgdown\.yml$
+paper.md
