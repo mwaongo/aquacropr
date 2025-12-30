@@ -26,7 +26,6 @@
 <url><loc>/reference/ManData.html</loc></url>
 <url><loc>/reference/path_to_file.html</loc></url>
 <url><loc>/reference/pipe.html</loc></url>
-<url><loc>/reference/read_out.html</loc></url>
 <url><loc>/reference/read_season_out.html</loc></url>
 <url><loc>/reference/round_to.html</loc></url>
 <url><loc>/reference/run_aquacrop.html</loc></url>
@@ -45,7 +44,6 @@
 <url><loc>/reference/write_prm.html</loc></url>
 <url><loc>/reference/write_prm_batch.html</loc></url>
 <url><loc>/reference/write_sol.html</loc></url>
-<url><loc>/reference/write_sol2.html</loc></url>
 <url><loc>/reference/write_swo.html</loc></url>
 <url><loc>/reference/write_tnx.html</loc></url>
 </urlset>
