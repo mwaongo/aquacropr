@@ -68,26 +68,26 @@ containing daily ETo data for use in crop simulations.
 }
 \examples{
 \dontrun{
-  # Load example weather data
-  data("weather")
+# Load example weather data
+data("weather")
 
-  # Write ETo file with default column name
-  write_eto(
-    path = "weather/",
-    stn = "Wakanda_Station",
-    data = weather
-  )
+# Write ETo file with default column name
+write_eto(
+  path = "weather/",
+  stn = "Wakanda_Station",
+  data = weather
+)
 
-  # Write ETo file with custom column name
-  write_eto(
-    path = "weather/",
-    stn = "Wakanda_Station",
-    data = weather,
-    var_name = "eto_calculated"
-  )
+# Write ETo file with custom column name
+write_eto(
+  path = "weather/",
+  stn = "Wakanda_Station",
+  data = weather,
+  var_name = "eto_calculated"
+)
 
-  # Legacy format (backward compatibility)
-  write_eto(data = weather_with_station, path = "climate/")
+# Legacy format (backward compatibility)
+write_eto(data = weather_with_station, path = "climate/")
 }
 
 }

@@ -82,50 +82,50 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Load example weather data
-#'   data("weather")
+#' # Load example weather data
+#' data("weather")
 #'
-#'   # Write all climate files with defaults
-#'   files <- write_climate(
-#'     data = weather,
-#'     path = "weather/",
-#'     stn = "Wakanda"
-#'   )
+#' # Write all climate files with defaults
+#' files <- write_climate(
+#'   data = weather,
+#'   path = "weather/",
+#'   stn = "Wakanda"
+#' )
 #'
-#'   # Access individual file paths
-#'   files$cli
-#'   files$plu
+#' # Access individual file paths
+#' files$cli
+#' files$plu
 #'
-#'   # Write climate files with RCP 4.5 scenario
-#'   write_climate(
-#'     data = weather,
-#'     path = "weather/",
-#'     stn = "Wakanda_Station",
-#'     scenario = "rcp45"
-#'   )
+#' # Write climate files with RCP 4.5 scenario
+#' write_climate(
+#'   data = weather,
+#'   path = "weather/",
+#'   stn = "Wakanda_Station",
+#'   scenario = "rcp45"
+#' )
 #'
-#'   # Write climate files with custom column names
-#'   write_climate(
-#'     data = my_weather_data,
-#'     path = "climate/",
-#'     stn = "MyStation",
-#'     var_name_rain = "precipitation",
-#'     var_name_et0 = "pet",
-#'     var_name_tmin = "temp_min",
-#'     var_name_tmax = "temp_max"
-#'   )
+#' # Write climate files with custom column names
+#' write_climate(
+#'   data = my_weather_data,
+#'   path = "climate/",
+#'   stn = "MyStation",
+#'   var_name_rain = "precipitation",
+#'   var_name_et0 = "pet",
+#'   var_name_tmin = "temp_min",
+#'   var_name_tmax = "temp_max"
+#' )
 #'
-#'   # Using data with station column (backward compatibility)
-#'   write_climate(data = weather_with_station, path = "climate/")
+#' # Using data with station column (backward compatibility)
+#' write_climate(data = weather_with_station, path = "climate/")
 #'
-#'   # Specify year range explicitly
-#'   write_climate(
-#'     data = weather,
-#'     path = "weather/",
-#'     stn = "Wakanda",
-#'     syear = 2000,
-#'     eyear = 2010
-#'   )
+#' # Specify year range explicitly
+#' write_climate(
+#'   data = weather,
+#'   path = "weather/",
+#'   stn = "Wakanda",
+#'   syear = 2000,
+#'   eyear = 2010
+#' )
 #' }
 #'
 #' @seealso
@@ -150,9 +150,7 @@ write_climate <- function(
     scenario = "hist",
     eol = "windows",
     syear = NULL,
-    eyear = NULL
-) {
-
+    eyear = NULL) {
   # Validate data
   if (is.null(data) || !is.data.frame(data)) {
     stop(

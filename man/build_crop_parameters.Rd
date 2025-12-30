@@ -80,15 +80,15 @@ build_crop_parameters(
 
 # Use with write_cro
 \dontrun{
-  params <- build_crop_parameters(
-    crop_cycle = 120,
-    flowering_date = 60
-  )
+params <- build_crop_parameters(
+  crop_cycle = 120,
+  flowering_date = 60
+)
 
-  write_cro(
-    crop_name = "custom-maize",
-    params = params
-  )
+write_cro(
+  crop_name = "custom-maize",
+  params = params
+)
 }
 
 }

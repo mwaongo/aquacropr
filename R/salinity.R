@@ -28,10 +28,10 @@
 #' }
 #'
 #' @examples
-#' salinity_to_ece("none")            # 0
+#' salinity_to_ece("none") # 0
 #' salinity_to_ece("slightly saline") # 3
-#' salinity_to_ece("moderate")        # 6
-#' salinity_to_ece(5.5)               # 5.5
+#' salinity_to_ece("moderate") # 6
+#' salinity_to_ece(5.5) # 5.5
 #'
 #' @export
 salinity_to_ece <- function(salinity) {
@@ -86,9 +86,9 @@ salinity_to_ece <- function(salinity) {
 #' @return Character string describing the salinity level
 #'
 #' @examples
-#' ece_to_salinity(0)    # "Non-saline"
-#' ece_to_salinity(3.5)  # "Slightly saline"
-#' ece_to_salinity(10)   # "Strongly saline"
+#' ece_to_salinity(0) # "Non-saline"
+#' ece_to_salinity(3.5) # "Slightly saline"
+#' ece_to_salinity(10) # "Strongly saline"
 #'
 #' @export
 ece_to_salinity <- function(ece) {

@@ -159,8 +159,8 @@ data("CropData")
 head(CropData)
 
 # Find specific parameters
-CropData[CropData$name == "var_35", ]  # Crop coefficient
-CropData[CropData$name == "var_50", ]  # Maximum canopy cover
+CropData[CropData$name == "var_35", ] # Crop coefficient
+CropData[CropData$name == "var_50", ] # Maximum canopy cover
 
 # See all phenology parameters
 CropData[52:57, ]

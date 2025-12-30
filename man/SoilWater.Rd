@@ -88,7 +88,6 @@ SoilWater$awc <- SoilWater$fc - SoilWater$wp
 # Find textures with high Ksat (> 500 mm/day)
 SoilWater[SoilWater$ksat > 500, c("description", "ksat")]
 
-
 }
 \seealso{
 \itemize{

@@ -37,7 +37,6 @@
 #' @export
 
 calculate_harvest_index_timing <- function(flowering_date = 35) {
-
   # Validate flowering_date
   if (!is.numeric(flowering_date)) {
     stop(
@@ -130,15 +129,15 @@ calculate_harvest_index_timing <- function(flowering_date = 35) {
 #'
 #' # Use with write_cro
 #' \dontrun{
-#'   params <- build_crop_parameters(
-#'     crop_cycle = 120,
-#'     flowering_date = 60
-#'   )
+#' params <- build_crop_parameters(
+#'   crop_cycle = 120,
+#'   flowering_date = 60
+#' )
 #'
-#'   write_cro(
-#'     crop_name = "custom-maize",
-#'     params = params
-#'   )
+#' write_cro(
+#'   crop_name = "custom-maize",
+#'   params = params
+#' )
 #' }
 #'
 #' @seealso
@@ -159,9 +158,7 @@ build_crop_parameters <- function(
     var_28 = 40,
     var_38 = 1,
     var_08 = 8.0,
-    var_09 = 30
-) {
-
+    var_09 = 30) {
   # Validate additional parameters
   if (var_28 < 0 || var_28 > 100) {
     stop("var_28 (minimum CC for yield) must be between 0 and 100%. Received: ", var_28)
@@ -222,4 +219,3 @@ build_crop_parameters <- function(
 #' @rdname build_crop_parameters
 #' @export
 crop_params <- build_crop_parameters
-

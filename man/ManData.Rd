@@ -104,8 +104,8 @@ data("ManData")
 head(ManData)
 
 # Find specific parameters
-ManData[ManData$name == "var_05", ]  # Soil fertility stress
-ManData[ManData$name == "var_03", ]  # Mulch coverage
+ManData[ManData$name == "var_05", ] # Soil fertility stress
+ManData[ManData$name == "var_03", ] # Mulch coverage
 
 # See all mulch-related parameters
 ManData[3:4, ]

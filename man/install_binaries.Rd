@@ -2,22 +2,65 @@
 % Please edit documentation in R/install_binaries.R
 \name{install_binaries}
 \alias{install_binaries}
-\title{Install AquaCrop binaries}
+\title{Install AquaCrop Binary}
 \usage{
 install_binaries(version = NULL, os = NULL, path, force = FALSE)
 }
 \arguments{
-\item{version}{Version (NULL = latest, e.g. "7.1"). Minimum: 7.0}
+\item{version}{Character string specifying the AquaCrop version to install.
+If \code{NULL} (default), installs the latest available version.
+Version must be >= 7.0. Accepts formats like "7.1", "v7.1", or "7.1.0".
+If requested version is < 7.0 or > latest, falls back to latest version.}
 
-\item{os}{OS ("windows", "linux", "macos", NULL = auto-detect)}
+\item{os}{Character string specifying the operating system: "windows", "linux",
+or "macos". If \code{NULL} (default), automatically detects the current OS.}
 
-\item{path}{Install path (single directory, no subdirs)}
+\item{path}{Character string specifying the installation directory path where
+the AquaCrop executable will be installed.}
 
-\item{force}{Force reinstall (default: FALSE)}
+\item{force}{Logical. If \code{TRUE}, reinstalls even if executable already exists.
+If \code{FALSE} (default), skips installation if executable is present.}
 }
 \value{
-Path to executable
+Invisibly returns the installed version number as a character string.
 }
 \description{
-Install AquaCrop binaries
+Downloads and installs the AquaCrop executable for the current operating system.
+Automatically detects OS, manages versioning with intelligent fallbacks, and caches
+downloads to avoid repeated transfers.
+}
+\details{
+The function performs the following steps:
+\itemize{
+\item Detects the operating system if not specified
+\item Queries GitHub for the latest AquaCrop release
+\item Validates the requested version (minimum 7.0)
+\item Downloads the binary from GitHub releases (with 5-minute timeout)
+\item Validates cached downloads to detect corruption
+\item Extracts and installs the executable
+\item Sets appropriate permissions on Unix systems
+}
+
+Fallback behavior:
+\itemize{
+\item Version < 7.0 → falls back to latest
+\item Version > latest → falls back to latest
+\item Download failure → retries with latest version
+}
+}
+\examples{
+\dontrun{
+# Install latest version
+install_binaries(path = "~/aquacrop")
+
+# Install specific version
+install_binaries(version = "7.1", path = "~/aquacrop")
+
+# Force reinstall
+install_binaries(version = "7.1", path = "~/aquacrop", force = TRUE)
+
+# Specify OS explicitly
+install_binaries(version = "7.1", os = "linux", path = "~/aquacrop")
+}
+
 }

@@ -36,18 +36,17 @@
 #'
 #' # Use with write_cro to create a crop file
 #' \dontrun{
-#'   stages <- calculate_crop_stages(crop_cycle = 130)
-#'   write_cro(
-#'     path = "crop/",
-#'     crop_name = "maize-130d",
-#'     params = stages
-#'   )
+#' stages <- calculate_crop_stages(crop_cycle = 130)
+#' write_cro(
+#'   path = "crop/",
+#'   crop_name = "maize-130d",
+#'   params = stages
+#' )
 #' }
 #'
 #' @export
 
 calculate_crop_stages <- function(crop_cycle = 90) {
-
   # Input validation
   if (!is.numeric(crop_cycle)) {
     stop(

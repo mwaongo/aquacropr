@@ -25,40 +25,40 @@ Unspecified parameters use default values from CropData.}
 \value{
 Invisibly returns the full path to the created .CRO file. Creates a colon-delimited .CRO file
 in the specified directory with the format: <<crop_name>>.CRO containing crop parameters
-and descriptions as required by AquaCrop v7.0.
+and descriptions as required by AquaCrop v7.2.
 }
 \description{
-Write an AquaCrop v7.0 (August 2022) crop (.CRO) file containing crop-specific parameters.
+Write an AquaCrop v7.2 (August 2024) crop (.CRO) file containing crop-specific parameters.
 This file specifies physiological characteristics, growth parameters, water stress responses,
 and other crop-specific properties that will be used during the AquaCrop simulation.
 }
 \examples{
 \dontrun{
-  # Write default crop file
-  write_cro(path = "crops/", crop_name = "maize")
+# Write default crop file
+write_cro(path = "crops/", crop_name = "maize")
 
-  # Write custom crop with modified parameters
-  write_cro(
-    path = "crops/",
-    crop_name = "maize-irrigated",
-    params = list(
-      var_35 = 1.10,  # Higher crop coefficient
-      var_50 = 0.85,  # Max canopy cover
-      var_64 = 35     # Reference harvest index
-    )
+# Write custom crop with modified parameters
+write_cro(
+  path = "crops/",
+  crop_name = "maize-irrigated",
+  params = list(
+    var_35 = 1.10, # Higher crop coefficient
+    var_50 = 0.85, # Max canopy cover
+    var_64 = 35 # Reference harvest index
   )
+)
 
-  # Write crop with phenology parameters
-  write_cro(
-    path = "crops/",
-    crop_name = "wheat",
-    params = list(
-      var_52 = 10,    # Days to emergence
-      var_53 = 120,   # Days to max rooting
-      var_54 = 100,   # Days to senescence
-      var_55 = 130    # Days to maturity
-    )
+# Write crop with phenology parameters
+write_cro(
+  path = "crops/",
+  crop_name = "wheat",
+  params = list(
+    var_52 = 10, # Days to emergence
+    var_53 = 120, # Days to max rooting
+    var_54 = 100, # Days to senescence
+    var_55 = 130 # Days to maturity
   )
+)
 }
 
 }

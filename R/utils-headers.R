@@ -1,4 +1,3 @@
-
 #' Get Climate File Header
 #'
 #' @description
@@ -25,9 +24,7 @@
     eol = "windows",
     record_type = 1,
     first_day = 1,
-    first_month = 1
-) {
-
+    first_month = 1) {
   # Apply safe defaults
   if (is.null(stn)) stn <- "station"
   if (is.null(syear)) syear <- 1991
@@ -143,8 +140,8 @@
 .get_soil_header <- function(cn = cn, rew = rew, nsoils = nsoils, eol = "windows") {
   headline_1 <- "default"
   headline_2 <- paste0(
-    format("7.0", width = 28, justify = "centre"),
-    ": AquaCrop Version (August 2022)"
+    format("7.2", width = 28, justify = "centre"),
+    ": AquaCrop Version (August 2024)"
   )
   headline_3 <- paste0(
     format(paste(cn), width = 28, justify = "centre"),
@@ -221,8 +218,7 @@
     man = "generic_management",
     fertilizer,
     mulch,
-    eol = "windows"
-) {
+    eol = "windows") {
   # Validate fertilizer input
   if (!is.numeric(fertilizer)) {
     stop(
@@ -329,9 +325,7 @@
     initial_root_depth = -9.00,
     bund_water = 0.0,
     bund_ec = 0.00,
-    eol = "windows"
-) {
-
+    eol = "windows") {
   # Load SWOData for texture validation
   utils::data("SWOData", envir = environment())
 
@@ -403,8 +397,8 @@
 
   # Line 2: AquaCrop version
   headline_2 <- paste0(
-    format("7.0", width = 10, justify = "centre"),
-    ": AquaCrop Version (August 2022)"
+    format("7.2", width = 10, justify = "centre"),
+    ": AquaCrop Version (August 2024)"
   )
 
   # Line 3: Initial canopy cover

@@ -120,69 +120,69 @@ Use \code{\link{salinity_to_ece}} to convert qualitative descriptions to ECe val
 }
 \examples{
 \dontrun{
-  # Simple: Single layer at wilting point, no salinity
-  write_swo(
-    path = "soil/",
-    soil_name = "loam-wp",
-    texture = "loam",
-    initial_water = "WP"
-  )
+# Simple: Single layer at wilting point, no salinity
+write_swo(
+  path = "soil/",
+  soil_name = "loam-wp",
+  texture = "loam",
+  initial_water = "WP"
+)
 
-  # Single layer at field capacity
-  write_swo(
-    soil_name = "sandy-loam-fc",
-    texture = "sandy loam",
-    initial_water = "FC"
-  )
+# Single layer at field capacity
+write_swo(
+  soil_name = "sandy-loam-fc",
+  texture = "sandy loam",
+  initial_water = "FC"
+)
 
-  # With salinity
-  write_swo(
-    soil_name = "saline-soil",
-    texture = "clay loam",
-    initial_water = "WP",
-    salinity = "moderate"
-  )
+# With salinity
+write_swo(
+  soil_name = "saline-soil",
+  texture = "clay loam",
+  initial_water = "WP",
+  salinity = "moderate"
+)
 
-  # Multiple layers with different textures
-  write_swo(
-    soil_name = "layered-profile",
-    texture = c("sandy loam", "loam", "clay loam"),
-    layer_thickness = c(0.3, 0.4, 0.3),
-    initial_water = "FC",
-    salinity = "slight"
-  )
+# Multiple layers with different textures
+write_swo(
+  soil_name = "layered-profile",
+  texture = c("sandy loam", "loam", "clay loam"),
+  layer_thickness = c(0.3, 0.4, 0.3),
+  initial_water = "FC",
+  salinity = "slight"
+)
 
-  # Mid-season with existing crop
-  write_swo(
-    soil_name = "mid-season-maize",
-    texture = "loam",
-    initial_water = "FC",
-    initial_cc = 60,
-    initial_biomass = 3.5,
-    initial_root_depth = 0.7
-  )
+# Mid-season with existing crop
+write_swo(
+  soil_name = "mid-season-maize",
+  texture = "loam",
+  initial_water = "FC",
+  initial_cc = 60,
+  initial_biomass = 3.5,
+  initial_root_depth = 0.7
+)
 
-  # Custom numeric values
-  write_swo(
-    soil_name = "custom",
-    texture = "loam",
-    layer_thickness = c(0.5, 0.5),
-    initial_water = 28,
-    salinity = 4.5
-  )
+# Custom numeric values
+write_swo(
+  soil_name = "custom",
+  texture = "loam",
+  layer_thickness = c(0.5, 0.5),
+  initial_water = 28,
+  salinity = 4.5
+)
 
-  # Manual layers (full control)
-  layers <- data.frame(
-    thickness = c(0.3, 0.4, 0.3),
-    water_content = c(20, 25, 30),
-    ece = c(0, 3, 6)
-  )
+# Manual layers (full control)
+layers <- data.frame(
+  thickness = c(0.3, 0.4, 0.3),
+  water_content = c(20, 25, 30),
+  ece = c(0, 3, 6)
+)
 
-  write_swo(
-    soil_name = "manual-layers",
-    texture = c("Sandy Loam", "Loam", "Clay Loam"),
-    layers = layers
-  )
+write_swo(
+  soil_name = "manual-layers",
+  texture = c("Sandy Loam", "Loam", "Clay Loam"),
+  layers = layers
+)
 }
 
 }

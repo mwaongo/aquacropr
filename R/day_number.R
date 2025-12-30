@@ -25,7 +25,6 @@
 #'
 #' @export
 day_number <- function(year, month = NULL, day = NULL, doy = NULL) {
-
   # Case 1: String date input
   if (is.character(year)) {
     date <- lubridate::ymd(year)
@@ -75,7 +74,6 @@ day_number <- function(year, month = NULL, day = NULL, doy = NULL) {
 
 # Internal helper: Year, month, day computation
 .compute_day_number <- function(year, month, day) {
-
   # Validation
   if (!is.numeric(year) || !is.numeric(month) || !is.numeric(day)) {
     stop("year, month, day must be numeric")
@@ -105,7 +103,6 @@ day_number <- function(year, month = NULL, day = NULL, doy = NULL) {
 
 # Internal helper: Year + day-of-year
 .compute_from_ydoy <- function(year, doy) {
-
   if (!is.numeric(year) || !is.numeric(doy)) {
     stop("year and doy must be numeric")
   }

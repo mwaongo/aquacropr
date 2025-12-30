@@ -16,8 +16,8 @@ Character string describing the salinity level
 Convert electrical conductivity (ECe) values to qualitative salinity descriptions.
 }
 \examples{
-ece_to_salinity(0)    # "Non-saline"
-ece_to_salinity(3.5)  # "Slightly saline"
-ece_to_salinity(10)   # "Strongly saline"
+ece_to_salinity(0) # "Non-saline"
+ece_to_salinity(3.5) # "Slightly saline"
+ece_to_salinity(10) # "Strongly saline"
 
 }

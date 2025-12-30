@@ -42,9 +42,7 @@ write_prm <- function(
     write_header = TRUE,
     eol = "windows",
     use_standalone = TRUE,
-    base_path
-) {
-
+    base_path) {
   # Input validation
   stopifnot(
     is.character(path) && length(path) == 1,
@@ -103,7 +101,7 @@ write_prm <- function(
       is_leap_year(year),
       92,
       91
-    )  # April 1st
+    ) # April 1st
   }
 
   # Calculate planting end date
@@ -249,9 +247,7 @@ write_prm_batch <- function(
     scenario = "hist",
     eol = "windows",
     use_standalone = TRUE,
-    base_path
-) {
-
+    base_path) {
   # Input validation
   stopifnot(
     is.character(path) && length(path) == 1,

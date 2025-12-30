@@ -85,7 +85,8 @@
 #' # Compare with SoilWater data
 #' data(SoilWater)
 #' merge(SWOData, SoilWater[, c("description", "fc", "sat")],
-#'       by.x = "texture", by.y = "description")
+#'   by.x = "texture", by.y = "description"
+#' )
 #'
 #' @seealso
 #' \itemize{

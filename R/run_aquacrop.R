@@ -14,13 +14,12 @@
 #' init_aquacrop("~/my-project")
 #' setwd("~/my-project")
 #' run_aquacrop()
-#' 
+#'
 #' # Or from within project directory
 #' setwd("~/my-project")
 #' run_aquacrop()
 #' }
 run_aquacrop <- function(verbose = TRUE) {
-  
   # Determine executable name based on OS
   if (.Platform$OS.type == "windows") {
     exe_name <- "aquacrop.exe"
@@ -29,18 +28,17 @@ run_aquacrop <- function(verbose = TRUE) {
     exe_name <- "aquacrop"
     cmd <- "./aquacrop"
   }
-  
+
   # Check if executable exists in current directory
   if (!file.exists(exe_name)) {
-    
     # Check if ALL typical AquaCrop folders are present
     aquacrop_folders <- c(
-      "CLIMATE", "CROP", "SOIL", "SIMUL", "OUTP", 
+      "CLIMATE", "CROP", "SOIL", "SIMUL", "OUTP",
       "MANAGEMENT", "PARAM", "LIST"
     )
-    
+
     all_folders_present <- all(dir.exists(aquacrop_folders))
-    
+
     if (all_folders_present) {
       # Complete AquaCrop project structure but binary is missing
       stop(
@@ -61,19 +59,19 @@ run_aquacrop <- function(verbose = TRUE) {
       )
     }
   }
-  
+
   # Ensure executable permissions on Unix
   if (.Platform$OS.type != "windows") {
     Sys.chmod(exe_name, mode = "0755")
   }
-  
+
   # Run AquaCrop
   if (verbose) {
     message("Running AquaCrop in: ", getwd())
   }
-  
+
   result <- system2(cmd, stdout = "", stderr = "")
-  
+
   # Check result
   if (result != 0) {
     warning("AquaCrop exited with status: ", result)
@@ -83,6 +81,6 @@ run_aquacrop <- function(verbose = TRUE) {
       message("Check results in OUTP/ directory")
     }
   }
-  
+
   invisible(result)
 }

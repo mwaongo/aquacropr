@@ -71,7 +71,6 @@
 #' @export
 
 calculate_plant_density <- function(plant_spacing = 0.3, row_spacing = 0.8) {
-
   # Validate plant_spacing
   if (!is.numeric(plant_spacing)) {
     stop(
@@ -143,5 +142,3 @@ calculate_plant_density <- function(plant_spacing = 0.3, row_spacing = 0.8) {
 #' @rdname calculate_plant_density
 #' @export
 plant_density <- calculate_plant_density
-
-

@@ -30,7 +30,7 @@ AquaCrop season output files follow a fixed-width format with:
 }
 \examples{
 \dontrun{
-  data <- read_season_out("C1PRMSeason.OUT")
+data <- read_season_out("C1PRMSeason.OUT")
 }
 
 }

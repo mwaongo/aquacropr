@@ -97,73 +97,73 @@ Text is aligned within the specified width using \code{sprintf} formatting:
 }
 \examples{
 \dontrun{
-  # Create sample data
-  df <- data.frame(
-    year = c(2020, 2021, 2022),
-    rainfall = c(850.5, 920.3, 780.1),
-    temp = c(25.2, 26.1, 24.8)
-  )
+# Create sample data
+df <- data.frame(
+  year = c(2020, 2021, 2022),
+  rainfall = c(850.5, 920.3, 780.1),
+  temp = c(25.2, 26.1, 24.8)
+)
 
-  # Write with uniform width, left-aligned
-  write_fwf(
-    x = df,
-    file = "output.txt",
-    width = 10,
-    justify = "l",
-    append = FALSE
-  )
+# Write with uniform width, left-aligned
+write_fwf(
+  x = df,
+  file = "output.txt",
+  width = 10,
+  justify = "l",
+  append = FALSE
+)
 
-  # Write with different widths per column, right-aligned
-  write_fwf(
-    x = df,
-    file = "output.txt",
-    width = c(6, 10, 10),
-    justify = "r",
-    append = FALSE
-  )
+# Write with different widths per column, right-aligned
+write_fwf(
+  x = df,
+  file = "output.txt",
+  width = c(6, 10, 10),
+  justify = "r",
+  append = FALSE
+)
 
-  # Write with mixed alignment (left, right, right)
-  write_fwf(
-    x = df,
-    file = "output.txt",
-    width = c(6, 10, 10),
-    justify = "lrr",
-    append = FALSE
-  )
+# Write with mixed alignment (left, right, right)
+write_fwf(
+  x = df,
+  file = "output.txt",
+  width = c(6, 10, 10),
+  justify = "lrr",
+  append = FALSE
+)
 
-  # Append to existing file
-  write_fwf(
-    x = df[1:2, ],
-    file = "output.txt",
-    width = 10,
-    justify = "r",
-    append = TRUE
-  )
+# Append to existing file
+write_fwf(
+  x = df[1:2, ],
+  file = "output.txt",
+  width = 10,
+  justify = "r",
+  append = TRUE
+)
 
-  # Handle NA values with custom replacement
-  df_na <- data.frame(
-    year = c(2020, 2021, NA),
-    value = c(100, NA, 150)
-  )
+# Handle NA values with custom replacement
+df_na <- data.frame(
+  year = c(2020, 2021, NA),
+  value = c(100, NA, 150)
+)
 
-  write_fwf(
-    x = df_na,
-    file = "output.txt",
-    width = 10,
-    justify = "r",
-    replace_na = "-9999",
-    append = FALSE
-  )
+write_fwf(
+  x = df_na,
+  file = "output.txt",
+  width = 10,
+  justify = "r",
+  replace_na = "-9999",
+  append = FALSE
+)
 
-  # Unix-style line endings
-  write_fwf(
-    x = df,
-    file = "output.txt",
-    width = 10,
-    justify = "r",
-    eol = "unix",
-    append = FALSE
-  )
+# Unix-style line endings
+write_fwf(
+  x = df,
+  file = "output.txt",
+  width = 10,
+  justify = "r",
+  eol = "unix",
+  append = FALSE
+)
 }
 
 }

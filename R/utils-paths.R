@@ -1,4 +1,3 @@
-
 #' Validate and Normalize Path to Absolute
 #'
 #' @description
@@ -11,7 +10,6 @@
 #' @keywords internal
 #' @noRd
 .validate_and_normalize_path <- function(path, param_name) {
-
   # Check if path is relative
   if (!fs::is_absolute_path(path)) {
     warning(
@@ -82,7 +80,6 @@
 #' @keywords internal
 #' @noRd
 path_for_prm <- function(dir_name, use_standalone = TRUE, base_path = NULL) {
-
   # Validate dir_name
   if (!is.character(dir_name) || length(dir_name) != 1 || nchar(dir_name) == 0) {
     stop("dir_name must be a non-empty character string")
@@ -154,8 +151,7 @@ has_aquacrop <- function() {
 get_aquacrop_path <- function() {
   sysname <- Sys.info()["sysname"]
 
-  exe_name <- switch(
-    sysname,
+  exe_name <- switch(sysname,
     "Windows" = "aquacrop.exe",
     "Darwin" = "aquacrop_macos",
     "Linux" = "aquacrop_linux",
@@ -189,22 +185,28 @@ get_aquacrop_path <- function() {
 #'
 #' @export
 get_aquacrop_version <- function() {
-  tryCatch({
-    get("aquacrop_version", envir = asNamespace(.pkg_name()))
-  }, error = function(e) {
-    "unknown"
-  })
+  tryCatch(
+    {
+      get("aquacrop_version", envir = asNamespace(.pkg_name()))
+    },
+    error = function(e) {
+      "unknown"
+    }
+  )
 }
 
 #' Internal helper to check if AquaCrop executable is available
 #' @noRd
 #' @keywords internal
 .has_aquacrop <- function() {
-  exe_path <- tryCatch({
-    get_aquacrop_path()
-  }, error = function(e) {
-    NULL
-  })
+  exe_path <- tryCatch(
+    {
+      get_aquacrop_path()
+    },
+    error = function(e) {
+      NULL
+    }
+  )
 
   !is.null(exe_path)
 }
@@ -226,5 +228,3 @@ get_aquacrop_version <- function() {
 
 #' Get Aquacrop version string
 aquacrop_version <- function() .aquacrop_state$version
-
-

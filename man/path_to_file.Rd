@@ -83,16 +83,16 @@ co2_ssp126 <- path_to_file("SSP1_2.6.CO2")
 
 # Read CO2 data for analysis
 \dontrun{
-  # Read historical CO2 concentrations
-  hist_data <- readLines(path_to_file("MaunaLoa.CO2"))
+# Read historical CO2 concentrations
+hist_data <- readLines(path_to_file("MaunaLoa.CO2"))
 
-  # Compare different scenarios
-  rcp26_data <- readLines(path_to_file("RCP2-6.CO2"))
-  rcp85_data <- readLines(path_to_file("RCP8-5.CO2"))
+# Compare different scenarios
+rcp26_data <- readLines(path_to_file("RCP2-6.CO2"))
+rcp85_data <- readLines(path_to_file("RCP8-5.CO2"))
 
-  # Note: Typically you use write_cli() instead, which handles this automatically:
-  write_cli(stn = "Wakanda", scenario = "rcp45")  # Automatically uses RCP4-5.CO2
-  write_cli(stn = "Wakanda", scenario = "hist")   # Automatically uses MaunaLoa.CO2
+# Note: Typically you use write_cli() instead, which handles this automatically:
+write_cli(stn = "Wakanda", scenario = "rcp45") # Automatically uses RCP4-5.CO2
+write_cli(stn = "Wakanda", scenario = "hist") # Automatically uses MaunaLoa.CO2
 }
 
 }

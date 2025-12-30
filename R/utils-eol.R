@@ -1,4 +1,3 @@
-
 #' Get End-of-Line Character
 #'
 #' @description

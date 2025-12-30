@@ -4,7 +4,16 @@
 \alias{.create_readme}
 \title{Helper function to create README}
 \usage{
-.create_readme(path, dirs, version = NULL)
+.create_readme(path, dirs, version = NULL, pkg_name = "aquacroptools")
+}
+\arguments{
+\item{path}{Character string. Path where the README.txt will be created}
+
+\item{dirs}{Character vector. List of directory names (currently unused but kept for compatibility)}
+
+\item{version}{Character string or NULL. AquaCrop version number. If NULL, displays "latest"}
+
+\item{pkg_name}{Character string. Name of the package calling this function. Default is "aquacroptools"}
 }
 \description{
 Helper function to create README

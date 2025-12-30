@@ -1,4 +1,3 @@
-
 #' Format String with Width and Justification
 #'
 #' @description

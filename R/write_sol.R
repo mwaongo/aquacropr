@@ -105,9 +105,7 @@ write_sol <- function(
     initial_root_depth = -9.00,
     bund_water = 0.0,
     bund_ec = 0.00,
-    swo_layers = NULL
-) {
-
+    swo_layers = NULL) {
   # Ensure trailing slash on path
   if (!stringr::str_ends(path, pattern = "/")) path <- paste0(path, "/")
 

@@ -41,7 +41,7 @@ to_aquacrop_day <- function(x, ...) {
 #' @param day Integer representing the day of month (1-31)
 #' @export
 to_aquacrop_day.numeric <- function(x, month, day, ...) {
-  year <- x  # x is year when using numeric method
+  year <- x # x is year when using numeric method
 
   # Validate inputs are numeric
   if (!is.numeric(year) || !is.numeric(month) || !is.numeric(day)) {
@@ -115,10 +115,10 @@ to_aquacrop_day.numeric <- function(x, month, day, ...) {
 
   # Cumulative days at start of each month (accounting for leap year average)
   elapsed_days <- c(
-    0,      # January
-    31,     # February
-    59.25,  # March
-    90.25,  # April
+    0, # January
+    31, # February
+    59.25, # March
+    90.25, # April
     120.25, # May
     151.25, # June
     181.25, # July
@@ -126,7 +126,7 @@ to_aquacrop_day.numeric <- function(x, month, day, ...) {
     243.25, # September
     273.25, # October
     304.25, # November
-    334.25  # December
+    334.25 # December
   )
 
   # Calculate AquaCrop day number
@@ -141,7 +141,6 @@ to_aquacrop_day.numeric <- function(x, month, day, ...) {
 #' @rdname to_aquacrop_day
 #' @export
 to_aquacrop_day.character <- function(x, ...) {
-
   # Validate input
   if (length(x) != 1) {
     stop(
@@ -192,7 +191,6 @@ to_aquacrop_day.character <- function(x, ...) {
 #' @rdname to_aquacrop_day
 #' @export
 to_aquacrop_day.Date <- function(x, ...) {
-
   # Validate input
   if (length(x) != 1) {
     stop(
@@ -219,7 +217,6 @@ to_aquacrop_day.Date <- function(x, ...) {
 #' @rdname to_aquacrop_day
 #' @export
 to_aquacrop_day.POSIXt <- function(x, ...) {
-
   # Convert POSIXt to Date first
   date_obj <- as.Date(x)
 

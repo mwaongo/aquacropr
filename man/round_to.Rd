@@ -36,29 +36,29 @@ By default, \code{threshold = to/2} provides standard rounding behavior
 }
 \examples{
 # Round to nearest 5
-round_to(47, to = 5)   # Returns 45
-round_to(48, to = 5)   # Returns 50
-round_to(50, to = 5)   # Returns 50
-round_to(52, to = 5)   # Returns 50
+round_to(47, to = 5) # Returns 45
+round_to(48, to = 5) # Returns 50
+round_to(50, to = 5) # Returns 50
+round_to(52, to = 5) # Returns 50
 
 # Round to nearest 10
-round_to(23, to = 10)  # Returns 20
-round_to(27, to = 10)  # Returns 30
-round_to(25, to = 10)  # Returns 30 (standard rounding)
+round_to(23, to = 10) # Returns 20
+round_to(27, to = 10) # Returns 30
+round_to(25, to = 10) # Returns 30 (standard rounding)
 
 # Round to nearest integer
 round_to(47.8, to = 1) # Returns 48
 round_to(47.3, to = 1) # Returns 47
 
 # Round to nearest 0.5
-round_to(3.2, to = 0.5)  # Returns 3.0
-round_to(3.7, to = 0.5)  # Returns 3.5
+round_to(3.2, to = 0.5) # Returns 3.0
+round_to(3.7, to = 0.5) # Returns 3.5
 
 # Works with vectors
-round_to(c(12, 17, 23, 28), to = 5)  # Returns c(10, 15, 25, 30)
+round_to(c(12, 17, 23, 28), to = 5) # Returns c(10, 15, 25, 30)
 
 # Custom threshold (round up at 3 instead of 2.5 for to = 5)
-round_to(47, to = 5, threshold = 3)  # Returns 45
-round_to(48, to = 5, threshold = 3)  # Returns 50
+round_to(47, to = 5, threshold = 3) # Returns 45
+round_to(48, to = 5, threshold = 3) # Returns 50
 
 }

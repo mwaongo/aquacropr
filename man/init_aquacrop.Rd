@@ -9,7 +9,8 @@ init_aquacrop(
   version = NULL,
   os = NULL,
   force = FALSE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  use_rproject = TRUE
 )
 }
 \arguments{
@@ -22,8 +23,11 @@ should be created. Default is the current working directory (\code{"."}).}
 
 \item{force}{Force reinstall binary even if exists (default: FALSE)}
 
-\item{overwrite}{Logical; if \code{TRUE}, overwrites existing directory structure.
-Default: \code{FALSE}.}
+\item{overwrite}{Logical; if TRUE, overwrites existing directory structure.
+Default: FALSE.}
+
+\item{use_rproject}{Logical. If TRUE, creates an RStudio project file (.Rproj)
+in the project directory. Default is TRUE.}
 }
 \value{
 Invisibly returns the normalized path to the created directory.
@@ -35,15 +39,15 @@ you can run simulations directly in the project directory.
 }
 \details{
 The function creates the following directory structure:
-\itemize{
-\item \code{CLIMATE/} - Climate input files (temperature, rainfall, ETo)
-\item \code{CROP/} - Crop parameter files
-\item \code{LIST/} - Project and simulation list files
-\item \code{MANAGEMENT/} - Field management practice files
-\item \code{OUTP/} - Simulation output files
-\item \code{PARAM/} - General parameter files
-\item \code{SIMUL/} - Simulation configuration files
-\item \code{SOIL/} - Soil profile and characteristic files
+\describe{
+\item{CLIMATE/}{Climate input files (temperature, rainfall, ETo)}
+\item{CROP/}{Crop parameter files}
+\item{LIST/}{Project simulation files \code{*.PRM}}
+\item{MANAGEMENT/}{Field management practice files \code{*.MAN}}
+\item{OUTP/}{Simulation output files}
+\item{PARAM/}{Program parameters files \code{*.PPn}}
+\item{SIMUL/}{Simulation configuration files}
+\item{SOIL/}{Soil profile and water content characteristic files}
 }
 
 The AquaCrop binary is automatically downloaded and installed in the project
@@ -71,5 +75,5 @@ init_aquacrop("~/project", overwrite = TRUE, force = TRUE)
 \url{https://www.fao.org/aquacrop/} for AquaCrop documentation
 }
 \seealso{
-\code{\link{install_binaries}}, \code{\link{run_aquacrop}}
+\link{install_binaries}, \link{run_aquacrop}
 }

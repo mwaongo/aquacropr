@@ -43,27 +43,24 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Write default management file
-#'   write_man(path = "management/", management_name = "default-management")
+#' # Write default management file
+#' write_man(path = "management/", management_name = "default-management")
 #'
-#'   # Write custom management with modified parameters
-#'   write_man(
-#'     path = "management/",
-#'     management_name = "irrigated-maize",
-#'     params = list(var_03 = 20, var_04 = 60, var_05 = 30)
-#'   )
+#' # Write custom management with modified parameters
+#' write_man(
+#'   path = "management/",
+#'   management_name = "irrigated-maize",
+#'   params = list(var_03 = 20, var_04 = 60, var_05 = 30)
+#' )
 #' }
 #'
 #' @export
 
 write_man <- function(
-  path = "man/",
-  management_name = "generic-management",
-  eol = "windows",
-  params = list()
-
-) {
-
+    path = "man/",
+    management_name = "generic-management",
+    eol = "windows",
+    params = list()) {
   # Handle NULL params
   if (is.null(params)) {
     params <- list()
@@ -85,8 +82,8 @@ write_man <- function(
   # Validate fertilization_rate and mulching_rate
   if (
     !is.numeric(fertilization_rate) ||
-    fertilization_rate < 0 ||
-    fertilization_rate > 100
+      fertilization_rate < 0 ||
+      fertilization_rate > 100
   ) {
     stop(
       "fertilization_rate must be numeric between 0 and 100. Received: ",
@@ -100,7 +97,7 @@ write_man <- function(
   path <- .add_trailing_slash(path)
 
   # Create directory if it doesn't exist
-  fs::dir_create(path,recurse = TRUE)
+  fs::dir_create(path, recurse = TRUE)
 
   # Load ManData
   utils::data("ManData", envir = environment())
@@ -160,8 +157,8 @@ write_man <- function(
   # Process parameters
   value <- params %>%
     unlist() %>%
-    as.vector() #%>%
-    # round_to(to = 5 ) that's good but not general, think later how to take user need
+    as.vector() # %>%
+  # round_to(to = 5 ) that's good but not general, think later how to take user need
 
   description <- ManData %>%
     dplyr::filter((name %in% names(params))) %>%

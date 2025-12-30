@@ -54,18 +54,18 @@ precipitation data for use in crop simulations.
 }
 \examples{
 \dontrun{
-  # Load example weather data
-  data("weather")
+# Load example weather data
+data("weather")
 
-  # Write rainfall file with default column name
-  write_plu(
-    path = "weather/",
-    stn = "Wakanda_Station",
-    data = weather
-  )
+# Write rainfall file with default column name
+write_plu(
+  path = "weather/",
+  stn = "Wakanda_Station",
+  data = weather
+)
 
-  # Legacy format (backward compatibility)
-  write_plu(data = weather_with_station, path = "climate/")
+# Legacy format (backward compatibility)
+write_plu(data = weather_with_station, path = "climate/")
 }
 
 }

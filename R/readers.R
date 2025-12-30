@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   data <- read_season_out("C1PRMSeason.OUT")
+#' data <- read_season_out("C1PRMSeason.OUT")
 #' }
 #'
 #' @export
@@ -43,7 +43,9 @@ read_season_out <- function(file) {
 
   if (!endsWith(basename(file), expected_suffix)) {
     stop("file should be ended with ", expected_suffix,
-         ", got: ", basename(file), call. = FALSE)
+      ", got: ", basename(file),
+      call. = FALSE
+    )
   }
 }
 
@@ -54,7 +56,5 @@ read_season_out <- function(file) {
     unlist() %>%
     c("PRMName") %>%
     janitor::make_clean_names(case = "snake") %>%
-    gsub(pattern = "_",replacement = "",x = .)
-
+    gsub(pattern = "_", replacement = "", x = .)
 }
-

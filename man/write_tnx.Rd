@@ -57,18 +57,18 @@ minimum and maximum temperature data for use in crop simulations.
 }
 \examples{
 \dontrun{
-  # Load example weather data
-  data("weather")
+# Load example weather data
+data("weather")
 
-  # Write temperature file with default column names
-  write_tnx(
-    path = "weather/",
-    stn = "Wakanda_Station",
-    data = weather
-  )
+# Write temperature file with default column names
+write_tnx(
+  path = "weather/",
+  stn = "Wakanda_Station",
+  data = weather
+)
 
-  # Legacy format (backward compatibility)
-  write_tnx(data = weather_with_station, path = "climate/")
+# Legacy format (backward compatibility)
+write_tnx(data = weather_with_station, path = "climate/")
 }
 
 }

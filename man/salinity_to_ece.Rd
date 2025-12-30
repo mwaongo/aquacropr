@@ -36,9 +36,9 @@ Standard salinity classification:
 }
 }
 \examples{
-salinity_to_ece("none")            # 0
+salinity_to_ece("none") # 0
 salinity_to_ece("slightly saline") # 3
-salinity_to_ece("moderate")        # 6
-salinity_to_ece(5.5)               # 5.5
+salinity_to_ece("moderate") # 6
+salinity_to_ece(5.5) # 5.5
 
 }

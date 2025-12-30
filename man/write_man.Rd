@@ -59,15 +59,15 @@ ManData contains 20 management parameters (var_02 to var_21) with the following 
 }
 \examples{
 \dontrun{
-  # Write default management file
-  write_man(path = "management/", management_name = "default-management")
+# Write default management file
+write_man(path = "management/", management_name = "default-management")
 
-  # Write custom management with modified parameters
-  write_man(
-    path = "management/",
-    management_name = "irrigated-maize",
-    params = list(var_03 = 20, var_04 = 60, var_05 = 30)
-  )
+# Write custom management with modified parameters
+write_man(
+  path = "management/",
+  management_name = "irrigated-maize",
+  params = list(var_03 = 20, var_04 = 60, var_05 = 30)
+)
 }
 
 }

@@ -1,4 +1,3 @@
-
 #' Format Date String for Comments
 #'
 #' @description

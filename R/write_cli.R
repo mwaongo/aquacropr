@@ -49,33 +49,33 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # First, create the required climate files
-#'   data("weather")
-#'   write_plu(data = weather, stn = "Wakanda", path = "weather/")
-#'   write_eto(data = weather, stn = "Wakanda", path = "weather/")
-#'   write_tnx(data = weather, stn = "Wakanda", path = "weather/")
+#' # First, create the required climate files
+#' data("weather")
+#' write_plu(data = weather, stn = "Wakanda", path = "weather/")
+#' write_eto(data = weather, stn = "Wakanda", path = "weather/")
+#' write_tnx(data = weather, stn = "Wakanda", path = "weather/")
 #'
-#'   # Then write CLI file with historical CO2
-#'   write_cli(
-#'     path = "weather/",
-#'     stn = "Wakanda",
-#'     scenario = "hist"
-#'   )
+#' # Then write CLI file with historical CO2
+#' write_cli(
+#'   path = "weather/",
+#'   stn = "Wakanda",
+#'   scenario = "hist"
+#' )
 #'
-#'   # Write CLI file with RCP 4.5 scenario
-#'   write_cli(
-#'     path = "weather/",
-#'     stn = "Wakanda",
-#'     scenario = "rcp45"
-#'   )
+#' # Write CLI file with RCP 4.5 scenario
+#' write_cli(
+#'   path = "weather/",
+#'   stn = "Wakanda",
+#'   scenario = "rcp45"
+#' )
 #'
-#'   # Skip validation (not recommended)
-#'   write_cli(
-#'     path = "weather/",
-#'     stn = "Wakanda",
-#'     scenario = "hist",
-#'     check_files = FALSE
-#'   )
+#' # Skip validation (not recommended)
+#' write_cli(
+#'   path = "weather/",
+#'   stn = "Wakanda",
+#'   scenario = "hist",
+#'   check_files = FALSE
+#' )
 #' }
 #'
 #' @seealso
@@ -89,9 +89,7 @@ write_cli <- function(
     stn = "station",
     eol = "windows",
     scenario = "hist",
-    check_files = TRUE
-) {
-
+    check_files = TRUE) {
   # Ensure trailing slash on path
   path <- .add_trailing_slash(path)
 
