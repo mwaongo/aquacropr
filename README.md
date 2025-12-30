@@ -28,30 +28,150 @@ You can install the development version of aquacroptools from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("oousmane/aquacroptools")
+devtools::install_github("mwaongo/aquacroptools")
 ```
 
-## Example
+## Example - Basic Usage
 
-This is a basic example which shows you how to use aquacroptools:
+This is a basic example which shows you how to use aquacroptools to
+create climate files:
 
 ``` r
 library(aquacroptools)
 library(fs)
-## basic example code
-data("weather") # load example dataset
 
-head(weather) # check the data sets structure. The column names should be as is.
+## Load example dataset
+data("weather") # load example weather dataset
 
-if(!dir_ls("climate/")) dir_create("climate/") # output directories
+# Check the data structure
+head(weather)
+# The dataset should contain columns: year, month, day, rain, et0, tmin, tmax
 
-write_plu(path = "climate/") # write .PLU file
-write_tnx(path = "climate/") # write .Tnx file
-write_et0(path = "climate/") # write .ETo file
+## Create output directory if it doesn't exist
+if(!dir_exists("climate/")) dir_create("climate/")
+
+## Write individual climate files
+write_plu(path = "climate/", data = weather)  # write .PLU file (rainfall)
+write_tnx(path = "climate/", data = weather)  # write .Tnx file (temperature)
+write_eto(path = "climate/", data = weather)  # write .ETo file (reference ET)
+
+## Write climate master file that links all the above
 write_cli(
-  path = "climate/", #path were we have <<station>>.* (PLU,ETo, Tnx)
-  stn ="wakanda", # name of the station <<station>>.* (PLU,ETo, Tnx)
-  scenario ="hist" # climate data scenario : hist, rcpxx or sspxxx,
-  check_files = TRUE
-  )
+  path = "climate/",      # path where we have station files (PLU, ETo, Tnx)
+  stn = "wakanda",        # name of the station for files: wakanda.PLU, wakanda.ETo, wakanda.Tnx
+  scenario = "hist",      # climate data scenario: hist, rcp26, rcp45, rcp60, rcp85, ssp119, ssp126, ssp245, ssp370, ssp585
+  check_files = TRUE      # verify that all required files exist
+)
 ```
+
+## Example - Using write_climate() (Recommended)
+
+For convenience, you can create all climate files at once using
+`write_climate()`:
+
+``` r
+library(aquacroptools)
+
+## Load example dataset
+data("weather")
+
+## Create output directory
+fs::dir_create("climate/", recurse = TRUE)
+
+## Write all climate files at once
+write_climate(
+  path = "climate/",
+  stn = "wakanda",
+  data = weather,         # Must contain: year, month, day, rain, et0, tmin, tmax
+  scenario = "hist"
+)
+
+# This creates: wakanda.PLU, wakanda.Tnx, wakanda.ETo, wakanda.CLI
+```
+
+## Example - Complete Workflow
+
+Here’s a more complete example showing the full simulation workflow:
+
+``` r
+library(aquacroptools)
+
+# 1. Initialize AquaCrop project
+init_aquacrop(path = "my-aquacrop-project", version = "7.2")
+
+# 2. Set working directory to project
+setwd("my-aquacrop-project")
+
+# 3. Load and prepare your data
+data("weather")
+
+# 4. Create climate files
+write_climate(
+  path = "CLIMATE/",
+  stn = "wakanda",
+  data = weather,
+  scenario = "hist"
+)
+
+# 5. Create crop file
+write_cro(
+  path = "CROP/",
+  crop_name = "maize",
+  params = list(
+    # Add your crop parameters here
+  )
+)
+
+# 6. Create soil files
+write_sol(
+  path = "SOIL/",
+  site_name = "wakanda",
+  texture = "loam"
+)
+
+write_swo(
+  path = "SOIL/",
+  soil_name = "wakanda"
+)
+
+# 7. Create management file (optional)
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "wakanda",
+  params = list(
+    # Add your management parameters here
+  )
+)
+
+# 8. Create project file
+write_prm(
+  path = "LIST/",
+  station_name = "wakanda",
+  year = 2020,
+  planting_doy = 121,  # May 1st
+  crop_name = "maize",
+  crop_path = "./CROP/",
+  climate_path = "./CLIMATE/",
+  management_path = "./MANAGEMENT/",
+  soil_path = "./SOIL/",
+  base_path = getwd()
+)
+
+# 9. Run simulation
+run_aquacrop()
+
+# 10. Read and analyze results
+results <- read_seas_out("OUTP/wakandaPRMseason.OUT")
+summary(results)
+```
+
+## Notes
+
+- The `weather` dataset is included in aquacroptools for testing and
+  examples
+- Column names in your data should match: `year`, `month`, `day`,
+  `rain`, `et0`, `tmin`, `tmax`
+- The `write_climate()` function is recommended as it ensures all files
+  are created consistently
+- For custom column names, use the `var_name_*` parameters in individual
+  write functions
