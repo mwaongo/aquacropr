@@ -47,6 +47,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -67,17 +79,55 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div class="section level1">
-<div class="page-header"><h1 id="aquacroptools-">aquacroptools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#aquacroptools-"></a>
-</h1></div>
+
+<div class="section level2">
+<h2 id="aquacroptools-">aquacroptools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#aquacroptools-"></a>
+</h2>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>aquacroptools is a set of tools specifically developed to work with AquaCrop v7.0 (August 2022) files. AquaCrop is a crop-water productivity model developed by the Food and Agriculture Organization (FAO) of the United Nations. It is used to simulate and evaluate the response of various crops to water availability and provides insights into crop water requirements, yield potential, and water productivity.</p>
-<p>aquacroptools is designed to make Aquacrop v7.0 files handling much easier and allow users to programmatically :</p>
-<ol style="list-style-type: decimal">
-<li><p>Generate AquaCrop v7.0 files.</p></li>
-<li><p>Read,manipulate Aquacrop v7.0 files.</p></li>
-</ol>
+<p>R tools and wrappers for running FAO AquaCrop in reproducible workflows</p>
+</div>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>AquaCrop is a crop simulation model developed by the Food and Agriculture Organization of the United Nations (FAO) to simulate crop yield response to water availability, climate variability, and management practices. Due to its strong scientific foundation and relatively low data requirements, AquaCrop is widely used in research, operational studies, and climate impact assessments worldwide.</p>
+<p>The aquacrotools R package provides a lightweight interface and a comprehensive set of utilities to run AquaCrop from R, automate batch simulations, and post-process model outputs in a reproducible and scalable manner. By bridging the gap between AquaCrop’s file-based workflow and modern data analysis environments, aquacrotools enables researchers and practitioners to leverage the full power of both AquaCrop’s simulation engine and R’s data science ecosystem.</p>
+</div>
+<div class="section level2">
+<h2 id="key-capabilities">Key Capabilities<a class="anchor" aria-label="anchor" href="#key-capabilities"></a>
+</h2>
+<p>aquacrotools enables users to:</p>
+<p><strong>Input Management</strong>: Programmatically generate AquaCrop input files for climate, crop parameters, soil properties, and management practices. Convert data frames and spatial datasets directly into AquaCrop-compatible formats without manual file editing.</p>
+<p><strong>Batch Simulation</strong>: Run AquaCrop simulations at scale across multiple stations, scenarios, years, or climate projections. Automate repetitive simulation tasks and parallelize computations for large-scale assessments.</p>
+<p><strong>Output Processing</strong>: Read, parse, and tidy AquaCrop output files into structured data frames ready for analysis. Extract time series data, final yields, water balance components, and other model outputs programmatically.</p>
+<p><strong>Workflow Integration</strong>: Seamlessly integrate AquaCrop simulations into tidyverse and spatial R workflows. Combine crop modeling with climate data processing, statistical analysis, and visualization in a single reproducible script.</p>
+<p><strong>Reproducibility</strong>: Version control your entire modeling workflow, from data preparation through simulation to analysis. Document parameter choices, ensure traceability, and facilitate collaboration through scripted workflows.</p>
+</div>
+<div class="section level2">
+<h2 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
+</h2>
+<p>The package does not modify AquaCrop equations or internal model logic. All simulations rely on the official AquaCrop engine distributed by FAO, ensuring scientific validity and consistency with published research. aquacrotools acts as an interface layer, handling file I/O, batch orchestration, and data transformation while preserving AquaCrop’s core functionality.</p>
+</div>
+<div class="section level2">
+<h2 id="typical-applications">Typical Applications<a class="anchor" aria-label="anchor" href="#typical-applications"></a>
+</h2>
+<p><strong>Regional and Large-Scale Crop Yield Assessments</strong>: Simulate crop performance across multiple locations using gridded climate data, station networks, or spatial datasets. Aggregate results at administrative boundaries for decision support and policy analysis.</p>
+<p><strong>Climate Variability and Change Impact Studies</strong>: Evaluate crop response to historical climate variability, drought events, or future climate projections. Quantify yield impacts under different Representative Concentration Pathways (RCPs) or Shared Socioeconomic Pathways (SSPs).</p>
+<p><strong>Water Management and Irrigation Optimization</strong>: Compare rainfed versus irrigated conditions, test deficit irrigation strategies, or optimize irrigation schedules. Assess water productivity and identify water-saving management practices.</p>
+<p><strong>Agronomic Practice Evaluation</strong>: Explore the impact of planting dates, cultivar selection, fertilization regimes, or mulching practices on crop performance. Identify optimal management strategies for specific agro-climatic zones.</p>
+<p><strong>Operational Crop Monitoring</strong>: Integrate near-real-time climate data for within-season yield forecasting. Support early warning systems and agricultural advisory services with up-to-date simulation results.</p>
+<p><strong>Research and Capacity Building</strong>: Facilitate reproducible crop modeling research, enable sensitivity analyses, and support training activities. Lower the technical barrier to AquaCrop adoption through accessible R-based workflows.</p>
+</div>
+<div class="section level2">
+<h2 id="target-users">Target Users<a class="anchor" aria-label="anchor" href="#target-users"></a>
+</h2>
+<p>aquacrotools is designed for agronomists, climate scientists, hydrologists, agricultural economists, and data analysts working on crop-water-climate interactions. The package is particularly useful for researchers conducting regional assessments, operational services requiring automated simulation pipelines, and anyone seeking to integrate crop modeling into broader analytical workflows.</p>
+</div>
+<div class="section level2">
+<h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h2>
+<p>The package documentation includes detailed vignettes on setting up your AquaCrop environment, preparing input data, running simulations, and analyzing outputs. Example datasets and workflows demonstrate common use cases and best practices for reproducible crop modeling with R and AquaCrop.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -226,7 +276,7 @@
 <li>For custom column names, use the <code>var_name_*</code> parameters in individual write functions</li>
 </ul>
 </div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
