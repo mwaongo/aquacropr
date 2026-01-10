@@ -67,7 +67,7 @@ aquacrotools is designed for agronomists, climate scientists, hydrologists, agri
 
 The package documentation includes detailed vignettes on setting up your AquaCrop environment, preparing input data, running simulations, and analyzing outputs. Example datasets and workflows demonstrate common use cases and best practices for reproducible crop modeling with R and AquaCrop.
 
-## Installation
+## Installation steps
 
 You can install the development version of aquacroptools from [GitHub](https://github.com/) with:
 
