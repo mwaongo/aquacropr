@@ -118,6 +118,7 @@ utils::globalVariables(
     "thickness_fmt",
     "water_content_fmt",
     "ece_fmt",
-    "."
+    ".",
+    "thickness_vec"
   )
 )

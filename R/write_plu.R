@@ -18,6 +18,7 @@
 #' @param first_day First day of record. For 10-daily: 1, 11, or 21; For monthly: 1. Default = 1
 #' @param first_month First month of record (1-12). Default = 1
 #'
+#' @family AquaCrop file writers
 #' @return
 #' Invisibly returns the full path to the created .PLU file. Creates a formatted .PLU file
 #' in the specified directory with the format: <<stn>>.PLU containing daily rainfall data

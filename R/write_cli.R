@@ -42,7 +42,7 @@
 #'   - ssp245: SSP2-4.5 (intermediate emissions)
 #'   - ssp370: SSP3-7.0 (high emissions)
 #'   - ssp585: SSP5-8.5 (very high emissions)
-#'
+#' @family AquaCrop file writers
 #' @return
 #' Invisibly returns the full path to the created .CLI file. The function also copies
 #' the appropriate CO2 file to the specified path if it doesn't already exist there.

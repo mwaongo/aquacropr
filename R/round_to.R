@@ -20,7 +20,7 @@
 #'
 #' By default, \code{threshold = to/2} provides standard rounding behavior
 #' (e.g., 47.5 rounds to 50 when \code{to = 5}).
-#'
+#' @family utility functions
 #' @return
 #' Numeric vector of the same length as \code{x} with values rounded to
 #' the nearest multiple of \code{to}.

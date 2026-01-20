@@ -1,7 +1,7 @@
 #' Write AquaCrop Soil Initial Water Content File
 #'
 #' @description
-#' Write an AquaCrop v7.0 (August 2022) soil initial water content (.SW0) file that
+#' Write an AquaCrop v7.0 (August 2022) and higher soil initial water content (.SW0) file that
 #' specifies the initial water content for each soil layer at the start of the
 #' simulation. This file defines the soil moisture status at planting or simulation start.
 #'
@@ -43,7 +43,7 @@
 #'     \item \strong{water_content}: Volumetric water content (vol%)
 #'     \item \strong{ece}: Electrical conductivity (dS/m). Optional, defaults to 0
 #'   }
-#'
+#' @family AquaCrop file writers
 #' @details
 #' The .SW0 file defines the initial soil water conditions for each layer at the
 #' start of the AquaCrop simulation. These conditions significantly affect early
@@ -151,7 +151,7 @@
 #' @export
 
 write_swo <- function(
-    path = "soil/",
+    path = "SOIL/",
     soil_name = "default-soil-init",
     texture = "loam",
     eol = "windows",
@@ -324,9 +324,9 @@ write_swo <- function(
     stop("layers data frame must have at least one row")
   }
 
-  if (n_layers > 12) {
+  if (n_layers > 13) {
     warning(
-      "Number of layers (", n_layers, ") exceeds AquaCrop recommended maximum of 12.",
+      "Number of layers (", n_layers, ") exceeds AquaCrop recommended maximum of 13.",
       "\nThis may cause issues in some AquaCrop versions."
     )
   }
@@ -440,3 +440,8 @@ write_swo <- function(
   # Return invisibly with file path
   invisible(output_file)
 }
+
+#' @rdname write_swo
+#' @export
+
+write_sw0 <- write_swo

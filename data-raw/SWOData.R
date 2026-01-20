@@ -16,10 +16,11 @@ SWOData <- data.frame(
     "silty clay loam",
     "sandy clay",
     "silty clay",
-    "clay"
+    "clay",
+    "impermeable"
   ),
-  wp = c(6, 8, 10, 15, 13, 9, 20, 23, 23, 27, 32, 39),
-  ece = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  wp = c(6, 8, 10, 15, 13, 9, 20, 23, 23, 27, 32, 39, 0.1),
+  ece = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   stringsAsFactors = FALSE
 )
 

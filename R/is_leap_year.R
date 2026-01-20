@@ -1,7 +1,7 @@
 #' Check if a Year is a Leap Year
 #'
 #' @param x A numeric scalar representing a year
-#'
+#' @family utility functions
 #' @return A logical scalar (TRUE if leap year, FALSE otherwise)
 #'
 #' @export

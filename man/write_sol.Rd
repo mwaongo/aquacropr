@@ -2,11 +2,31 @@
 % Please edit documentation in R/write_sol.R
 \name{write_sol}
 \alias{write_sol}
+\alias{write_soil}
 \title{Write AquaCrop Soil Profile File (.SOL)}
 \usage{
 write_sol(
-  path = "soil/",
   site_name = "default-site",
+  path = "SOIL/",
+  cn = 46,
+  rew = 5,
+  texture = c("loam", "silt loam"),
+  thickness = c(0.5, 1),
+  eol = "windows",
+  write_sw0 = TRUE,
+  initial_water = "WP",
+  salinity = "none",
+  initial_cc = -9,
+  initial_biomass = 0,
+  initial_root_depth = -9,
+  bund_water = 0,
+  bund_ec = 0,
+  swo_layers = NULL
+)
+
+write_soil(
+  site_name = "default-site",
+  path = "SOIL/",
   cn = 46,
   rew = 5,
   texture = c("loam", "silt loam"),
@@ -24,11 +44,11 @@ write_sol(
 )
 }
 \arguments{
-\item{path}{Directory where the \code{.SOL} file will be written.
-Default: \code{"soil/"}.}
-
 \item{site_name}{Name of the soil profile (used in the filename).
 Default: \code{"default-site"}.}
+
+\item{path}{Directory where the \code{.SOL} file will be written.
+Default: \code{"soil/"}.}
 
 \item{cn}{Curve number for runoff estimation (0–100). Default: \code{46}.}
 

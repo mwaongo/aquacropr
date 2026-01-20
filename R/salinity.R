@@ -15,6 +15,8 @@
 #'     \item \strong{Numeric value}: Used directly (0-100 dS/m)
 #'   }
 #'
+#' @family utility functions
+#'
 #' @return Numeric value representing electrical conductivity in dS/m
 #'
 #' @details

@@ -161,13 +161,6 @@ write_climate(
 }
 
 }
-\seealso{
-Individual file writing functions:
-\code{\link{write_plu}} for writing rainfall files (.PLU),
-\code{\link{write_eto}} for writing ETo files (.ETo),
-\code{\link{write_tnx}} for writing temperature files (.Tnx),
-\code{\link{write_cli}} for writing climate reference files (.CLI).
-
+\concept{AquaCrop file writers
 Data:
-\code{\link{weather}} for example weather data
-}
+\code{\link{weather}} for example weather data}

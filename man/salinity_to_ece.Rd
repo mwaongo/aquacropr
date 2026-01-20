@@ -42,3 +42,12 @@ salinity_to_ece("moderate") # 6
 salinity_to_ece(5.5) # 5.5
 
 }
+\seealso{
+Other utility functions: 
+\code{\link{calculate_plant_density}()},
+\code{\link{is_leap_year}()},
+\code{\link{path_to_file}()},
+\code{\link{round_to}()},
+\code{\link{to_aquacrop_day}()}
+}
+\concept{utility functions}

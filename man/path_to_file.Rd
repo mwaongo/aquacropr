@@ -94,5 +94,13 @@ rcp85_data <- readLines(path_to_file("RCP8-5.CO2"))
 write_cli(stn = "Wakanda", scenario = "rcp45") # Automatically uses RCP4-5.CO2
 write_cli(stn = "Wakanda", scenario = "hist") # Automatically uses MaunaLoa.CO2
 }
-
 }
+\seealso{
+Other utility functions: 
+\code{\link{calculate_plant_density}()},
+\code{\link{is_leap_year}()},
+\code{\link{round_to}()},
+\code{\link{salinity_to_ece}()},
+\code{\link{to_aquacrop_day}()}
+}
+\concept{utility functions}

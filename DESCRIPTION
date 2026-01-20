@@ -35,6 +35,7 @@ Imports:
     gh,
     rappdirs,
     rstudioapi,
+    sf,
     utils,
     magrittr
 Roxygen: list(markdown = TRUE)

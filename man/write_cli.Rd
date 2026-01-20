@@ -106,4 +106,14 @@ write_cli(
 \code{\link{write_plu}} for writing rainfall files,
 \code{\link{write_eto}} for writing ETo files,
 \code{\link{write_tnx}} for writing temperature files
+
+Other AquaCrop file writers: 
+\code{\link{write_cro}()},
+\code{\link{write_eto}()},
+\code{\link{write_man}()},
+\code{\link{write_plu}()},
+\code{\link{write_prm}()},
+\code{\link{write_swo}()},
+\code{\link{write_tnx}()}
 }
+\concept{AquaCrop file writers}

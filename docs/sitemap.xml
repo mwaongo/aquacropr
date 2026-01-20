@@ -17,6 +17,7 @@
 <url><loc>/reference/day_number.html</loc></url>
 <url><loc>/reference/dot-create_readme.html</loc></url>
 <url><loc>/reference/dot-install_templates.html</loc></url>
+<url><loc>/reference/dot-onAttach.html</loc></url>
 <url><loc>/reference/ece_to_salinity.html</loc></url>
 <url><loc>/reference/get_aquacrop_path.html</loc></url>
 <url><loc>/reference/get_aquacrop_version.html</loc></url>
@@ -25,14 +26,20 @@
 <url><loc>/reference/init_aquacrop.html</loc></url>
 <url><loc>/reference/install_binaries.html</loc></url>
 <url><loc>/reference/is_leap_year.html</loc></url>
+<url><loc>/reference/is_plu.html</loc></url>
 <url><loc>/reference/ManData.html</loc></url>
 <url><loc>/reference/path_to_file.html</loc></url>
 <url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/read_cli.html</loc></url>
+<url><loc>/reference/read_eto.html</loc></url>
+<url><loc>/reference/read_plu.html</loc></url>
 <url><loc>/reference/read_season_out.html</loc></url>
+<url><loc>/reference/read_tnx.html</loc></url>
 <url><loc>/reference/round_to.html</loc></url>
 <url><loc>/reference/run_aquacrop.html</loc></url>
 <url><loc>/reference/salinity_to_ece.html</loc></url>
 <url><loc>/reference/SoilWater.html</loc></url>
+<url><loc>/reference/st_grid.html</loc></url>
 <url><loc>/reference/SWOData.html</loc></url>
 <url><loc>/reference/to_aquacrop_day.html</loc></url>
 <url><loc>/reference/weather.html</loc></url>
@@ -42,6 +49,7 @@
 <url><loc>/reference/write_eto.html</loc></url>
 <url><loc>/reference/write_fwf.html</loc></url>
 <url><loc>/reference/write_man.html</loc></url>
+<url><loc>/reference/write_man_batch.html</loc></url>
 <url><loc>/reference/write_plu.html</loc></url>
 <url><loc>/reference/write_prm.html</loc></url>
 <url><loc>/reference/write_prm_batch.html</loc></url>

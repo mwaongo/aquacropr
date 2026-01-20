@@ -2,35 +2,31 @@
 % Please edit documentation in R/write_prm.R
 \name{write_prm}
 \alias{write_prm}
-\title{Write AquaCrop Parameter (.PRM) File for Single Year}
+\title{Write AquaCrop Parameter Files for Multiple Years (Batch)}
 \usage{
 write_prm(
-  path = "LIST/",
   station_name,
-  year,
-  planting_doy,
+  path = "LIST/",
+  planting_schedule,
   crop_name,
-  crop_path,
+  crop_path = "CROP/",
   crop_duration = 90,
-  climate_path = "./climate/",
-  management_path = "./management/",
-  soil_path = "./soil/",
+  climate_path = "CLIMATE/",
+  management_path = "MANAGEMENT/",
+  soil_path = "SOIL/",
   simulation_start_doy = NULL,
   scenario = "hist",
-  write_header = TRUE,
   eol = "windows",
   use_standalone = TRUE,
-  base_path
+  base_path = getwd()
 )
 }
 \arguments{
-\item{path}{Output directory path (absolute or relative)}
+\item{station_name}{Station identifier}
 
-\item{station_name}{Station identifier (used to find CLI, Tnx, ETo, PLU files)}
+\item{path}{Output directory path}
 
-\item{year}{Year of cultivation}
-
-\item{planting_doy}{Day of year for planting (1-365/366)}
+\item{planting_schedule}{data.frame with: year, planting_doy}
 
 \item{crop_name}{Crop name (e.g., "maize_90days")}
 
@@ -38,28 +34,36 @@ write_prm(
 
 \item{crop_duration}{Growing season length in days}
 
-\item{climate_path}{Path to climate file directory (absolute or relative)}
+\item{climate_path}{Path to climate file directory}
 
-\item{management_path}{Path to management file directory (absolute or relative)}
+\item{management_path}{Path to management file directory}
 
-\item{soil_path}{Path to soil file directory (absolute or relative)}
+\item{soil_path}{Path to soil file directory}
 
-\item{simulation_start_doy}{Day of year for simulation start (NULL = April 1st)}
+\item{simulation_start_doy}{Day of year for simulation start}
 
-\item{scenario}{Climate scenario: "hist", "rcp26", "rcp45", "rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585"}
+\item{scenario}{Climate scenario}
 
-\item{write_header}{Logical. If TRUE (default), writes header. FALSE for batch mode.}
+\item{eol}{End-of-line type}
 
-\item{eol}{End-of-line type: "windows" (default) or "unix"}
+\item{use_standalone}{Logical. Whether running in standalone mode}
 
-\item{use_standalone}{Logical. Whether running in standalone mode (default: TRUE)}
-
-\item{base_path}{Character. Base absolute path (required for file existence checking)}
+\item{base_path}{Character. Base absolute path (required)}
 }
 \value{
 Invisibly returns the output file path
 }
 \description{
-Creates an AquaCrop parameter file (.PRM) for a single station and year.
-Includes the header (crop name and version) plus the year block.
+Creates a single \code{.PRM} file with header once + multiple year blocks.
 }
+\seealso{
+Other AquaCrop file writers: 
+\code{\link{write_cli}()},
+\code{\link{write_cro}()},
+\code{\link{write_eto}()},
+\code{\link{write_man}()},
+\code{\link{write_plu}()},
+\code{\link{write_swo}()},
+\code{\link{write_tnx}()}
+}
+\concept{AquaCrop file writers}

@@ -144,11 +144,11 @@
     ": AquaCrop Version (August 2024)"
   )
   headline_3 <- paste0(
-    format(paste(cn), width = 28, justify = "centre"),
+    format(paste(cn[1]), width = 28, justify = "centre"),
     ": CN (Curve Number)"
   )
   headline_4 <- paste0(
-    format(paste(rew), width = 28, justify = "centre"),
+    format(paste(rew[1]), width = 28, justify = "centre"),
     ": Readily evaporable water from top layer (mm)"
   )
   headline_5 <- paste0(

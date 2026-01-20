@@ -89,8 +89,8 @@
 #'
 #' @export
 write_sol <- function(
-    path = "soil/",
     site_name = "default-site",
+    path = "SOIL/",
     cn = 46,
     rew = 5,
     texture = c("loam", "silt loam"),
@@ -112,21 +112,15 @@ write_sol <- function(
   # Create directory if it doesn't exist
   if (!fs::dir_exists(path)) fs::dir_create(path)
 
-  # Derive number of horizons
-  nsoils <- length(texture)
+  # Get unique soils texture and thickness if continuous
+  soil_info <- consolidate_soils(
+    texture = texture,
+    thickness = thickness
+  )
 
-  # Validate texture and thickness lengths
-  if (length(texture) != length(thickness)) {
-    stop(
-      "Length of texture (", length(texture), ") must match ",
-      "length of thickness (", length(thickness), ")"
-    )
-  }
-
-  # Validate positive thickness values
-  if (any(thickness <= 0)) {
-    stop("All thickness values must be positive (> 0)")
-  }
+  nsoils <- soil_info[["nsoils"]]
+  texture <- soil_info[["texture"]]
+  thickness <- soil_info[["thickness"]]
 
   # Check total depth (warn if > 2 m)
   total_depth <- sum(thickness)
@@ -137,15 +131,39 @@ write_sol <- function(
     )
   }
 
-  # Validate CN
-  if (cn < 0 || cn > 100) {
-    stop("cn (curve number) must be between 0 and 100. Received: ", cn)
-  }
+ # Validate CN
+if (anyNA(cn)) {
+  na_idx <- which(is.na(cn))
+  stop(sprintf(
+    "cn contains NA value(s) at position(s): %s",
+    paste(na_idx, collapse = ", ")
+  ))
+}
+if (any(cn < 0 | cn > 100)) {
+  invalid_idx <- which(cn < 0 | cn > 100)
+  stop(sprintf(
+    "cn (curve number) must be between 0 and 100.\nInvalid value(s) at position(s) %s: %s",
+    paste(invalid_idx, collapse = ", "),
+    paste(cn[invalid_idx], collapse = ", ")
+  ))
+}
 
-  # Validate REW
-  if (rew < 0) {
-    stop("rew (readily evaporable water) must be non-negative. Received: ", rew)
-  }
+# Validate REW
+if (anyNA(rew)) {
+  na_idx <- which(is.na(rew))
+  stop(sprintf(
+    "rew contains NA value(s) at position(s): %s",
+    paste(na_idx, collapse = ", ")
+  ))
+}
+if (any(rew < 0)) {
+  invalid_idx <- which(rew < 0)
+  stop(sprintf(
+    "rew (readily evaporable water) must be non-negative.\nInvalid value(s) at position(s) %s: %s",
+    paste(invalid_idx, collapse = ", "),
+    paste(rew[invalid_idx], collapse = ", ")
+  ))
+}
 
   # Normalize texture names
   texture <- tolower(trimws(texture))
@@ -196,7 +214,7 @@ write_sol <- function(
       penetrability = sprintf("%10.0f", penetrability),
       gravel = sprintf("%9.0f", gravel),
       cra = sprintf("%13.6f", cra),
-      crb = sprintf("%9.6f", crb),
+      crb = sprintf("%13.6f", crb),
       description = sprintf("%25s", description)
     )
 
@@ -240,3 +258,65 @@ write_sol <- function(
   # Return the .SOL path (original behavior preserved)
   invisible(output_file)
 }
+
+#' Consolidate consecutive soil horizons with identical texture
+#'
+#' Merges consecutive horizons with the same texture into a single horizon
+#' by summing their thicknesses.
+#'
+#' @param texture Character vector of soil texture names.
+#' @param thickness Numeric vector of horizon thicknesses (m).
+#'
+#' @return List with consolidated texture, thickness, and n_horizons.
+#'
+#' @keywords internal
+#' @noRd
+consolidate_soils <- function(texture, thickness) {
+  # Validate inputs
+  if (length(texture) != length(thickness)) {
+    stop(
+      "Length of texture (", length(texture), ") must match ",
+      "length of thickness (", length(thickness), ")",
+      call. = FALSE
+    )
+  }
+
+  if (length(texture) == 0) {
+    stop("texture and thickness cannot be empty", call. = FALSE)
+  }
+
+  if (!is.numeric(thickness) || any(is.na(thickness))) {
+    stop("thickness must be numeric without NA values", call. = FALSE)
+  }
+
+  if (any(thickness <= 0)) {
+    stop("All thickness values must be positive (> 0)", call. = FALSE)
+  }
+
+  # Use run-length encoding to find consecutive identical textures
+  rle_texture <- rle(texture)
+
+  # Initialize vectors for consolidated horizons
+  consolidated_texture <- rle_texture$values
+  consolidated_thickness <- numeric(length(consolidated_texture))
+
+  # Calculate consolidated thickness for each group
+  end_idx <- cumsum(rle_texture$lengths)
+  start_idx <- c(1, end_idx[-length(end_idx)] + 1)
+
+  for (i in seq_along(consolidated_texture)) {
+    consolidated_thickness[i] <- sum(thickness[start_idx[i]:end_idx[i]])
+  }
+
+  # Return consolidated soil profile
+  list(
+    texture = consolidated_texture,
+    thickness = consolidated_thickness,
+    nsoils = length(consolidated_texture)
+  )
+}
+#'
+#' @rdname write_sol
+#' @export
+#'
+write_soil <- write_sol

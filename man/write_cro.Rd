@@ -64,4 +64,14 @@ write_cro(
 }
 \seealso{
 \code{\link{CropData}} for complete list of all 83 crop parameters with descriptions and valid ranges
+
+Other AquaCrop file writers: 
+\code{\link{write_cli}()},
+\code{\link{write_eto}()},
+\code{\link{write_man}()},
+\code{\link{write_plu}()},
+\code{\link{write_prm}()},
+\code{\link{write_swo}()},
+\code{\link{write_tnx}()}
 }
+\concept{AquaCrop file writers}

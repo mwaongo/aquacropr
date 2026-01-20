@@ -37,6 +37,7 @@
 #'   \item Low: 250,000-350,000 plants/ha (0.75m × 0.05m)
 #'   \item High: 400,000-500,000 plants/ha (0.50m × 0.05m)
 #' }
+#' @family utility functions
 #'
 #' @return Integer representing the number of plants per hectare (plants/ha)
 #'

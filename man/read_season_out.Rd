@@ -34,3 +34,11 @@ data <- read_season_out("C1PRMSeason.OUT")
 }
 
 }
+\seealso{
+Other AquaCrop readers: 
+\code{\link{read_cli}()},
+\code{\link{read_eto}()},
+\code{\link{read_plu}()},
+\code{\link{read_tnx}()}
+}
+\concept{AquaCrop readers}

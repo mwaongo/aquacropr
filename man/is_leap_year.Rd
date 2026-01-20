@@ -20,3 +20,12 @@ is_leap_year(2020)
 is_leap_year(2021)
 
 }
+\seealso{
+Other utility functions: 
+\code{\link{calculate_plant_density}()},
+\code{\link{path_to_file}()},
+\code{\link{round_to}()},
+\code{\link{salinity_to_ece}()},
+\code{\link{to_aquacrop_day}()}
+}
+\concept{utility functions}

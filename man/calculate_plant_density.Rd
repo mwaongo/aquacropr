@@ -81,3 +81,12 @@ spacings$plants_per_ha <- mapply(
 )
 
 }
+\seealso{
+Other utility functions: 
+\code{\link{is_leap_year}()},
+\code{\link{path_to_file}()},
+\code{\link{round_to}()},
+\code{\link{salinity_to_ece}()},
+\code{\link{to_aquacrop_day}()}
+}
+\concept{utility functions}

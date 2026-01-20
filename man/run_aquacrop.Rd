@@ -7,14 +7,23 @@
 run_aquacrop(verbose = TRUE)
 }
 \arguments{
-\item{verbose}{Print messages (default: TRUE)}
+\item{verbose}{Logical. Print messages (default: TRUE).}
 }
 \value{
-Exit status (0 = success)
+Invisibly returns the exit status (0 = success, non-zero = error).
 }
 \description{
 Execute AquaCrop in the current directory. The directory must contain
 the AquaCrop executable (aquacrop.exe on Windows, aquacrop on Linux/macOS).
+}
+\details{
+This function must be run from a directory containing the AquaCrop executable.
+The directory should also contain the standard AquaCrop folder structure
+(CLIMATE/, CROP/, SOIL/, MANAGEMENT/, LIST/, OUTP/, etc.).
+
+The OUTP/ directory is cleaned before running to avoid mixing results from
+different runs. Temporary files (AllDone.OUT, ListProjectsLoaded.OUT) are
+removed after execution.
 }
 \examples{
 \dontrun{
@@ -23,8 +32,7 @@ init_aquacrop("~/my-project")
 setwd("~/my-project")
 run_aquacrop()
 
-# Or from within project directory
-setwd("~/my-project")
-run_aquacrop()
+# Silent mode
+run_aquacrop(verbose = FALSE)
 }
 }

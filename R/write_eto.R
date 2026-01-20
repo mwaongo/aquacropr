@@ -47,12 +47,9 @@
 #' write_eto(data = weather_with_station, path = "climate/")
 #' }
 #'
-#' @seealso
-#' \code{\link{weather}} for example weather data,
-#' \code{\link{write_plu}} for writing rainfall files,
-#' \code{\link{write_tnx}} for writing temperature files
-#'
+#' @family AquaCrop file writers
 #' @export
+#'
 write_eto <- function(
     path = "weather/",
     stn = NULL,

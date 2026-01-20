@@ -90,6 +90,10 @@ path_for_prm <- function(dir_name, use_standalone = TRUE, base_path = NULL) {
     stop("use_standalone must be a single logical value")
   }
 
+  # Clean dir_name: remove any leading/trailing slashes
+  dir_name <- sub("^[/\\\\]+", "", dir_name)  # Remove leading slashes
+  dir_name <- sub("[/\\\\]+$", "", dir_name)  # Remove trailing slashes
+
   # Auto-detect OS
   is_windows <- .Platform$OS.type == "windows"
 
@@ -106,14 +110,13 @@ path_for_prm <- function(dir_name, use_standalone = TRUE, base_path = NULL) {
       stop("base_path is required when use_standalone = FALSE")
     }
 
-    # Use forward slashes for consistency across platforms
     # Normalize base_path (remove trailing separator if present)
     base_path <- sub("[/\\]+$", "", base_path)
 
+    # Use forward slashes for consistency across platforms
     return(paste0(base_path, "/", dir_name, "/"))
   }
 }
-
 #' Check if AquaCrop Executable is Available
 #'
 #' Checks whether the AquaCrop executable for the current operating system

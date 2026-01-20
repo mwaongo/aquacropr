@@ -59,3 +59,12 @@ to_aquacrop_day(as.Date("2023-06-15"))
 to_aquacrop_day(Sys.Date())
 
 }
+\seealso{
+Other utility functions: 
+\code{\link{calculate_plant_density}()},
+\code{\link{is_leap_year}()},
+\code{\link{path_to_file}()},
+\code{\link{round_to}()},
+\code{\link{salinity_to_ece}()}
+}
+\concept{utility functions}

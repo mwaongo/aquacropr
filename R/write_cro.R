@@ -12,6 +12,7 @@
 #'   Parameter names should be var_02 through var_84 (e.g., `list(var_02 = 7.0, var_35 = 1.05)`).
 #'   Unspecified parameters use default values from CropData.
 #'
+#' @family AquaCrop file writers
 #' @return
 #' Invisibly returns the full path to the created .CRO file. Creates a colon-delimited .CRO file
 #' in the specified directory with the format: <<crop_name>>.CRO containing crop parameters

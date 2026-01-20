@@ -5,69 +5,161 @@
 \title{Write AquaCrop Management File}
 \usage{
 write_man(
-  path = "man/",
-  management_name = "generic-management",
+  path = "MANAGEMENT/",
+  management_name,
   eol = "windows",
   params = list()
 )
 }
 \arguments{
-\item{path}{Directory path where the output .MAN file will be written. Default = "man/"}
+\item{path}{Character. Directory path where the .MAN file will be created.
+The directory is created automatically if it doesn't exist. Default: \code{"man/"}.}
 
-\item{management_name}{Name identifier for the management scenario (used in output filename). Default = "generic-management"}
+\item{management_name}{Character. Name identifier for the management scenario.
+This name is used as the filename (e.g., \code{"high-fertility"} creates
+\code{"high-fertility.MAN"}). Default: \code{"generic-management"}.}
 
-\item{eol}{End-of-line character style for the output file. Options: "windows", "linux", "unix", or "macOS". Default = "windows"}
+\item{eol}{Character. End-of-line character style for the output file.
+Options: \code{"windows"}, \code{"linux"}, \code{"unix"}, or \code{"macOS"}. Default: \code{"windows"}.}
 
-\item{params}{Named list of management parameter values to override defaults from ManData.
-Parameter names should be var_02 through var_21 (e.g., \code{list(var_02 = 7.0, var_04 = 50)}).
-Unspecified parameters use default values from ManData. See details for complete parameter list and valid ranges.}
+\item{params}{Named list of management parameters to override defaults.
+Parameter names must be \code{var_02} through \code{var_21}. Any parameters not
+specified will use default values. Set to \code{NULL} or \code{list()} to use all defaults.
+See \code{\link{ManData}} for complete parameter descriptions, valid ranges,
+and default values.}
 }
 \value{
-Invisibly returns the full path to the created .MAN file. Creates a colon-delimited .MAN file
-in the specified directory with the format: <<management_name>>.MAN containing management
-parameters and descriptions as required by AquaCrop v7.0.
+Invisibly returns the full path to the created .MAN file as a character string.
+The main effect is writing the file to disk.
 }
 \description{
-Write an AquaCrop v7.0 (August 2022) management (.MAN) file containing field and crop management parameters.
-This file specifies management practices such as mulch cover, soil fertility, weeds, and harvesting practices
-that will be applied during the AquaCrop simulation.
+Creates an AquaCrop v7.0+ management (.MAN) file that defines field and crop
+management practices for simulation. Management files specify practices such as
+mulch coverage, soil fertility stress, weed competition, and harvesting strategies.
 }
 \details{
-ManData contains 20 management parameters (var_02 to var_21) with the following valid ranges:
+\subsection{Management Parameters}{
+
+Management practices are controlled by 20 parameters (\code{var_02} to \code{var_21}) covering:
 \itemize{
-\item var_02: AquaCrop version (typically 7.0)
-\item var_03: Ground surface covered by mulches (0-100 \%)
-\item var_04: Mulch effect on soil evaporation reduction (0-100 \%)
-\item var_05: Soil fertility stress degree (0-100 \%)
-\item var_06: Height of soil bunds (0+ m)
-\item var_07: Surface runoff not affected by practices (0-100 \%)
-\item var_08: Surface runoff completely prevented (0-100 \%)
-\item var_09: Relative weed cover at canopy closure (0-100 \%)
-\item var_10: Increase of relative weed cover in mid-season (0+ \%)
-\item var_11: Shape factor of canopy cover expansion in weed field
-\item var_12: Replacement by weeds of self-thinned cover (0-100 \%)
-\item var_13: Multiple cuttings flag (0 = not considered, 1 = considered)
-\item var_14: Canopy cover after cutting (0-100 \%)
-\item var_15: Increase of Canopy Growth Coefficient after cutting (0+ \%)
-\item var_16: First day of cutting window (1+ days)
-\item var_17: Number of days in cutting window (-9 = total cycle)
-\item var_18: Timing of multiple cuttings
-\item var_19: Time criterion for cuttings
-\item var_20: Final harvest at maturity flag (0 = not considered, 1 = considered)
-\item var_21: Start of growing cycle in cuttings list (1+ or -9)
+\item Surface management (mulching, bunds, runoff)
+\item Soil fertility stress
+\item Weed competition
+\item Harvest management (single or multiple cuttings)
+}
+
+For detailed descriptions of all parameters, their valid ranges, units, and default
+values, see \code{\link{ManData}}.
+
+You only need to specify parameters that differ from defaults. Unspecified
+parameters automatically use default values from \code{\link{ManData}}.
+}
+
+\subsection{File Format}{
+
+The function creates a colon-delimited text file compatible with AquaCrop v7.0+:
+\itemize{
+\item Filename: \verb{<management_name>.MAN}
+\item Format: \code{value : description}
+\item Each parameter on a separate line
+\item Header contains management scenario name and key parameters
+}
 }
 }
 \examples{
 \dontrun{
-# Write default management file
-write_man(path = "management/", management_name = "default-management")
-
-# Write custom management with modified parameters
+# Example 1: Use all default values
 write_man(
-  path = "management/",
-  management_name = "irrigated-maize",
-  params = list(var_03 = 20, var_04 = 60, var_05 = 30)
+  path = "MANAGEMENT/",
+  management_name = "default"
+)
+
+# Example 2: High fertility with moderate mulching
+# See ?ManData for parameter details
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "high-fertility",
+  params = list(
+    var_05 = 10, # Low fertility stress (high fertility)
+    var_03 = 30, # 30\% mulch cover
+    var_04 = 50 # 50\% evaporation reduction
+  )
+)
+
+# Example 3: Low fertility, no mulch
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "low-fertility",
+  params = list(
+    var_05 = 70, # High fertility stress (poor soil)
+    var_03 = 0, # No mulch
+    var_04 = 0 # No mulch effect
+  )
+)
+
+# Example 4: Weed competition scenario
+# Check ?ManData for weed-related parameters
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "with-weeds",
+  params = list(
+    var_05 = 50, # Moderate fertility stress
+    var_09 = 20, # Weed cover at closure
+    var_10 = 10, # Weed increase in mid-season
+    var_12 = 50 # Weed replacement
+  )
+)
+
+# Example 5: Multiple cutting management (e.g., forage)
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "multiple-cuts",
+  params = list(
+    var_13 = 1, # Enable multiple cuttings
+    var_14 = 10, # Canopy after cut
+    var_15 = 20, # CGC increase after cut
+    var_16 = 45, # First cutting day
+    var_17 = 30 # Cutting window
+  )
+)
+
+# Example 6: Complete management scenario
+# Consult ?ManData to understand each parameter
+irrigation_params <- list(
+  var_03 = 40, # Mulch cover
+  var_04 = 70, # Mulch effect
+  var_05 = 20, # Fertility stress
+  var_06 = 0.15, # Bund height
+  var_07 = 10, # Runoff not affected
+  var_08 = 80 # Runoff prevented
+)
+
+write_man(
+  path = "MANAGEMENT/",
+  management_name = "irrigated-field",
+  params = irrigation_params,
+  eol = "linux"
+)
+
+# Example 7: Create station-specific management
+station <- "grid_001"
+write_man(
+  path = "MANAGEMENT/",
+  management_name = station,
+  params = list(var_05 = 35)
 )
 }
 
+
 }
+\seealso{
+Other AquaCrop file writers: 
+\code{\link{write_cli}()},
+\code{\link{write_cro}()},
+\code{\link{write_eto}()},
+\code{\link{write_plu}()},
+\code{\link{write_prm}()},
+\code{\link{write_swo}()},
+\code{\link{write_tnx}()}
+}
+\concept{AquaCrop file writers}

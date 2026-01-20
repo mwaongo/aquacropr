@@ -85,7 +85,7 @@
 #' write_cli(stn = "Wakanda", scenario = "rcp45") # Automatically uses RCP4-5.CO2
 #' write_cli(stn = "Wakanda", scenario = "hist") # Automatically uses MaunaLoa.CO2
 #' }
-#'
+#' @family utility functions
 #' @export
 
 path_to_file <- function(path = NULL) {

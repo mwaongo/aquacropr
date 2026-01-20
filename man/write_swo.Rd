@@ -2,10 +2,27 @@
 % Please edit documentation in R/write_swo.R
 \name{write_swo}
 \alias{write_swo}
+\alias{write_sw0}
 \title{Write AquaCrop Soil Initial Water Content File}
 \usage{
 write_swo(
-  path = "soil/",
+  path = "SOIL/",
+  soil_name = "default-soil-init",
+  texture = "loam",
+  eol = "windows",
+  initial_cc = -9,
+  initial_biomass = 0,
+  initial_root_depth = -9,
+  bund_water = 0,
+  bund_ec = 0,
+  initial_water = "WP",
+  salinity = "none",
+  layer_thickness = 1,
+  layers = NULL
+)
+
+write_sw0(
+  path = "SOIL/",
   soil_name = "default-soil-init",
   texture = "loam",
   eol = "windows",
@@ -76,7 +93,7 @@ Must contain columns:
 Invisibly returns the full path to the created .SW0 file.
 }
 \description{
-Write an AquaCrop v7.0 (August 2022) soil initial water content (.SW0) file that
+Write an AquaCrop v7.0 (August 2022) and higher soil initial water content (.SW0) file that
 specifies the initial water content for each soil layer at the start of the
 simulation. This file defines the soil moisture status at planting or simulation start.
 }
@@ -192,4 +209,14 @@ write_swo(
 \item \code{\link{salinity_to_ece}} for salinity level conversions
 \item \code{\link{write_sol}} for writing soil profile characteristics
 }
+
+Other AquaCrop file writers: 
+\code{\link{write_cli}()},
+\code{\link{write_cro}()},
+\code{\link{write_eto}()},
+\code{\link{write_man}()},
+\code{\link{write_plu}()},
+\code{\link{write_prm}()},
+\code{\link{write_tnx}()}
 }
+\concept{AquaCrop file writers}

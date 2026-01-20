@@ -78,6 +78,22 @@ simulation. This file defines the soil moisture status at planting or simulation
 <span>  salinity <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  layer_thickness <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  layers <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">write_sw0</span><span class="op">(</span></span>
+<span>  path <span class="op">=</span> <span class="st">"soil/"</span>,</span>
+<span>  soil_name <span class="op">=</span> <span class="st">"default-soil-init"</span>,</span>
+<span>  texture <span class="op">=</span> <span class="st">"loam"</span>,</span>
+<span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
+<span>  initial_cc <span class="op">=</span> <span class="op">-</span><span class="fl">9</span>,</span>
+<span>  initial_biomass <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  initial_root_depth <span class="op">=</span> <span class="op">-</span><span class="fl">9</span>,</span>
+<span>  bund_water <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  bund_ec <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  initial_water <span class="op">=</span> <span class="st">"WP"</span>,</span>
+<span>  salinity <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  layer_thickness <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  layers <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -207,7 +223,15 @@ for 12 standard USDA soil textures. See <code>data(SWOData)</code> for details.<
 <ul><li><p><code><a href="SWOData.html">SWOData</a></code> for soil texture wilting point data</p></li>
 <li><p><code><a href="salinity_to_ece.html">salinity_to_ece</a></code> for salinity level conversions</p></li>
 <li><p><code><a href="write_sol.html">write_sol</a></code> for writing soil profile characteristics</p></li>
-</ul></div>
+</ul><p>Other AquaCrop file writers:
+<code><a href="write_cli.html">write_cli</a>()</code>,
+<code><a href="write_cro.html">write_cro</a>()</code>,
+<code><a href="write_eto.html">write_eto</a>()</code>,
+<code><a href="write_man.html">write_man</a>()</code>,
+<code><a href="write_plu.html">write_plu</a>()</code>,
+<code><a href="write_prm.html">write_prm</a>()</code>,
+<code><a href="write_sol.html">write_sol</a>()</code>,
+<code><a href="write_tnx.html">write_tnx</a>()</code></p></div>
     </div>
 
     <div id="ref-examples">

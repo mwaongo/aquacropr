@@ -24,25 +24,25 @@
 #' @importFrom purrr walk
 #'
 #' @return Invisibly returns the output file path
-#'
-#' @export
-write_prm <- function(
-    path = "LIST/",
+#' @keywords internal
+#' @noRd
+.write_prm <- function(
     station_name,
+    path = "LIST/",
     year,
     planting_doy,
     crop_name,
-    crop_path,
+    crop_path = "CROP/",
     crop_duration = 90,
-    climate_path = "./climate/",
-    management_path = "./management/",
-    soil_path = "./soil/",
+    climate_path = "CLIMATE/",
+    management_path = "MANAGEMENT",
+    soil_path = "SOIL/",
     simulation_start_doy = NULL,
     scenario = "hist",
     write_header = TRUE,
     eol = "windows",
     use_standalone = TRUE,
-    base_path) {
+    base_path = getwd()) {
   # Input validation
   stopifnot(
     is.character(path) && length(path) == 1,
@@ -130,10 +130,10 @@ write_prm <- function(
   output_file <- file.path(path, paste0(station_name, ".PRM"))
 
   # Get paths for PRM file using path_for_prm()
-  climate_path_prm <- path_for_prm("CLIMATE", use_standalone = use_standalone, base_path = base_path)
-  crop_path_prm <- path_for_prm("CROP", use_standalone = use_standalone, base_path = base_path)
-  management_path_prm <- path_for_prm("MANAGEMENT", use_standalone = use_standalone, base_path = base_path)
-  soil_path_prm <- path_for_prm("SOIL", use_standalone = use_standalone, base_path = base_path)
+  climate_path_prm <- path_for_prm(climate_path, use_standalone = use_standalone, base_path = base_path)
+  crop_path_prm <- path_for_prm(crop_path, use_standalone = use_standalone, base_path = base_path)
+  management_path_prm <- path_for_prm(management_path, use_standalone = use_standalone, base_path = base_path)
+  soil_path_prm <- path_for_prm(soil_path, use_standalone = use_standalone, base_path = base_path)
 
   # Build the PRM content block
   prm_lines <- c(
@@ -190,20 +190,31 @@ write_prm <- function(
     # First write: write header
     .write_prm_header(path = path, crop = crop_name, station_name = station_name, eol = eol)
     # Then append year block line by line
-    purrr::walk(
-      .x = prm_lines,
-      .f = readr::write_file,
+
+    readr::write_file(
+      x = paste(prm_lines, collapse = ""),
       file = output_file,
       append = TRUE
     )
+    # purrr::walk(
+    #   .x = prm_lines,
+    #   .f = readr::write_file,
+    #   file = output_file,
+    #   append = TRUE
+    # )
   } else {
     # Append only: no header, just year block
-    purrr::walk(
-      .x = prm_lines,
-      .f = readr::write_file,
+    readr::write_file(
+      x = paste(prm_lines, collapse = ""),
       file = output_file,
       append = TRUE
     )
+    # purrr::walk(
+    #   .x = prm_lines,
+    #   .f = readr::write_file,
+    #   file = output_file,
+    #   append = TRUE
+    # )
   }
 
   invisible(output_file)
@@ -229,25 +240,25 @@ write_prm <- function(
 #' @param eol End-of-line type
 #' @param use_standalone Logical. Whether running in standalone mode
 #' @param base_path Character. Base absolute path (required)
-#'
+#' @family AquaCrop file writers
 #' @return Invisibly returns the output file path
 #'
 #' @export
-write_prm_batch <- function(
-    path = "LIST/",
+write_prm <- function(
     station_name,
+    path = "LIST/",
     planting_schedule,
     crop_name,
-    crop_path,
+    crop_path = "CROP/",
     crop_duration = 90,
-    climate_path = "./climate/",
-    management_path = "./management/",
-    soil_path = "./soil/",
+    climate_path = "CLIMATE/",
+    management_path = "MANAGEMENT/",
+    soil_path = "SOIL/",
     simulation_start_doy = NULL,
     scenario = "hist",
     eol = "windows",
     use_standalone = TRUE,
-    base_path) {
+    base_path = getwd()) {
   # Input validation
   stopifnot(
     is.character(path) && length(path) == 1,
@@ -277,9 +288,9 @@ write_prm_batch <- function(
     # Write header only for the first year
     write_header <- (i == 1)
 
-    write_prm(
-      path = path,
+    .write_prm(
       station_name = station_name,
+      path = path,
       year = planting_schedule$year[i],
       planting_doy = planting_schedule$planting_doy[i],
       crop_name = crop_name,

@@ -12,7 +12,7 @@
 #'     \item Date: Date object from base R or lubridate
 #'   }
 #' @param ... Additional arguments passed to methods
-#'
+#' @family utility functions
 #' @return Integer representing the AquaCrop day number (days since Jan 1, 1901)
 #'
 #' @details
