@@ -8,7 +8,7 @@ write_sol_batch(
   site_name = NULL,
   params = NULL,
   path = "SOIL/",
-  eol = "windows",
+  eol = NULL,
   verbose = TRUE,
   clean = FALSE,
   write_sw0 = TRUE,
@@ -40,9 +40,9 @@ Set to \code{NULL} or \code{list()} to use all default values for all sites.
 Valid parameters: \code{cn}, \code{rew}, \code{texture}, \code{thickness}.
 }}
 
-\item{path}{Output directory path. Default: \code{"soil/"}.}
+\item{path}{Output directory path. Default: \code{"SOIL/"}.}
 
-\item{eol}{End-of-line type. Default: \code{"windows"}.}
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), prints progress messages. If \code{FALSE}, runs silently.}
 

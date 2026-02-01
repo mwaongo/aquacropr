@@ -5,18 +5,18 @@
 \title{Write AquaCrop Crop File}
 \usage{
 write_cro(
-  path = "crop/",
+  path = "CROP/",
   crop_name = "generic-crop-name",
   eol = "windows",
   params = NULL
 )
 }
 \arguments{
-\item{path}{Directory path where the output .CRO file will be written. Default = "crop/"}
+\item{path}{Directory path where the output .CRO file will be written. Default = "CROP/"}
 
 \item{crop_name}{Name identifier for the crop (used in output filename). Default = "generic-crop-name"}
 
-\item{eol}{End-of-line character style for the output file. Options: "windows", "linux", "unix", or "macOS". Default = "windows"}
+\item{eol}{End-of-line character style for the output file. Options: "windows", "linux", "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{params}{Named list of crop parameter values to override defaults from CropData.
 Parameter names should be var_02 through var_84 (e.g., \code{list(var_02 = 7.0, var_35 = 1.05)}).

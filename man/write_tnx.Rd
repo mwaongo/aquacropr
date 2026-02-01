@@ -5,21 +5,21 @@
 \title{Write AquaCrop Temperature File}
 \usage{
 write_tnx(
-  path = "weather/",
+  path = "CLIMATE/",
   stn = NULL,
   data = NULL,
   var_name_min = "tmin",
   var_name_max = "tmax",
   syear = NULL,
   eyear = NULL,
-  eol = "windows",
+  eol = "NULL",
   record_type = 1,
   first_day = 1,
   first_month = 1
 )
 }
 \arguments{
-\item{path}{Directory path where the output .Tnx file will be written. Default = "weather/"}
+\item{path}{Directory path where the output .Tnx file will be written. Default = "CLIMATE/"}
 
 \item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 

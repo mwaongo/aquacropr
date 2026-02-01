@@ -10,7 +10,7 @@ write_fwf(
   width,
   justify = "l",
   replace_na = "NA",
-  eol = "windows",
+  eol = NULL,
   append = TRUE
 )
 }
@@ -40,7 +40,7 @@ it is recycled for all columns.}
 
 \item{replace_na}{Character string to use in place of NA values. Default = \code{"NA"}}
 
-\item{eol}{End-of-line character style for the output file. Options:
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.
 \itemize{
 \item \code{"windows"}: Windows-style line endings (\\r\\n)
 \item \code{"unix"}, \code{"linux"}, \code{"macOS"}: Unix-style line endings (\\n)

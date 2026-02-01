@@ -16,7 +16,7 @@ write_prm_batch(
   crop_duration = 90,
   simulation_start_doy = NULL,
   scenario = "hist",
-  eol = "windows",
+  eol = NULL,
   use_standalone = TRUE,
   base_path = getwd(),
   verbose = TRUE,
@@ -55,7 +55,7 @@ The length of the list must match the number of stations.
 
 \item{scenario}{Character. Scenario name. Default: \code{"hist"}.}
 
-\item{eol}{End-of-line type. Default: \code{"windows"}.}
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{use_standalone}{Logical. Use standalone mode? Default: \code{TRUE}.}
 

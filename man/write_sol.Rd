@@ -12,7 +12,7 @@ write_sol(
   rew = 5,
   texture = c("loam", "silt loam"),
   thickness = c(0.5, 1),
-  eol = "windows",
+  eol = NULL,
   write_sw0 = TRUE,
   initial_water = "WP",
   salinity = "none",
@@ -31,7 +31,7 @@ write_soil(
   rew = 5,
   texture = c("loam", "silt loam"),
   thickness = c(0.5, 1),
-  eol = "windows",
+  eol = NULL,
   write_sw0 = TRUE,
   initial_water = "WP",
   salinity = "none",
@@ -48,7 +48,7 @@ write_soil(
 Default: \code{"default-site"}.}
 
 \item{path}{Directory where the \code{.SOL} file will be written.
-Default: \code{"soil/"}.}
+Default: \code{"SOIL/"}.}
 
 \item{cn}{Curve number for runoff estimation (0–100). Default: \code{46}.}
 
@@ -60,8 +60,7 @@ Must match entries in the \code{SoilWater} dataset.}
 \item{thickness}{Numeric vector of horizon thicknesses (m).
 Must have the same length as \code{texture}.}
 
-\item{eol}{End-of-line style. One of \code{"windows"}, \code{"unix"}, \code{"linux"}, \code{"macOS"}.
-Default: \code{"windows"}.}
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{write_sw0}{Logical; if \code{TRUE}, also write the corresponding \code{.SW0}
 file by calling \code{\link[=write_swo]{write_swo()}}. Default: \code{TRUE}.}

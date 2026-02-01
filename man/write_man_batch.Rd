@@ -8,7 +8,7 @@ write_man_batch(
   station_name = NULL,
   params = NULL,
   path = "MANAGEMENT/",
-  eol = "windows",
+  eol = NULL,
   climate_path = "CLIMATE/",
   base_path = getwd(),
   verbose = TRUE,
@@ -33,7 +33,7 @@ See \code{\link{ManData}} documentation for further details.
 
 \item{path}{Output directory path. Default: \code{"MANAGEMENT/"}.}
 
-\item{eol}{End-of-line type. Default: \code{"windows"}.}
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{climate_path}{Path to climate file directory for auto-discovery. Default: \code{"CLIMATE/"}.}
 

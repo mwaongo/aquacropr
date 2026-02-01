@@ -4,23 +4,17 @@
 \alias{write_man}
 \title{Write AquaCrop Management File}
 \usage{
-write_man(
-  path = "MANAGEMENT/",
-  management_name,
-  eol = "windows",
-  params = list()
-)
+write_man(path = "MANAGEMENT/", management_name, eol = NULL, params = list())
 }
 \arguments{
 \item{path}{Character. Directory path where the .MAN file will be created.
-The directory is created automatically if it doesn't exist. Default: \code{"man/"}.}
+The directory is created automatically if it doesn't exist. Default: \code{"MANAGEMENT/"}.}
 
 \item{management_name}{Character. Name identifier for the management scenario.
 This name is used as the filename (e.g., \code{"high-fertility"} creates
 \code{"high-fertility.MAN"}). Default: \code{"generic-management"}.}
 
-\item{eol}{Character. End-of-line character style for the output file.
-Options: \code{"windows"}, \code{"linux"}, \code{"unix"}, or \code{"macOS"}. Default: \code{"windows"}.}
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{params}{Named list of management parameters to override defaults.
 Parameter names must be \code{var_02} through \code{var_21}. Any parameters not

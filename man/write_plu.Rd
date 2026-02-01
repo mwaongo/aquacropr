@@ -5,20 +5,20 @@
 \title{Write AquaCrop Rainfall File}
 \usage{
 write_plu(
-  path = "weather/",
+  path = "CLIMATE/",
   stn = NULL,
   data = NULL,
   var_name = "rain",
   syear = NULL,
   eyear = NULL,
-  eol = "windows",
+  eol = NULL,
   record_type = 1,
   first_day = 1,
   first_month = 1
 )
 }
 \arguments{
-\item{path}{Directory path where the output .PLU file will be written. Default = "weather/"}
+\item{path}{Directory path where the output .PLU file will be written. Default = "CLIMATE/"}
 
 \item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 
@@ -34,7 +34,7 @@ write_plu(
 
 \item{eyear}{End year of the data period (extracted from data if not provided). Default = NULL}
 
-\item{eol}{End-of-line character style for the output file.
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.
 Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 
 \item{record_type}{Type of temporal aggregation. Options: 1 = daily, 2 = 10-daily, 3 = monthly. Default = 1}

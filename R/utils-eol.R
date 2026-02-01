@@ -19,11 +19,7 @@
 #'   \item Linux → linux
 #'   \item Windows → windows
 #' }
-#'
-#' @examples
-#' # Detect current OS
-#' get_os()
-#'
+
 #' @keywords internal
 get_os <- function() {
   # Try Sys.info() first (most reliable)

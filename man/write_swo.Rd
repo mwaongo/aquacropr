@@ -9,7 +9,7 @@ write_swo(
   path = "SOIL/",
   soil_name = "default-soil-init",
   texture = "loam",
-  eol = "windows",
+  eol = NULL,
   initial_cc = -9,
   initial_biomass = 0,
   initial_root_depth = -9,
@@ -25,7 +25,7 @@ write_sw0(
   path = "SOIL/",
   soil_name = "default-soil-init",
   texture = "loam",
-  eol = "windows",
+  eol = NULL,
   initial_cc = -9,
   initial_biomass = 0,
   initial_root_depth = -9,
@@ -38,7 +38,7 @@ write_sw0(
 )
 }
 \arguments{
-\item{path}{Directory path where the .SW0 file will be written. Default = "soil/"}
+\item{path}{Directory path where the .SW0 file will be written. Default = "SOIL/"}
 
 \item{soil_name}{Name identifier for the soil initial conditions file (used in filename).
 Default = "default-soil-init"}
@@ -48,7 +48,7 @@ Valid textures: "sand", "loamy sand", "sandy loam", "loam", "silt loam", "silt",
 "sandy clay loam", "clay loam", "silty clay loam", "sandy clay", "silty clay", "clay".
 Default = "loam"}
 
-\item{eol}{End-of-line character style for the output file.
+\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.
 Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 
 \item{initial_cc}{Numeric. Initial canopy cover that can be reached without water stress (\%).
