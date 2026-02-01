@@ -7,7 +7,7 @@
 #' @param stn Station name or identifier. Default = "station"
 #' @param syear Start year of the data period. Default = 1991
 #' @param eyear End year of the data period. Default = 2020
-#' @param eol End-of-line character style. Options: "windows", "unix", "linux", or "macOS". Default = "windows"
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param record_type Type of temporal aggregation. Options: 1 = daily, 2 = 10-daily, 3 = monthly. Default = 1
 #' @param first_day First day of record. For 10-daily: 1, 11, or 21; For monthly: 1. Default = 1
 #' @param first_month First month of record (1-12). Default = 1
@@ -21,7 +21,7 @@
     stn = NULL,
     syear = NULL,
     eyear = NULL,
-    eol = "windows",
+    eol = NULL,
     record_type = 1,
     first_day = 1,
     first_month = 1) {
@@ -104,6 +104,11 @@
   headline_8 <- "======================="
 
   # Get end-of-line separator
+
+  if (is.null(eol)) eol <- get_os()
+
+  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
+
   sep <- .get_eol(eol = eol)
 
   # Combine all headlines
@@ -132,12 +137,12 @@
 #' @param cn Numeric. Curve Number
 #' @param rew Numeric. Readily evaporable water from top layer (mm)
 #' @param nsoils Integer. Number of soil horizons
-#' @param eol Character. End-of-line style. Default = "windows"
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'
 #' @return Character string containing the formatted header for soil files
 #' @keywords internal
 #' @noRd
-.get_soil_header <- function(cn = cn, rew = rew, nsoils = nsoils, eol = "windows") {
+.get_soil_header <- function(cn = cn, rew = rew, nsoils = nsoils, eol = NULL) {
   headline_1 <- "default"
   headline_2 <- paste0(
     format("7.2", width = 28, justify = "centre"),
@@ -166,7 +171,13 @@
     "  ---(m)-   ----(vol %)-----  (mm/day)      (%)        (%)    -----------------------------------------"
   )
   # end of line handling
+
+  if (is.null(eol)) eol <- get_os()
+
+  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
+
   sep <- .get_eol(eol = eol)
+
   header <- glue::glue(
     headline_1,
     headline_2,
@@ -209,7 +220,7 @@
 #' @param man Character string naming the management scenario
 #' @param fertilizer Numeric value (0-100) representing soil fertility level as percentage
 #' @param mulch Numeric value (0-100) representing mulch coverage as percentage
-#' @param eol Character string for end-of-line style. Default = "windows"
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'
 #' @return Character string with formatted header
 #' @keywords internal
@@ -218,7 +229,7 @@
     man = "generic_management",
     fertilizer,
     mulch,
-    eol = "windows") {
+    eol = NULL) {
   # Validate fertilizer input
   if (!is.numeric(fertilizer)) {
     stop(
@@ -311,11 +322,11 @@
 #' @param initial_root_depth Numeric. Initial rooting depth (m). Default = -9.00
 #' @param bund_water Numeric. Water stored between bunds (mm). Default = 0.0
 #' @param bund_ec Numeric. EC of water between bunds (dS/m). Default = 0.00
-#' @param eol Character. End-of-line style. Default = "windows"
-#'
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @return Character string containing the formatted header
 #' @keywords internal
 #' @noRd
+#'
 .get_soil_init_header <- function(
     texture,
     nsoils,
@@ -325,7 +336,7 @@
     initial_root_depth = -9.00,
     bund_water = 0.0,
     bund_ec = 0.00,
-    eol = "windows") {
+    eol = NULL) {
   # Load SWOData for texture validation
   utils::data("SWOData", envir = environment())
 
@@ -453,6 +464,10 @@
   headline_12 <- "=============================================================="
 
   # Get line ending
+  if (is.null(eol)) eol <- get_os()
+
+  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
+
   sep <- .get_eol(eol = eol)
 
   # Build complete header
@@ -485,13 +500,19 @@
 #' @param path Character. Directory path
 #' @param crop Character. Crop name
 #' @param station_name Character. Station identifier
-#' @param eol Character. End-of-line style. Default = "windows"
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'
 #' @return NULL (writes to file)
 #' @keywords internal
 #' @noRd
-.write_prm_header <- function(path = path, crop = crop, station_name, eol = "windows") {
+.write_prm_header <- function(path = path, crop = crop, station_name, eol = NULL) {
+
+  if (is.null(eol)) eol <- get_os()
+
+  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
+
   sep <- .get_eol(eol = eol)
+
   line1 <- paste0(.format_string2(crop, "%s", 16), "", sep)
   line2 <- paste0(.format_string2(7, "%.1f", 16), ":AquaCrop Version (August 2022)", sep)
 

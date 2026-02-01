@@ -4,7 +4,7 @@
 #' Creates an AquaCrop parameter file (.PRM) for a single station and year.
 #' Includes the header (crop name and version) plus the year block.
 #'
-#' @param path Output directory path (absolute or relative)
+#' @param path Output directory path for PRM files. Default: `"LIST/"`
 #' @param station_name Station identifier (used to find CLI, Tnx, ETo, PLU files)
 #' @param year Year of cultivation
 #' @param planting_doy Day of year for planting (1-365/366)
@@ -17,7 +17,7 @@
 #' @param simulation_start_doy Day of year for simulation start (NULL = April 1st)
 #' @param scenario Climate scenario: "hist", "rcp26", "rcp45", "rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585"
 #' @param write_header Logical. If TRUE (default), writes header. FALSE for batch mode.
-#' @param eol End-of-line type: "windows" (default) or "unix"
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param use_standalone Logical. Whether running in standalone mode (default: TRUE)
 #' @param base_path Character. Base absolute path (required for file existence checking)
 #'
@@ -40,7 +40,7 @@
     simulation_start_doy = NULL,
     scenario = "hist",
     write_header = TRUE,
-    eol = "windows",
+    eol = NULL,
     use_standalone = TRUE,
     base_path = getwd()) {
   # Input validation

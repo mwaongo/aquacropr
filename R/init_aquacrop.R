@@ -180,20 +180,9 @@ init_aquacrop <- function(path = ".",
   # Create R project if use_rproject = TRUE
 
   if (use_rproject) {
-    newSession <- rstudioapi::showPrompt(
-      title = "Open project",
-      message = "Open the project in a new session? (Y/N)",
-      default = "N"
-    )
 
-    # Handle cancellation (user closes dialog)
-    if (is.null(newSession)) {
-      message("Project opening cancelled")
-      return(invisible(NULL))
-    }
+    rstudioapi::openProject(path = path, newSession = FALSE)
 
-    new_session <- tolower(trimws(newSession)) %in% c("y", "yes")
-    rstudioapi::openProject(path = path, newSession = newSession)
   } else {
     message("\n", cli::symbol$info, " To work in this project, run:")
     message("  setwd(\"", path, "\")")

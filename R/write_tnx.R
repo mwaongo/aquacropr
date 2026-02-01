@@ -4,7 +4,7 @@
 #' Write an AquaCrop v7.0 (August 2022) temperature (.Tnx) file containing daily
 #' minimum and maximum temperature data for use in crop simulations.
 #'
-#' @param path Directory path where the output .Tnx file will be written. Default = "weather/"
+#' @param path Directory path where the output .Tnx file will be written. Default = "CLIMATE/"
 #' @param stn Station name or identifier for the weather station. Default = NULL (extracted from data if available)
 #' @param data Data frame containing daily temperature data. Can have either:
 #'   - Columns: station, year, month, day, tmin, tmax (legacy format), or
@@ -48,14 +48,14 @@
 #'
 #' @export
 write_tnx <- function(
-    path = "weather/",
+    path = "CLIMATE/",
     stn = NULL,
     data = NULL,
     var_name_min = "tmin",
     var_name_max = "tmax",
     syear = NULL,
     eyear = NULL,
-    eol = "windows",
+    eol = "NULL",
     record_type = 1,
     first_day = 1,
     first_month = 1) {

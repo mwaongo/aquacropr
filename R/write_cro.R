@@ -5,9 +5,9 @@
 #' This file specifies physiological characteristics, growth parameters, water stress responses,
 #' and other crop-specific properties that will be used during the AquaCrop simulation.
 #'
-#' @param path Directory path where the output .CRO file will be written. Default = "crop/"
+#' @param path Directory path where the output .CRO file will be written. Default = "CROP/"
 #' @param crop_name Name identifier for the crop (used in output filename). Default = "generic-crop-name"
-#' @param eol End-of-line character style for the output file. Options: "windows", "linux", "unix", or "macOS". Default = "windows"
+#' @param eol End-of-line character style for the output file. Options: "windows", "linux", "macos". If `NULL` (default), eol is auto-detected.
 #' @param params Named list of crop parameter values to override defaults from CropData.
 #'   Parameter names should be var_02 through var_84 (e.g., `list(var_02 = 7.0, var_35 = 1.05)`).
 #'   Unspecified parameters use default values from CropData.
@@ -52,7 +52,7 @@
 #'
 #' @export
 write_cro <- function(
-    path = "crop/",
+    path = "CROP/",
     crop_name = "generic-crop-name",
     eol = "windows",
     params = NULL) {

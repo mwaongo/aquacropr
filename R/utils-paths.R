@@ -74,7 +74,7 @@
 #'
 #' @return Character string with formatted path:
 #'   - Standalone + Windows: ".\\DIRNAME\\"
-#'   - Standalone + Non-Windows: "./DIRNAME/"
+#'   - Standalone + Non-Windows: "'./DIRNAME/'"
 #'   - Non-standalone: absolute path to /DIRNAME/
 #'
 #' @keywords internal
@@ -102,7 +102,7 @@ path_for_prm <- function(dir_name, use_standalone = TRUE, base_path = NULL) {
     if (is_windows) {
       return(paste0(".\\", dir_name, "\\"))
     } else {
-      return(paste0("./", dir_name, "/"))
+      return(paste0("'./", dir_name, "/'"))
     }
   } else {
     # Non-standalone: absolute path
@@ -117,117 +117,3 @@ path_for_prm <- function(dir_name, use_standalone = TRUE, base_path = NULL) {
     return(paste0(base_path, "/", dir_name, "/"))
   }
 }
-#' Check if AquaCrop Executable is Available
-#'
-#' Checks whether the AquaCrop executable for the current operating system
-#' is available in the package installation.
-#'
-#' @return Logical; `TRUE` if executable is available, `FALSE` otherwise.
-#'
-#' @examples
-#' if (has_aquacrop()) {
-#'   message("AquaCrop is ready to use!")
-#' } else {
-#'   message("AquaCrop executable not found for this system.")
-#' }
-#'
-#' @export
-has_aquacrop <- function() {
-  .has_aquacrop()
-}
-
-#' Get AquaCrop Executable Path
-#'
-#' Returns the full path to the AquaCrop executable for the current OS.
-#'
-#' @return Character string with the path to the executable, or `NULL` if not found.
-#'
-#' @examples
-#' \dontrun{
-#' exe_path <- get_aquacrop_path()
-#' if (!is.null(exe_path)) {
-#'   system(exe_path)
-#' }
-#' }
-#'
-#' @export
-get_aquacrop_path <- function() {
-  sysname <- Sys.info()["sysname"]
-
-  exe_name <- switch(sysname,
-    "Windows" = "aquacrop.exe",
-    "Darwin" = "aquacrop_macos",
-    "Linux" = "aquacrop_linux",
-    stop("Unsupported operating system: ", sysname, call. = FALSE)
-  )
-
-  exe_path <- path_to_file(exe_name)
-
-  if (is.null(exe_path) || !file.exists(exe_path) || !nzchar(exe_path)) {
-    warning(
-      "AquaCrop executable not found for ", sysname,
-      call. = FALSE
-    )
-    return(NULL)
-  }
-
-  exe_path
-}
-
-#' Get AquaCrop Version
-#'
-#' Returns the version of the bundled AquaCrop executable.
-#'
-#' @return Character string with version information.
-#'
-#' @examples
-#' \dontrun{
-#' version <- get_aquacrop_version()
-#' print(version)
-#' }
-#'
-#' @export
-get_aquacrop_version <- function() {
-  tryCatch(
-    {
-      get("aquacrop_version", envir = asNamespace(.pkg_name()))
-    },
-    error = function(e) {
-      "unknown"
-    }
-  )
-}
-
-#' Internal helper to check if AquaCrop executable is available
-#' @noRd
-#' @keywords internal
-.has_aquacrop <- function() {
-  exe_path <- tryCatch(
-    {
-      get_aquacrop_path()
-    },
-    error = function(e) {
-      NULL
-    }
-  )
-
-  !is.null(exe_path)
-}
-
-
-#' Get package name dynamically
-#' @noRd
-#' @keywords internal
-.pkg_name <- function() {
-  pkg <- tryCatch(
-    utils::packageName(),
-    error = function(e) "aquacroptools"
-  )
-
-  if (is.null(pkg)) pkg <- "aquacroptools"
-
-  pkg
-}
-
-#' Get Aquacrop version string
-aquacrop_version <- function() .aquacrop_state$version

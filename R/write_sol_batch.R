@@ -11,8 +11,8 @@
 #'     The length of the list must match the number of sites.
 #'   Set to `NULL` or `list()` to use all default values for all sites.
 #'   Valid parameters: `cn`, `rew`, `texture`, `thickness`.
-#' @param path Output directory path. Default: `"soil/"`.
-#' @param eol End-of-line type. Default: `"windows"`.
+#' @param path Output directory path. Default: `"SOIL/"`.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param verbose Logical. If `TRUE` (default), prints progress messages. If `FALSE`, runs silently.
 #' @param clean Logical. If `TRUE`, removes existing `.SOL` and `.SW0` files
 #'   from `path` before writing new files. Default: `FALSE`
@@ -95,7 +95,7 @@ write_sol_batch <- function(
     site_name = NULL,
     params = NULL,
     path = "SOIL/",
-    eol = "windows",
+    eol = NULL,
     verbose = TRUE,
     clean = FALSE,
     write_sw0 = TRUE,

@@ -6,12 +6,11 @@
 #' mulch coverage, soil fertility stress, weed competition, and harvesting strategies.
 #'
 #' @param path Character. Directory path where the .MAN file will be created.
-#'   The directory is created automatically if it doesn't exist. Default: `"man/"`.
+#'   The directory is created automatically if it doesn't exist. Default: `"MANAGEMENT/"`.
 #' @param management_name Character. Name identifier for the management scenario.
 #'   This name is used as the filename (e.g., `"high-fertility"` creates
 #'   `"high-fertility.MAN"`). Default: `"generic-management"`.
-#' @param eol Character. End-of-line character style for the output file.
-#'   Options: `"windows"`, `"linux"`, `"unix"`, or `"macOS"`. Default: `"windows"`.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param params Named list of management parameters to override defaults.
 #'   Parameter names must be `var_02` through `var_21`. Any parameters not
 #'   specified will use default values. Set to `NULL` or `list()` to use all defaults.
@@ -136,7 +135,7 @@
 write_man <- function(
     path = "MANAGEMENT/",
     management_name,
-    eol = "windows",
+    eol = NULL,
     params = list()) {
   # Handle NULL params - only change needed
   if (is.null(params)) {

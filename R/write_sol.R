@@ -7,7 +7,7 @@
 #' soil-water content file (`.SW0`) by calling [write_swo()].
 #'
 #' @param path Directory where the `.SOL` file will be written.
-#'   Default: `"soil/"`.
+#'   Default: `"SOIL/"`.
 #' @param site_name Name of the soil profile (used in the filename).
 #'   Default: `"default-site"`.
 #' @param cn Curve number for runoff estimation (0–100). Default: `46`.
@@ -16,8 +16,7 @@
 #'   Must match entries in the `SoilWater` dataset.
 #' @param thickness Numeric vector of horizon thicknesses (m).
 #'   Must have the same length as `texture`.
-#' @param eol End-of-line style. One of `"windows"`, `"unix"`, `"linux"`, `"macOS"`.
-#'   Default: `"windows"`.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'
 #' @param write_sw0 Logical; if `TRUE`, also write the corresponding `.SW0`
 #'   file by calling [write_swo()]. Default: `TRUE`.
@@ -95,7 +94,7 @@ write_sol <- function(
     rew = 5,
     texture = c("loam", "silt loam"),
     thickness = c(0.5, 1.0),
-    eol = "windows",
+    eol = NULL,
     # optional .SW0 side-effect
     write_sw0 = TRUE,
     initial_water = "WP",

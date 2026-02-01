@@ -97,13 +97,5 @@ run_aquacrop <- function(verbose = TRUE) {
     }
   }
 
-  # ---- Remove trailing files ----
-  fs::file_delete(
-    c(
-      "OUTP/AllDone.OUT",
-      "OUTP/ListProjectsLoaded.OUT"
-    )
-  )
-
   invisible(result)
 }

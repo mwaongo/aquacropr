@@ -12,7 +12,7 @@
 #'   Set to `NULL` or `list()` to use all default values for all stations.
 #'   See \code{\link{ManData}} documentation for further details.
 #' @param path Output directory path. Default: `"MANAGEMENT/"`.
-#' @param eol End-of-line type. Default: `"windows"`.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param climate_path Path to climate file directory for auto-discovery. Default: `"CLIMATE/"`.
 #' @param base_path Base absolute path. Default: current working directory.
 #' @param verbose Logical. If `TRUE` (default), prints progress messages. If `FALSE`, runs silently.
@@ -85,7 +85,7 @@ write_man_batch <- function(
     station_name = NULL,
     params = NULL,
     path = "MANAGEMENT/",
-    eol = "windows",
+    eol = NULL,
     climate_path = "CLIMATE/",
     base_path = getwd(),
     verbose = TRUE,

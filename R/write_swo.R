@@ -5,14 +5,14 @@
 #' specifies the initial water content for each soil layer at the start of the
 #' simulation. This file defines the soil moisture status at planting or simulation start.
 #'
-#' @param path Directory path where the .SW0 file will be written. Default = "soil/"
+#' @param path Directory path where the .SW0 file will be written. Default = "SOIL/"
 #' @param soil_name Name identifier for the soil initial conditions file (used in filename).
 #'   Default = "default-soil-init"
 #' @param texture Character vector of soil texture names for each layer.
 #'   Valid textures: "sand", "loamy sand", "sandy loam", "loam", "silt loam", "silt",
 #'   "sandy clay loam", "clay loam", "silty clay loam", "sandy clay", "silty clay", "clay".
 #'   Default = "loam"
-#' @param eol End-of-line character style for the output file.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'   Options: "windows", "unix", "linux", or "macOS". Default = "windows"
 #' @param initial_cc Numeric. Initial canopy cover that can be reached without water stress (%).
 #'   Use -9.00 for automatic calculation by AquaCrop. Default = -9.00
@@ -154,7 +154,7 @@ write_swo <- function(
     path = "SOIL/",
     soil_name = "default-soil-init",
     texture = "loam",
-    eol = "windows",
+    eol = NULL,
     initial_cc = -9.00,
     initial_biomass = 0.000,
     initial_root_depth = -9.00,

@@ -26,7 +26,7 @@
 #'   Default = \code{"l"}. If a single character is provided for a multi-column data frame,
 #'   it is recycled for all columns.
 #' @param replace_na Character string to use in place of NA values. Default = \code{"NA"}
-#' @param eol End-of-line character style for the output file. Options:
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'   \itemize{
 #'     \item \code{"windows"}: Windows-style line endings (\\r\\n)
 #'     \item \code{"unix"}, \code{"linux"}, \code{"macOS"}: Unix-style line endings (\\n)
@@ -148,7 +148,7 @@
 write_fwf <- function(x, file, width,
                       justify = "l",
                       replace_na = "NA",
-                      eol = "windows", append = TRUE) {
+                      eol = NULL, append = TRUE) {
   # Convert factor columns to character
   fct_col <- which(sapply(x, is.factor))
   if (length(fct_col) > 0) {

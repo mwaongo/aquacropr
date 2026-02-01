@@ -18,7 +18,7 @@
 #' @param crop_duration Integer. Crop duration in days. Default: `90`.
 #' @param simulation_start_doy Integer. Day of year to start simulation. Default: `NULL`.
 #' @param scenario Character. Scenario name. Default: `"hist"`.
-#' @param eol End-of-line type. Default: `"windows"`.
+#' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param use_standalone Logical. Use standalone mode? Default: `TRUE`.
 #' @param base_path Base absolute path. Default: current working directory.
 #' @param verbose Logical. If `TRUE` (default), prints progress messages. If `FALSE`, runs silently.
@@ -90,7 +90,7 @@ write_prm_batch <- function(
     crop_duration = 90,
     simulation_start_doy = NULL,
     scenario = "hist",
-    eol = "windows",
+    eol = NULL,
     use_standalone = TRUE,
     base_path = getwd(),
     verbose = TRUE,

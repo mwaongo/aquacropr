@@ -59,17 +59,9 @@
 #' @export
 install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
   # Detect OS
-  if (is.null(os)) {
-    os <- if (.Platform$OS.type == "windows") {
-      "windows"
-    } else if (grepl("linux", tolower(Sys.info()["sysname"]))) {
-      "linux"
-    } else if (grepl("darwin", tolower(Sys.info()["sysname"]))) {
-      "macos"
-    } else {
-      stop("Unsupported OS")
-    }
-  }
+  if (is.null(os)) os <- get_os()
+
+  os <- match.arg(tolower(os), choices = c("windows", "linux", "macos"))
 
   # Get latest version info from GitHub
   latest_release <- gh::gh("/repos/KUL-RSDA/AquaCrop/releases/latest")
@@ -205,12 +197,14 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
     stop("Executable not found after extraction")
   }
 
-  # Move to root of path if nested
+  # Move to root of path if nested and clean extraction dir
   if (exe_found[1] != exe_path) {
+    extracted_dir <- glue::glue("aquacrop-{version}-x86_64-{os}.zip")
     file.rename(exe_found[1], exe_path)
-    # Clean up nested dirs
-    subdirs <- list.dirs(path, recursive = FALSE)
-    if (length(subdirs) > 0) unlink(subdirs, recursive = TRUE)
+
+    if (extracted_dir != path && dir.exists(extracted_dir)) {
+      unlink(extracted_dir, recursive = TRUE)
+    }
   }
 
   # Set permissions (Unix)
