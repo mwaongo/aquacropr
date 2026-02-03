@@ -1,3 +1,31 @@
+#' Add Trailing Slash to Path
+#'
+#' @description
+#' Internal helper function that ensures a directory path ends with a forward slash (/).
+#' This provides consistent path handling across all file writing functions.
+#'
+#' @param path Character string specifying a directory path
+#'
+#' @return Character string with a guaranteed trailing slash
+#'
+#' @examples
+#' .add_trailing_slash("CLIMATE")
+#' # Returns: "CLIMATE/"
+#'
+#' .add_trailing_slash("CLIMATE/")
+#' # Returns: "CLIMATE/" (unchanged)
+#'
+#' @keywords internal
+#' @noRd
+.add_trailing_slash <- function(path) {
+  if (!stringr::str_ends(path, pattern = "/")) {
+    paste0(path, "/")
+  } else {
+    path
+  }
+}
+
+
 #' Validate and Normalize Path to Absolute
 #'
 #' @description
@@ -19,10 +47,9 @@
     path <- fs::path_abs(path)
   }
 
-  # Ensure trailing slash
-  if (!grepl("/$", path)) {
-    path <- paste0(path, "/")
-  }
+  # Use shared helper for trailing slash
+
+path <- .add_trailing_slash(path)
 
   return(path)
 }

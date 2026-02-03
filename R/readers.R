@@ -26,37 +26,11 @@
 read_season_out <- function(file) {
   .validate_file(file, "PRMseason.OUT")
 
-  header <- .read_header(file)
+  header <- .read_season_header(file)
   data <- readr::read_fwf(file = file, skip = 4)
   names(data) <- header
 
   return(data)
-}
-
-
-
-#' @keywords internal
-.validate_file <- function(file, expected_suffix) {
-  if (!file.exists(file)) {
-    stop("file does not exist: ", file, call. = FALSE)
-  }
-
-  if (!endsWith(basename(file), expected_suffix)) {
-    stop("file should be ended with ", expected_suffix,
-      ", got: ", basename(file),
-      call. = FALSE
-    )
-  }
-}
-
-#' @keywords internal
-.read_header <- function(file) {
-  readr::read_fwf(file = file, skip = 2, n_max = 1) %>%
-    c() %>%
-    unlist() %>%
-    c("PRMName") %>%
-    janitor::make_clean_names(case = "snake") %>%
-    gsub(pattern = "_", replacement = "", x = .)
 }
 
 
@@ -190,29 +164,6 @@ read_cli <- function(file) {
   return(climate)
 }
 
-
-#' Resolve File Path Relative to Base Directory
-#'
-#' Helper function to resolve file paths that may be absolute, relative, or
-#' just filenames.
-#'
-#' @param file_path Character. Path from CLI file (may be filename, relative, or absolute).
-#' @param base_dir Character. Base directory (directory containing CLI file).
-#'
-#' @return Character. Resolved absolute path.
-#'
-#' @keywords internal
-#' @noRd
-.resolve_path <- function(file_path, base_dir) {
-  # If absolute path, return as is
-  if (fs::is_absolute_path(file_path)) {
-    return(file_path)
-  }
-
-  # Otherwise, treat as relative to base_dir
-  return(fs::path(base_dir, file_path))
-}
-
 #' @rdname read_cli
 #' @family AquaCrop readers
 #' @export
@@ -250,59 +201,7 @@ read_climate <- read_cli
 #' @noRd
 #' @keywords internal
 #'
-is_tnx <- function(file) {
-  # Check file existence
-  if (!fs::file_exists(file)) {
-    return(FALSE)
-  }
-
-  # Check file extension
-  ext_ok <- tolower(fs::path_ext(file)) == "tnx"
-
-  # Read first lines
-  lines <- tryCatch(
-    readLines(file, n = 20, warn = FALSE),
-    error = function(e) character()
-  )
-  if (length(lines) == 0) {
-    return(FALSE)
-  }
-
-  # Check for AquaCrop file structure
-  has_colon <- any(grepl(":", lines, fixed = TRUE))
-  has_separator <- any(grepl("^=+", lines))
-
-  # Check for data after separator
-  sep_idx <- grep("^=+", lines)
-  has_data <- FALSE
-  if (length(sep_idx) > 0 && sep_idx[1] < length(lines)) {
-    has_data <- any(grepl("^\\s*-?\\d", lines[(sep_idx[1] + 1):length(lines)]))
-  }
-
-  # Basic structure check
-  basic_ok <- ext_ok || (has_colon && has_separator && has_data)
-  if (!basic_ok) {
-    return(FALSE)
-  }
-
-  # Check business rules for first_day
-  header_lines <- lines[1:(sep_idx[1] - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  if (length(parts) >= 5) {
-    record_type <- as.integer(trimws(parts[[2]][1]))
-    first_day <- as.integer(trimws(parts[[3]][1]))
-
-    # Return FALSE if date rules are not met
-    if (!tryCatch(check_dates_rule(record_type, first_day),
-      error = function(e) FALSE
-    )) {
-      return(FALSE)
-    }
-  }
-
-  TRUE
-}
+is_tnx <- function(file) .is_climate_file(file, "tnx")
 
 
 #' Read an AquaCrop Tnx File
@@ -360,63 +259,7 @@ is_tnx <- function(file) {
 #' @family AquaCrop readers
 #' @export
 read_tnx <- function(file) {
-  # Validate file
-  if (!is_tnx(file)) {
-    stop("File is not a valid AquaCrop Tnx file: ", file)
-  }
-
-  # Read file
-  lines <- readLines(file, warn = FALSE)
-
-  # Locate separator (====)
-  sep_idx <- grep("^=+", lines)[1]
-  if (is.na(sep_idx)) {
-    stop("Cannot find separator line (====) in file: ", file)
-  }
-
-  # Parse header
-  header_lines <- lines[1:(sep_idx - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  station <- trimws(parts[[1]][1])
-  record_type <- as.integer(trimws(parts[[2]][1]))
-  first_day <- as.integer(trimws(parts[[3]][1]))
-  first_month <- as.integer(trimws(parts[[4]][1]))
-  first_year <- as.integer(trimws(parts[[5]][1]))
-
-  # Check business rules for dates
-  check_dates_rule(record_type, first_day)
-
-  # Read temperature values (2 columns: Tmin and Tmax)
-  temp_data <- readr::read_table(
-    file,
-    skip = sep_idx,
-    col_names = c("tmin", "tmax"),
-    show_col_types = FALSE
-  )
-
-  # Convert -9 to NA
-  temp_data$tmin <- replace(temp_data$tmin, temp_data$tmin == -9, NA_real_)
-  temp_data$tmax <- replace(temp_data$tmax, temp_data$tmax == -9, NA_real_)
-
-  # Generate dates based on record type
-  by_type <- c("day", "10 days", "month")
-  start_date <- as.Date(sprintf("%d-%02d-%02d", first_year, first_month, first_day))
-  dates <- seq.Date(
-    from = start_date,
-    by = by_type[record_type],
-    length.out = nrow(temp_data)
-  )
-
-  # Return tidy tibble
-  tibble::tibble(
-    station = station,
-    year    = as.integer(format(dates, "%Y")),
-    month   = as.integer(format(dates, "%m")),
-    day     = as.integer(format(dates, "%d")),
-    tmin    = temp_data$tmin,
-    tmax    = temp_data$tmax
-  )
+  .read_climate_file(file, "tnx", c("tmin", "tmax"), "Tnx")
 }
 
 #' Check if a File is an AquaCrop ETo File
@@ -450,59 +293,7 @@ read_tnx <- function(file) {
 #' @noRd
 #' @keywords internal
 #'
-is_eto <- function(file) {
-  # Check file existence
-  if (!fs::file_exists(file)) {
-    return(FALSE)
-  }
-
-  # Check file extension
-  ext_ok <- tolower(fs::path_ext(file)) == "eto"
-
-  # Read first lines
-  lines <- tryCatch(
-    readLines(file, n = 20, warn = FALSE),
-    error = function(e) character()
-  )
-  if (length(lines) == 0) {
-    return(FALSE)
-  }
-
-  # Check for AquaCrop file structure
-  has_colon <- any(grepl(":", lines, fixed = TRUE))
-  has_separator <- any(grepl("^=+", lines))
-
-  # Check for data after separator
-  sep_idx <- grep("^=+", lines)
-  has_data <- FALSE
-  if (length(sep_idx) > 0 && sep_idx[1] < length(lines)) {
-    has_data <- any(grepl("^\\s*-?\\d", lines[(sep_idx[1] + 1):length(lines)]))
-  }
-
-  # Basic structure check
-  basic_ok <- ext_ok || (has_colon && has_separator && has_data)
-  if (!basic_ok) {
-    return(FALSE)
-  }
-
-  # Check business rules for first_day
-  header_lines <- lines[1:(sep_idx[1] - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  if (length(parts) >= 5) {
-    record_type <- as.integer(trimws(parts[[2]][1]))
-    first_day <- as.integer(trimws(parts[[3]][1]))
-
-    # Return FALSE if date rules are not met
-    if (!tryCatch(check_dates_rule(record_type, first_day),
-      error = function(e) FALSE
-    )) {
-      return(FALSE)
-    }
-  }
-
-  TRUE
-}
+is_eto <- function(file) .is_climate_file(file, "eto")
 
 
 #' Read an AquaCrop ETo File
@@ -556,84 +347,7 @@ is_eto <- function(file) {
 #' @family AquaCrop readers
 #' @export
 read_eto <- function(file) {
-  # Validate file
-  if (!is_eto(file)) {
-    stop("File is not a valid AquaCrop ETo file: ", file)
-  }
-
-  # Read file, just 100 lines for header parsing
-  lines <- readLines(file, n = 100, warn = FALSE)
-
-  # Locate separator (====)
-  sep_idx <- grep("^=+", lines)[1]
-  if (is.na(sep_idx)) {
-    stop("Cannot find separator line (====) in file: ", file)
-  }
-
-  # Parse header
-  header_lines <- lines[1:(sep_idx - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  station <- trimws(parts[[1]][1])
-  record_type <- as.integer(trimws(parts[[2]][1]))
-  first_day <- as.integer(trimws(parts[[3]][1]))
-  first_month <- as.integer(trimws(parts[[4]][1]))
-  first_year <- as.integer(trimws(parts[[5]][1]))
-
-  # Check business rules for dates
-  check_dates_rule(record_type, first_day)
-
-  # Read ETo values
-  value <- readr::read_fwf(file, skip = sep_idx, show_col_types = FALSE)[[1]]
-  value <- replace(value, value == -9, NA_real_)
-
-  # Generate dates based on record type
-  by_type <- c("day", "10 days", "month")
-  start_date <- as.Date(sprintf("%d-%02d-%02d", first_year, first_month, first_day))
-  dates <- seq.Date(
-    from = start_date,
-    by = by_type[record_type],
-    length.out = length(value)
-  )
-
-  # Return tidy tibble
-  tibble::tibble(
-    station = station,
-    year    = as.integer(format(dates, "%Y")),
-    month   = as.integer(format(dates, "%m")),
-    day     = as.integer(format(dates, "%d")),
-    eto     = value
-  )
-}
-
-#' Check Consistency of first_day for record_type
-#'
-#' Validates that the first_day value is consistent with the record_type
-#' according to AquaCrop PLU file specifications.
-#'
-#' @param record_type Integer. Record type: 1 = daily, 2 = 10-day, 3 = monthly.
-#' @param first_day Integer. First day of the record.
-#'
-#' @return Logical. Returns TRUE if consistent, otherwise stops with an error.
-#'
-#' @details
-#' Business rules:
-#' \itemize{
-#'   \item Monthly (record_type = 3): first_day must be 1
-#'   \item 10-day (record_type = 2): first_day must be 1, 11, or 21
-#'   \item Daily (record_type = 1): first_day can be any valid day (1-31)
-#' }
-#'
-#' @keywords internal
-#' @noRd
-check_dates_rule <- function(record_type, first_day) {
-  if (record_type == 3 && first_day != 1) {
-    stop("Monthly record_type requires first_day = 1")
-  }
-  if (record_type == 2 && !(first_day %in% c(1, 11, 21))) {
-    stop("10-day record_type requires first_day = 1, 11, or 21")
-  }
-  TRUE
+  .read_climate_file(file, "eto", "eto", "ETo")
 }
 
 
@@ -664,59 +378,7 @@ check_dates_rule <- function(record_type, first_day) {
 #' }
 #'
 #' @export
-is_plu <- function(file) {
-  # Check file existence
-  if (!fs::file_exists(file)) {
-    return(FALSE)
-  }
-
-  # Check file extension
-  ext_ok <- tolower(fs::path_ext(file)) == "plu"
-
-  # Read first lines
-  lines <- tryCatch(
-    readLines(file, n = 20, warn = FALSE),
-    error = function(e) character()
-  )
-  if (length(lines) == 0) {
-    return(FALSE)
-  }
-
-  # Check for AquaCrop file structure
-  has_colon <- any(grepl(":", lines, fixed = TRUE))
-  has_separator <- any(grepl("^=+", lines))
-
-  # Check for data after separator
-  sep_idx <- grep("^=+", lines)
-  has_data <- FALSE
-  if (length(sep_idx) > 0 && sep_idx[1] < length(lines)) {
-    has_data <- any(grepl("^\\s*-?\\d", lines[(sep_idx[1] + 1):length(lines)]))
-  }
-
-  # Basic structure check
-  basic_ok <- ext_ok || (has_colon && has_separator && has_data)
-  if (!basic_ok) {
-    return(FALSE)
-  }
-
-  # Check business rules for first_day
-  header_lines <- lines[1:(sep_idx[1] - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  if (length(parts) >= 5) {
-    record_type <- as.integer(trimws(parts[[2]][1]))
-    first_day <- as.integer(trimws(parts[[3]][1]))
-
-    # Return FALSE if date rules are not met
-    if (!tryCatch(check_dates_rule(record_type, first_day),
-      error = function(e) FALSE
-    )) {
-      return(FALSE)
-    }
-  }
-
-  TRUE
-}
+is_plu <- function(file) .is_climate_file(file, "plu")
 
 
 #' Read an AquaCrop PLU File
@@ -759,54 +421,7 @@ is_plu <- function(file) {
 #' @family AquaCrop readers
 #' @export
 read_plu <- function(file) {
-  # Validate file
-  if (!is_plu(file)) {
-    stop("File is not a valid AquaCrop PLU file: ", file)
-  }
-
-  # Read file
-  lines <- readLines(file, n = 100, warn = FALSE)
-
-  # Locate separator (====)
-  sep_idx <- grep("^=+", lines)[1]
-  if (is.na(sep_idx)) {
-    stop("Cannot find separator line (====) in file: ", file)
-  }
-
-  # Parse header
-  header_lines <- lines[1:(sep_idx - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  station <- trimws(parts[[1]][1])
-  record_type <- as.integer(trimws(parts[[2]][1]))
-  first_day <- as.integer(trimws(parts[[3]][1]))
-  first_month <- as.integer(trimws(parts[[4]][1]))
-  first_year <- as.integer(trimws(parts[[5]][1]))
-
-  # Check business rules for dates
-  check_dates_rule(record_type, first_day)
-
-  # Read rainfall values
-  value <- readr::read_fwf(file, skip = sep_idx, show_col_types = FALSE)[[1]]
-  value <- replace(value, value == -9, NA_real_)
-
-  # Generate dates based on record type
-  by_type <- c("day", "10 days", "month")
-  start_date <- as.Date(sprintf("%d-%02d-%02d", first_year, first_month, first_day))
-  dates <- seq.Date(
-    from = start_date,
-    by = by_type[record_type],
-    length.out = length(value)
-  )
-
-  # Return tidy tibble
-  tibble::tibble(
-    station = station,
-    year    = as.integer(format(dates, "%Y")),
-    month   = as.integer(format(dates, "%m")),
-    day     = as.integer(format(dates, "%d")),
-    rain    = value
-  )
+  .read_climate_file(file, "plu", "rain", "PLU")
 }
 
 

@@ -8,14 +8,25 @@
 #' @importFrom utils globalVariables
 utils::globalVariables(
   c(
+    # Climate/weather columns
     "tmin",
     "tmax",
     "et0",
     "rain",
+    "year",
+    "month",
+    "day",
+    # General
     "x",
     "path",
     "%>%",
+    ".",
+    # Data objects
     "SoilWater",
+    "CropData",
+    "ManData",
+    "SWOData",
+    # Soil columns
     "description",
     "sat",
     "fc",
@@ -25,7 +36,19 @@ utils::globalVariables(
     "crb",
     "penetrability",
     "gravel",
+    "thickness",
+    "water_content",
+    "ece",
+    "thickness_fmt",
+    "water_content_fmt",
+    "ece_fmt",
+    "thickness_vec",
+    # Crop/Management columns
     "name",
+    "value",
+    "fmt",
+    "width",
+    # Dynamic var columns (write_prm)
     "var_02",
     "var_03",
     "var_04",
@@ -108,17 +131,6 @@ utils::globalVariables(
     "var_81",
     "var_82",
     "var_83",
-    "var_84",
-    "CropData",
-    "ManData",
-    "SWOData",
-    "thickness",
-    "water_content",
-    "ece",
-    "thickness_fmt",
-    "water_content_fmt",
-    "ece_fmt",
-    ".",
-    "thickness_vec"
+    "var_84"
   )
 )

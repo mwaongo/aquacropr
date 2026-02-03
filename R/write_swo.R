@@ -168,7 +168,7 @@ write_swo <- function(
   utils::data("SWOData", envir = environment())
 
   # Ensure trailing slash on path
-  if (!stringr::str_ends(path, pattern = "/")) path <- paste0(path, "/")
+  path <- .add_trailing_slash(path)
 
   # Create directory if it doesn't exist
   if (!fs::dir_exists(path)) fs::dir_create(path)

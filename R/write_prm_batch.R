@@ -95,13 +95,10 @@ write_prm_batch <- function(
     base_path = getwd(),
     verbose = TRUE,
     clean = FALSE) {
-  # Clean LIST/ directory if clean = TRUE
-  if (clean && fs::dir_exists(path)) {
-    files <- fs::dir_ls(path, regexp = "\\.PRM$")
-    if (length(files) > 0) {
-      fs::file_delete(files)
-      if (verbose) message("Cleaned ", length(files), " file(s) from ", path)
-    }
+
+  # Clean directory if requested
+  if (clean) {
+    .clean_directory(path, "\\.PRM$", verbose)
   }
 
   # Check if crop file exists
@@ -114,59 +111,20 @@ write_prm_batch <- function(
     )
   }
 
-  # Discover or validate station_name from climate files
-  cli_dir <- file.path(base_path, climate_path)
-  cli_files <- list.files(
-    cli_dir,
-    pattern = "\\.CLI$",
-    ignore.case = TRUE
+  # Discover or validate stations from climate files
+  station_name <- .discover_or_validate_items(
+    item_names = station_name,
+    climate_path = climate_path,
+    base_path = base_path,
+    item_type = "station",
+    verbose = verbose
   )
-  available_stations <- tools::file_path_sans_ext(cli_files)
 
-  if (is.null(station_name)) {
-    if (length(available_stations) == 0) {
-      stop(
-        "No stations to process.\n",
-        "No climate files were found in '", cli_dir, "'.\n",
-        "Please generate climate files first using write_climate().",
-        call. = FALSE
-      )
-    }
-    station_name <- available_stations
-    if (verbose) {
-      message(
-        "Auto-discovered ", length(station_name), " station(s): ",
-        paste(head(station_name, 5), collapse = ", "),
-        if (length(station_name) > 5) "..." else ""
-      )
-    }
-  } else {
-    missing <- setdiff(station_name, available_stations)
-    if (length(missing) > 0) {
-      stop(
-        "Some stations do not have corresponding climate files.\n",
-        "Missing climate files for: ",
-        paste(missing, collapse = ", "), "\n",
-        "Available stations: ",
-        paste(head(available_stations, 5), collapse = ", "),
-        if (length(available_stations) > 5) "..." else "", "\n",
-        "Please generate them first using write_climate().",
-        call. = FALSE
-      )
-    }
-  }
-
-  # Station count validation
+  # Warn if single item
   n <- length(station_name)
-  if (n == 1 && verbose) {
-    warning(
-      "write_prm_batch() called with a single station.\n",
-      "Consider using write_prm() instead for clarity.",
-      call. = FALSE
-    )
-  }
+  .warn_single_item(n, "write_prm_batch", "write_prm", verbose)
 
-  # Handle planting schedule
+  # Handle planting schedule (similar to params normalization but for data.frames)
   if (is.data.frame(planting_schedule)) {
     if (verbose) {
       message("Applying the same planting schedule to all ", n, " station(s)")
@@ -184,30 +142,23 @@ write_prm_batch <- function(
     )
   }
 
-  # Write PRM files for each station
+  # Write PRM files
   if (verbose) {
     message("Writing PRM files for ", n, " station(s)...")
   }
 
-  # Progress counter
-  counter <- 0
-
-  purrr::pwalk(
-    .l = list(
-      station_name = station_name,
-      planting_schedule = planting_schedule
-    ),
-    .f = function(station_name, planting_schedule) {
-      if (verbose) {
-        counter <<- counter + 1
-        message("  [", counter, "/", n, "] Processing station: ", station_name)
-      }
-
-      # Call write_prm with explicit arguments
+  .batch_with_progress(
+    items = station_name,
+    params = planting_schedule,  # Using params slot for planting_schedule
+    verbose = verbose,
+    item_type = "station",
+    fn = function(item, params, crop_name, path, base_path, crop_path,
+                  crop_duration, climate_path, management_path, soil_path,
+                  simulation_start_doy, scenario, eol, use_standalone) {
       write_prm(
-        station_name = station_name,
+        station_name = item,
         crop_name = crop_name,
-        planting_schedule = planting_schedule,
+        planting_schedule = params,  # params contains planting_schedule
         path = path,
         base_path = base_path,
         crop_path = crop_path,
@@ -220,7 +171,19 @@ write_prm_batch <- function(
         eol = eol,
         use_standalone = use_standalone
       )
-    }
+    },
+    crop_name = crop_name,
+    path = path,
+    base_path = base_path,
+    crop_path = crop_path,
+    crop_duration = crop_duration,
+    climate_path = climate_path,
+    management_path = management_path,
+    soil_path = soil_path,
+    simulation_start_doy = simulation_start_doy,
+    scenario = scenario,
+    eol = eol,
+    use_standalone = use_standalone
   )
 
   if (verbose) {

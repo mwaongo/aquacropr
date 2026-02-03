@@ -58,42 +58,26 @@
   # Get EOL separator
   sep <- .get_eol(eol)
 
-  # Validate climate files exist
+  # Build file paths
   cli_file <- fs::path(base_path, climate_path, paste0(station_name, ".CLI"))
   tnx_file <- fs::path(base_path, climate_path, paste0(station_name, ".Tnx"))
   eto_file <- fs::path(base_path, climate_path, paste0(station_name, ".ETo"))
   plu_file <- fs::path(base_path, climate_path, paste0(station_name, ".PLU"))
   cro_file <- fs::path(base_path, crop_path, paste0(crop_name, ".CRO"))
-
-  if (!file.exists(cli_file)) {
-    stop("CLI file not found: ", cli_file)
-  }
-  if (!file.exists(tnx_file)) {
-    stop("Tnx file not found: ", tnx_file)
-  }
-  if (!file.exists(eto_file)) {
-    stop("ETo file not found: ", eto_file)
-  }
-  if (!file.exists(plu_file)) {
-    stop("PLU file not found: ", plu_file)
-  }
-
-  # Validate management files exist
   man_file <- fs::path(base_path, management_path, paste0(station_name, ".MAN"))
-  if (!file.exists(man_file)) {
-    stop("MAN file not found: ", man_file)
-  }
-
-  # Validate soil files exist
   sol_file <- fs::path(base_path, soil_path, paste0(station_name, ".SOL"))
   sw0_file <- fs::path(base_path, soil_path, paste0(station_name, ".SW0"))
 
-  if (!file.exists(sol_file)) {
-    stop("SOL file not found: ", sol_file)
-  }
-  if (!file.exists(sw0_file)) {
-    stop("SW0 file not found: ", sw0_file)
-  }
+  # Validate all required files exist (single check for all files)
+  .validate_files_exist(c(
+    CLI = cli_file,
+    Tnx = tnx_file,
+    ETo = eto_file,
+    PLU = plu_file,
+    MAN = man_file,
+    SOL = sol_file,
+    SW0 = sw0_file
+  ))
 
   # Set simulation start doy if not provided
   if (is.null(simulation_start_doy)) {

@@ -64,7 +64,17 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
   os <- match.arg(tolower(os), choices = c("windows", "linux", "macos"))
 
   # Get latest version info from GitHub
-  latest_release <- gh::gh("/repos/KUL-RSDA/AquaCrop/releases/latest")
+  latest_release <- tryCatch(
+    gh::gh("/repos/KUL-RSDA/AquaCrop/releases/latest"),
+    error = function(e) {
+      stop(
+        "Failed to fetch release info from GitHub.\n",
+        "Check your internet connection or try again later.\n",
+        "Error: ", conditionMessage(e),
+        call. = FALSE
+      )
+    }
+  )
   latest_tag <- latest_release$tag_name
   latest_version <- gsub("^v", "", latest_tag)
 
@@ -190,7 +200,7 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
 
   # Find executable
   files <- list.files(path, recursive = TRUE, full.names = TRUE)
-  exe_pattern <- if (os == "windows") "\\.exe$" else "aquacrop"
+  exe_pattern <- if (os == "windows") "aquacrop\\.exe$" else "/aquacrop$"
   exe_found <- grep(exe_pattern, files, value = TRUE, ignore.case = TRUE)
 
   if (length(exe_found) == 0) {
@@ -209,6 +219,11 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
 
   # Set permissions (Unix)
   if (os != "windows") Sys.chmod(exe_path, mode = "0755")
+
+  # Clean up: remove cached zip file
+  if (file.exists(cached_zip)) {
+    unlink(cached_zip)
+  }
 
   message("Installed: ", exe_path)
   invisible(version)

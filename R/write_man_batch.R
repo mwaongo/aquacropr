@@ -90,121 +90,48 @@ write_man_batch <- function(
     base_path = getwd(),
     verbose = TRUE,
     clean = FALSE) {
-  # Clean MANAGEMENT/ directory if clean = TRUE
-  if (clean && fs::dir_exists(path)) {
-    files <- fs::dir_ls(path, regexp = "\\.MAN$")
-    if (length(files) > 0) {
-      fs::file_delete(files)
-      if (verbose) message("Cleaned ", length(files), " file(s) from ", path)
-    }
+
+  # Clean directory if requested
+  if (clean) {
+    .clean_directory(path, "\\.MAN$", verbose)
   }
 
-  # Discover or validate station_name from climate files
-  cli_dir <- file.path(base_path, climate_path)
-  cli_files <- list.files(
-    cli_dir,
-    pattern = "\\.CLI$",
-    ignore.case = TRUE
+  # Discover or validate stations from climate files
+  station_name <- .discover_or_validate_items(
+    item_names = station_name,
+    climate_path = climate_path,
+    base_path = base_path,
+    item_type = "station",
+    verbose = verbose
   )
-  available_stations <- tools::file_path_sans_ext(cli_files)
 
-  if (is.null(station_name)) {
-    if (length(available_stations) == 0) {
-      stop(
-        "No stations to process.\n",
-        "No climate files were found in '", cli_dir, "'.\n",
-        "Please generate climate files first using write_climate().",
-        call. = FALSE
-      )
-    }
-    station_name <- available_stations
-    if (verbose) {
-      message(
-        "Auto-discovered ", length(station_name), " station(s): ",
-        paste(head(station_name, 5), collapse = ", "),
-        if (length(station_name) > 5) "..." else ""
-      )
-    }
-  } else {
-    missing <- setdiff(station_name, available_stations)
-    if (length(missing) > 0) {
-      stop(
-        "Some stations do not have corresponding climate files.\n",
-        "Missing climate files for: ",
-        paste(missing, collapse = ", "), "\n",
-        "Available stations: ",
-        paste(head(available_stations, 5), collapse = ", "),
-        if (length(available_stations) > 5) "..." else "", "\n",
-        "Please generate them first using write_climate().",
-        call. = FALSE
-      )
-    }
-  }
-
-  # Station count validation
+  # Warn if single item
   n <- length(station_name)
-  if (n == 1 && verbose) {
-    warning(
-      "write_man_batch() called with a single station.\n",
-      "Consider using write_man() instead for clarity.",
-      call. = FALSE
-    )
-  }
+  .warn_single_item(n, "write_man_batch", "write_man", verbose)
 
-  # Handle params
-  if (is.null(params)) {
-    params <- list()
-  }
+  # Normalize params to list of lists
+  params <- .normalize_batch_params(params, n, "management", verbose)
 
-  if (is.list(params) && length(params) > 0 && !is.null(names(params))) {
-    # Single named list - apply to all stations
-    if (verbose) {
-      message("Applying the same management parameters to all ", n, " station(s)")
-    }
-    params <- rep(list(params), n)
-  } else if (is.list(params) && length(params) == 0) {
-    # Empty list - use defaults for all
-    if (verbose) {
-      message("Using default management parameters for all ", n, " station(s)")
-    }
-    params <- rep(list(list()), n)
-  } else if (!is.list(params) || length(params) != n) {
-    stop(
-      "params must be either:\n",
-      "  - A single named list (applied to all stations), or\n",
-      "  - A list of lists with length matching station_name\n",
-      "Expected length: ", n, ", got: ", length(params),
-      call. = FALSE
-    )
-  }
-
-  # Write MAN files for each station
+  # Write MAN files
   if (verbose) {
     message("Writing MAN files for ", n, " station(s)...")
   }
 
-  # Progress counter
-  counter <- 0
-
-  purrr::pwalk(
-    .l = list(
-      station_name = station_name,
-      params = params
-    ),
-    .f = function(station_name, params) {
-      if (verbose) {
-        counter <<- counter + 1
-        message("  [", counter, "/", n, "] Processing station: ", station_name)
-      }
-
-      # Call write_man with explicit arguments
+  .batch_with_progress(
+    items = station_name,
+    params = params,
+    verbose = verbose,
+    item_type = "station",
+    fn = function(item, params, path, eol) {
       write_man(
-        management_name = station_name,
+        management_name = item,
         params = params,
         path = path,
         eol = eol
       )
-    }
+    },
+    path = path,
+    eol = eol
   )
 
   if (verbose) {

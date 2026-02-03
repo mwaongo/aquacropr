@@ -1,3 +1,25 @@
+# =============================================================================
+# AquaCrop Project Directory Structure
+# =============================================================================
+
+#' Standard AquaCrop directory names
+#' @keywords internal
+#' @noRd
+.AQUACROP_DIRS <- c(
+"CLIMATE",
+  "CROP",
+  "GWT",
+  "IRR",
+  "LIST",
+  "MANAGEMENT",
+  "OBS",
+  "OUTP",
+  "PARAM",
+  "SIMUL",
+  "SOIL"
+)
+
+
 #' Initialize AquaCrop Project Structure
 #'
 #' Creates a directory structure for AquaCrop crop water productivity model
@@ -21,8 +43,11 @@
 #' \describe{
 #'   \item{CLIMATE/}{Climate input files (temperature, rainfall, ETo)}
 #'   \item{CROP/}{Crop parameter files}
+#'   \item{GWT/}{Groundwater table files}
+#'   \item{IRR/}{Irrigation schedule files}
 #'   \item{LIST/}{Project simulation files \code{*.PRM}}
 #'   \item{MANAGEMENT/}{Field management practice files \code{*.MAN}}
+#'   \item{OBS/}{Field observation files}
 #'   \item{OUTP/}{Simulation output files}
 #'   \item{PARAM/}{Program parameters files \code{*.PPn}}
 #'   \item{SIMUL/}{Simulation configuration files}
@@ -75,13 +100,9 @@ init_aquacrop <- function(path = ".",
 
   # Check if directory exists
   if (dir.exists(path) && !overwrite) {
-    # Check if it already has AquaCrop structure
-    aquacrop_folders <- c(
-      "CLIMATE", "CROP", "SOIL", "SIMUL", "OUTP",
-      "MANAGEMENT", "PARAM", "LIST"
-    )
-
-    has_structure <- all(dir.exists(file.path(path, aquacrop_folders)))
+    # Check if it already has AquaCrop structure (check core folders only)
+    core_folders <- c("CLIMATE", "CROP", "SOIL", "SIMUL", "OUTP", "LIST")
+    has_structure <- all(dir.exists(file.path(path, core_folders)))
 
     if (has_structure) {
       message("AquaCrop project structure already exists at: ", path)
@@ -113,11 +134,6 @@ init_aquacrop <- function(path = ".",
     }
   }
 
-  # Define directory structure
-  dirs <- c(
-    "CLIMATE", "CROP", "LIST", "MANAGEMENT",
-    "OUTP", "PARAM", "SIMUL", "SOIL"
-  )
 
   message(cli::symbol$arrow_right, " Creating AquaCrop project structure...")
 
@@ -152,7 +168,7 @@ init_aquacrop <- function(path = ".",
     }
   )
   # Create subdirectories
-  for (d in dirs) {
+  for (d in .AQUACROP_DIRS) {
     subdir_path <- file.path(path, d)
     tryCatch(
       {
@@ -168,26 +184,24 @@ init_aquacrop <- function(path = ".",
     )
   }
 
-  message(cli::symbol$tick, " Created directories: ", paste(dirs, collapse = ", "))
+  message(cli::symbol$tick, " Created directories: ", paste(.AQUACROP_DIRS, collapse = ", "))
 
   .install_templates(path, overwrite = TRUE)
 
-
-
   # Create README
-  .create_readme(path, dirs, version)
+  .create_readme(path, .AQUACROP_DIRS, version)
 
   # Create R project if use_rproject = TRUE
-
-  if (use_rproject) {
-
+  if (use_rproject && requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::isAvailable()) {
     rstudioapi::openProject(path = path, newSession = FALSE)
-
   } else {
     message("\n", cli::symbol$info, " To work in this project, run:")
     message("  setwd(\"", path, "\")")
     message("  run_aquacrop()")
   }
+
+  invisible(path)
 }
 
 #' Helper function to create README

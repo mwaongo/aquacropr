@@ -61,80 +61,22 @@ write_eto <- function(
     record_type = 1,
     first_day = 1,
     first_month = 1) {
-  # Handle NULL or invalid data
-  if (is.null(data) || !is.data.frame(data)) {
-    stop(
-      "data must be a data frame with columns: year, month, day, ", var_name,
-      "\nReceived: ", class(data)[1]
-    )
-  }
 
-  # Extract station from data if available and stn not provided
-  if (is.null(stn) && "station" %in% names(data)) {
-    stn <- utils::head(data, 1) %>%
-      dplyr::pull("station")
-  }
-
-  # Set default station if still NULL
-  if (is.null(stn)) {
-    stn <- "station"
-  }
-
-  # Validate required columns
-  required_cols <- c("year", "month", "day", var_name)
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    stop(
-      "Missing required columns: ", paste(missing_cols, collapse = ", "),
-      "\nRequired columns are: year, month, day, ", var_name
-    )
-  }
-
-  # Extract or validate years
-  if (is.null(syear)) {
-    syear <- utils::head(data, 1) %>%
-      dplyr::pull("year")
-  }
-
-  if (is.null(eyear)) {
-    eyear <- utils::tail(data, 1) %>%
-      dplyr::pull("year")
-  }
-
-  # Ensure trailing slash on path
-  path <- .add_trailing_slash(path)
-
-  # Create directory if it doesn't exist
-  fs::dir_create(path, recurse = TRUE)
-
-  # Format station name for filename
-  stn_formatted <- snakecase::to_any_case(stn, case = "snake", sep_out = "_")
-
-  # Get header
-  header <- .get_header(
-    var_name = "et0",
+  .write_climate_file(
+    path = path,
     stn = stn,
+    data = data,
+    var_cols = var_name,
+    header_var_name = "et0",
+    file_ext = ".ETo",
     syear = syear,
     eyear = eyear,
     eol = eol,
     record_type = record_type,
     first_day = first_day,
-    first_month = first_month
+    first_month = first_month,
+    col_widths = 10
   )
-
-  # Prepare data for output (select only the ETo column)
-  eto_data <- data %>%
-    dplyr::select(!!rlang::sym(var_name))
-
-  # Write file
-  output_file <- paste0(path, stn_formatted, ".ETo")
-
-  readr::write_file(x = header, file = output_file)
-
-  write_fwf(eto_data, file = output_file, width = 10, justify = "r")
-
-  # Return invisibly with file path
-  invisible(output_file)
 }
 
 
