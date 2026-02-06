@@ -169,7 +169,9 @@ write_climate <- function(
   path <- .add_trailing_slash(path)
 
   # Create directory if it doesn't exist
+
   fs::dir_create(path, recurse = TRUE)
+
   message("Writing climate files to: ", path)
 
   # Write rainfall file
