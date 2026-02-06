@@ -19,7 +19,7 @@
 #' @param write_header Logical. If TRUE (default), writes header. FALSE for batch mode.
 #' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #' @param use_standalone Logical. Whether running in standalone mode (default: TRUE)
-#' @param base_path Character. Base absolute path (required for file existence checking)
+#' @param base_path Character. Base absolute path (required for file existence checking). If `NULL` (default), current working directory will be used.
 #'
 #' @importFrom purrr walk
 #'
@@ -42,7 +42,8 @@
     write_header = TRUE,
     eol = NULL,
     use_standalone = TRUE,
-    base_path = getwd()) {
+    base_path = getwd()
+    ) {
   # Input validation
   stopifnot(
     is.character(path) && length(path) == 1,
@@ -51,8 +52,7 @@
     is.numeric(planting_doy) && length(planting_doy) == 1,
     is.numeric(crop_duration) && length(crop_duration) == 1,
     is.logical(write_header) && length(write_header) == 1,
-    is.logical(use_standalone) && length(use_standalone) == 1,
-    !missing(base_path) && is.character(base_path)
+    is.logical(use_standalone) && length(use_standalone) == 1
   )
 
   # Get EOL separator
@@ -250,8 +250,7 @@ write_prm <- function(
     is.data.frame(planting_schedule),
     all(c("year", "planting_doy") %in% names(planting_schedule)),
     nrow(planting_schedule) > 0,
-    is.logical(use_standalone) && length(use_standalone) == 1,
-    !missing(base_path) && is.character(base_path)
+    is.logical(use_standalone) && length(use_standalone) == 1
   )
 
   # Create output directory if needed

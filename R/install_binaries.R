@@ -209,21 +209,18 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
 
   # Move to root of path if nested and clean extraction dir
   if (exe_found[1] != exe_path) {
-    extracted_dir <- glue::glue("aquacrop-{version}-x86_64-{os}.zip")
+    extracted_dir <- file.path(path, glue::glue("aquacrop-{version}-x86_64-{os}"))
+
     file.rename(exe_found[1], exe_path)
 
-    if (extracted_dir != path && dir.exists(extracted_dir)) {
+    if (dir.exists(extracted_dir)) {
       unlink(extracted_dir, recursive = TRUE)
+      message("Cleaned extraction directory")
     }
   }
 
   # Set permissions (Unix)
   if (os != "windows") Sys.chmod(exe_path, mode = "0755")
-
-  # Clean up: remove cached zip file
-  if (file.exists(cached_zip)) {
-    unlink(cached_zip)
-  }
 
   message("Installed: ", exe_path)
   invisible(version)

@@ -1,36 +1,211 @@
-#' Read AquaCrop Season Output Files
-#'
-#' Reads seasonal output files from AquaCrop simulations (PRMSeason.OUT) and
-#' returns a tibble with formatted data and cleaned column names.
-#'
-#' @param file Path to the AquaCrop output file (fooPRMSeason.OUT)
-#'
-#' @return A tibble containing the output file data with:
-#'   \itemize{
-#'     \item Columns formatted with camelCase names
-#'     \item Automatically detected data types
-#'   }
-#'
-#' @details
-#' AquaCrop season output files follow a fixed-width format with:
-#' - Lines 1-2: Headers/metadata
-#' - Line 3: Column names
-#' - Line 4+: Data
-#' @family AquaCrop readers
-#' @examples
-#' \dontrun{
-#' data <- read_season_out("C1PRMSeason.OUT")
-#' }
-#'
+#' Standard AquaCrop seasonal output column names by version
+#' @keywords internal
+#' @noRd
+.SEASON_COLS_BY_VERSION <- list(
+  # Version 7.x (41 columns)
+  v7 = c(
+    "runnr", "day1", "month1", "year1", "rain", "eto", "gd", "co2",
+    "irri", "infilt", "runoff", "drain", "upflow", "e", "eex", "tr",
+    "trw", "trtrx", "saltin", "saltout", "saltup", "saltprof", "cycle",
+    "saltstr", "fertstr", "weedstr", "tempstr", "expstr", "stostr", "biomass",
+    "brelative", "hi", "ydry", "yfresh", "wpet", "bin", "bout",
+    "dayn", "monthn", "yearn", "prmfile"
+  ),
+  # Version 6.x (36 columns) - sans les 5 dernières colonnes de stress
+  v6 = c(
+    "runnr", "day1", "month1", "year1", "rain", "eto", "gd", "co2",
+    "irri", "infilt", "runoff", "drain", "upflow", "e", "eex", "tr",
+    "trw", "trtrx", "saltin", "saltout", "saltup", "saltprof", "cycle",
+    "biomass", "brelative", "hi", "ydry", "yfresh", "wpet", "bin", "bout",
+    "dayn", "monthn", "yearn", "prmfile"
+  )
+)
+
+#' Detect AquaCrop version from output file
+#' @keywords internal
+#' @noRd
+.detect_aquacrop_version <- function(file) {
+  # Read first line
+  first_line <- readr::read_lines(file, n_max = 1)
+
+  # Extract version
+  version_match <- stringr::str_extract(first_line, "AquaCrop ([0-9.]+)")
+
+  if (is.na(version_match)) {
+    return(NULL)
+  }
+
+  # Extract major version
+  version_num <- stringr::str_extract(version_match, "[0-9]+\\.[0-9]+")
+  major_version <- as.numeric(stringr::str_extract(version_num, "^[0-9]+"))
+
+  return(list(
+    full = version_num,
+    major = major_version
+  ))
+}
+
+#' Get appropriate column names based on file structure
+#' @keywords internal
+#' @noRd
+.get_season_colnames <- function(file, ncol_data) {
+  # Detect version
+  version_info <- .detect_aquacrop_version(file)
+
+  if (is.null(version_info)) {
+    # Fallback: guess based on column count
+    if (ncol_data == 41) {
+      return(.SEASON_COLS_BY_VERSION$v7)
+    } else if (ncol_data == 36) {
+      return(.SEASON_COLS_BY_VERSION$v6)
+    } else {
+      warning(
+        "Unknown column count: ", ncol_data, "\n",
+        "Using generic column names",
+        call. = FALSE
+      )
+      return(paste0("col", 1:ncol_data))
+    }
+  }
+
+  # Choose based on version
+  if (version_info$major >= 7) {
+    expected_cols <- .SEASON_COLS_BY_VERSION$v7
+  } else if (version_info$major >= 6) {
+    expected_cols <- .SEASON_COLS_BY_VERSION$v6
+  } else {
+    warning(
+      "AquaCrop version ", version_info$full, " may have different format\n",
+      "Proceeding with best guess",
+      call. = FALSE
+    )
+    expected_cols <- .SEASON_COLS_BY_VERSION$v6
+  }
+
+  # Validate column count
+  if (ncol_data != length(expected_cols)) {
+    warning(
+      "Column mismatch for AquaCrop ", version_info$full, ":\n",
+      "  Expected ", length(expected_cols), " columns\n",
+      "  Got ", ncol_data, " columns\n",
+      "Using generic names for extra/missing columns",
+      call. = FALSE
+    )
+
+    if (ncol_data > length(expected_cols)) {
+      # More columns than expected - add generic names
+      extra_cols <- paste0("col", (length(expected_cols) + 1):ncol_data)
+      return(c(expected_cols, extra_cols))
+    } else {
+      # Fewer columns - truncate
+      return(expected_cols[1:ncol_data])
+    }
+  }
+
+  return(expected_cols)
+}
+
+#' Read AquaCrop seasonal output file
 #' @export
-read_season_out <- function(file) {
+read_season_out <- function(file, add_dates = TRUE) {
+
+  # Validate file
   .validate_file(file, "PRMseason.OUT")
 
-  header <- .read_season_header(file)
-  data <- readr::read_fwf(file = file, skip = 4)
-  names(data) <- header
+  # Extract site name
+  site_name <- basename(file) %>%
+    stringr::str_replace("(?i)PRMseason\\.OUT$", "") %>%
+    stringr::str_replace("(?i)season\\.OUT$", "")
+
+  # Read data WITHOUT header
+  data <- tryCatch({
+    readr::read_table(
+      file = file,
+      skip = 4,
+      col_names = FALSE,
+      col_types = readr::cols(.default = readr::col_guess()),
+      show_col_types = FALSE,
+      na = c("", "NA", "-9", "-9.9")
+    )
+  }, error = function(e) {
+    stop("Failed to read data from: ", basename(file), "\n",
+         "Error: ", conditionMessage(e), call. = FALSE)
+  })
+
+  # Get appropriate column names based on version and column count
+  col_names <- .get_season_colnames(file, ncol(data))
+  names(data) <- col_names
+
+  # Convert to tibble
+  data <- dplyr::as_tibble(data)
+
+  # Add site column
+  data <- data %>%
+    dplyr::mutate(site = site_name, .before = 1)
+
+  # Add dates if requested
+  if (add_dates) {
+    if (all(c("day1", "month1", "year1") %in% names(data))) {
+      data <- data %>%
+        dplyr::mutate(
+          plantingdate = as.Date(paste(year1, month1, day1, sep = "-")),
+          .after = "runnr"
+        )
+    }
+
+    if (all(c("dayn", "monthn", "yearn") %in% names(data))) {
+      after_col <- if ("plantingdate" %in% names(data)) "plantingdate" else "runnr"
+
+      data <- data %>%
+        dplyr::mutate(
+          harvestdate = as.Date(paste(yearn, monthn, dayn, sep = "-")),
+          .after = dplyr::all_of(after_col)
+        )
+    }
+
+    if (all(c("plantingdate", "harvestdate") %in% names(data))) {
+      data <- data %>%
+        dplyr::mutate(
+          seasonlength = as.numeric(harvestdate - plantingdate),
+          .after = "harvestdate"
+        )
+    }
+  }
+
+  # Add metadata
+  version_info <- .detect_aquacrop_version(file)
+  attr(data, "source_file") <- normalizePath(file, mustWork = FALSE)
+  attr(data, "read_time") <- Sys.time()
+  if (!is.null(version_info)) {
+    attr(data, "aquacrop_version") <- version_info$full
+  }
 
   return(data)
+}
+
+#' Validate file exists and has expected pattern
+#' @keywords internal
+#' @noRd
+.validate_file <- function(file, pattern) {
+
+  if (!is.character(file) || length(file) != 1) {
+    stop("file must be a single character string", call. = FALSE)
+  }
+
+  if (!file.exists(file)) {
+    stop("File not found: ", file, call. = FALSE)
+  }
+
+  if (!grepl(pattern, file, ignore.case = TRUE)) {
+    warning(
+      "File name does not match expected pattern '", pattern, "'\n",
+      "File: ", basename(file), "\n",
+      "Proceeding anyway, but results may be incorrect.",
+      call. = FALSE
+    )
+  }
+
+  invisible(TRUE)
 }
 
 
