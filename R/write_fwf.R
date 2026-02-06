@@ -179,19 +179,13 @@ write_fwf <- function(x, file, width,
     collapse = ""
   )
 
-  # Validate and get end-of-line character
-  if (!(eol %in% c("windows", "unix", "linux", "macOs"))) {
-    stop(
-      "Invalid eol: '", eol, "'\n",
-      "Valid options are: 'windows', 'unix', 'linux', 'macOS'"
-    )
-  } else {
-    sep <- ifelse(
-      test = eol %in% c("unix", "linux", "macOS"),
-      yes = "\n",
-      no = "\r\n"
-    )
-  }
+  # Get end-of-line separator
+
+  if (is.null(eol)) eol <- get_os()
+
+  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
+
+  sep <- .get_eol(eol = eol)
 
   # Format data and write to file
   tbl_content <- do.call(sprintf, c(fmt = sptf_fmt, x))

@@ -68,16 +68,13 @@ get_os <- function() {
 #' @keywords internal
 #' @noRd
 .get_eol <- function(eol = NULL) {
+    if (is.null(eol)) eol <- get_os()
+    eol <- match.arg(eol, choices = c("windows", "linux", "macos"))
 
-  if (is.null(eol)) eol <- get_os()
-
-  eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
-
-  sep <- ifelse(
-    test = eol %in% c("unix", "linux", "macos"),
-    yes = "\n",
-    no = "\r\n"
-  )
-
-  return(sep)
+    sep <- ifelse(
+      test = eol %in% c("linux", "macos"),
+      yes = "\n",
+      no = "\r\n"
+      )
+    return(sep)
 }

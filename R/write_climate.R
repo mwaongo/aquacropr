@@ -31,10 +31,7 @@
 #' @param scenario CO2 scenario for .CLI file. Options: "hist" (historical/Mauna Loa),
 #'   "rcp26", "rcp45", "rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585".
 #'   Default = "hist". See \code{\link{write_cli}} for details on scenarios.
-#' @param eol End-of-line character style for all output files.
-#'   Options: "windows", "unix", "linux", or "macOS". Default = "windows".
-#'   See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
-#'   and \code{\link{write_cli}} for details.
+#' @param eol End-of-line character style for the output file. Options: "windows", "linux", "macos". If `NULL` (default), eol is auto-detected.
 #' @param syear Start year of the data period (extracted from \code{data} if not provided).
 #'   Default = NULL.
 #'   See \code{\link{write_plu}}, \code{\link{write_eto}}, and \code{\link{write_tnx}} for details.
@@ -135,14 +132,14 @@
 #' @export
 write_climate <- function(
     data = NULL,
-    path = "weather/",
+    path = "CLIMATE/",
     stn = NULL,
     var_name_rain = "rain",
     var_name_et0 = "et0",
     var_name_tmin = "tmin",
     var_name_tmax = "tmax",
     scenario = "hist",
-    eol = "windows",
+    eol = NULL,
     syear = NULL,
     eyear = NULL) {
   # Validate data
