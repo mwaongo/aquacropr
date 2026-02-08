@@ -1,14 +1,11 @@
-# =============================================================================
-# Internal Helper Functions for AquaCrop Readers
-# =============================================================================
-
-#' Validate File Existence and Suffix
-#'
+#' Validate File Existence and Suffix, essentially for OUTP/ files
+#' would write in future, solid checkers: is_season, is_day, is_harvest and so on.
 #' @param file Character. Path to the file.
 #' @param expected_suffix Character. Expected file suffix.
 #'
 #' @keywords internal
 #' @noRd
+#'
 .validate_file <- function(file, expected_suffix) {
   if (!file.exists(file)) {
     stop("file does not exist: ", file, call. = FALSE)
@@ -28,83 +25,13 @@
 #'
 #' @keywords internal
 #' @noRd
-.read_season_header <- function(file) {
+.season_header <- function(file) {
   readr::read_fwf(file = file, skip = 2, n_max = 1) %>%
     c() %>%
     unlist() %>%
     c("PRMName") %>%
     janitor::make_clean_names(case = "snake") %>%
     gsub(pattern = "_", replacement = "", x = .)
-}
-
-
-# =============================================================================
-# Generic Climate File Helpers
-# =============================================================================
-
-#' Validate AquaCrop Climate File Structure
-#'
-#' Generic validator for AquaCrop climate files (Tnx, ETo, PLU).
-#'
-#' @param file Character. Path to the file to check.
-#' @param expected_ext Character. Expected file extension (e.g., "tnx", "eto", "plu").
-#'
-#' @return Logical. TRUE if the file appears to be a valid AquaCrop climate file.
-#'
-#' @keywords internal
-#' @noRd
-.is_climate_file <- function(file, expected_ext) {
-  # Check file existence
-  if (!fs::file_exists(file)) {
-    return(FALSE)
-  }
-
-  # Check file extension
-  ext_ok <- tolower(fs::path_ext(file)) == expected_ext
-
-  # Read first lines
-  lines <- tryCatch(
-    readLines(file, n = 20, warn = FALSE),
-    error = function(e) character()
-  )
-  if (length(lines) == 0) {
-    return(FALSE)
-  }
-
-  # Check for AquaCrop file structure
-  has_colon <- any(grepl(":", lines, fixed = TRUE))
-  has_separator <- any(grepl("^=+", lines))
-
-  # Check for data after separator
-  sep_idx <- grep("^=+", lines)
-  has_data <- FALSE
-  if (length(sep_idx) > 0 && sep_idx[1] < length(lines)) {
-    has_data <- any(grepl("^\\s*-?\\d", lines[(sep_idx[1] + 1):length(lines)]))
-  }
-
-  # Basic structure check
-  basic_ok <- ext_ok || (has_colon && has_separator && has_data)
-  if (!basic_ok) {
-    return(FALSE)
-  }
-
-  # Check business rules for first_day
-  header_lines <- lines[1:(sep_idx[1] - 3)]
-  parts <- strsplit(header_lines, ":", fixed = TRUE)
-
-  if (length(parts) >= 5) {
-    record_type <- as.integer(trimws(parts[[2]][1]))
-    first_day <- as.integer(trimws(parts[[3]][1]))
-
-    # Return FALSE if date rules are not met
-    if (!tryCatch(.check_dates_rule(record_type, first_day),
-      error = function(e) FALSE
-    )) {
-      return(FALSE)
-    }
-  }
-
-  TRUE
 }
 
 
