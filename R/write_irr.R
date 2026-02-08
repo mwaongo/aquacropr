@@ -6,23 +6,23 @@
 #' percentage of soil surface wetted, and irrigation scheduling approach.
 #'
 #' @param path Character. Directory path where the .IRR file will be created.
-#'   The directory is created automatically if it doesn't exist. Default: `"IRRIGATION/"`.
+#'   The directory is created automatically if it doesn't exist. Default: `"MANAGEMENT/"`.
 #' @param irrigation_name Character. Name identifier for the irrigation scenario.
 #'   This name is used as the filename (e.g., `"drip-irrigation"` creates
 #'   `"drip-irrigation.IRR"`).
-#' @param var_01 Integer. Irrigation method:
+#' @param method Integer. Irrigation method:
 #'   - 1 = Sprinkler irrigation
 #'   - 2 = Surface irrigation: Basin
 #'   - 3 = Surface irrigation: Border
 #'   - 4 = Surface irrigation: Furrow
 #'   - 5 = Drip irrigation
-#' @param var_02 Integer. Percentage of soil surface wetted by irrigation (0-100).
+#' @param wet_surface Integer. Percentage of soil surface wetted by irrigation (0-100).
 #'   See Details for typical values by irrigation method.
-#' @param var_03 Integer. Irrigation mode:
+#' @param mode Integer. Irrigation mode:
 #'   - 1 = Specification of irrigation events
 #'   - 2 = Generation of an irrigation schedule
 #'   - 3 = Determination of net irrigation water requirement
-#' @param irr_data Data.frame or numeric. Irrigation data. Structure depends on `var_03`:
+#' @param irr_data Data.frame or numeric. Irrigation data. Structure depends on `mode`:
 #'   - Mode 1: data.frame with columns `day`, `depth`, `ecw`. See [create_irr_events()]
 #'   - Mode 2: data.frame with columns `from_day`, `time_crit`, `depth_crit`, `ecw`
 #'     and attributes `time_crit_code`, `depth_crit_code`. See [create_irr_schedule()]
@@ -30,19 +30,25 @@
 #' @param version Numeric. AquaCrop version. Default: 7.1
 #' @param eol Character. End-of-line character style. Options: "windows", "linux", or "macos".
 #'   If `NULL` (default), eol is auto-detected.
+#' @param crop_length Integer. Optional. Length of crop cycle in days for validation.
+#'   If provided, warns about irrigation events beyond crop harvest.
 #'
 #' @details
-#' ## Irrigation Methods and Typical Wetted Surface
+#' ## Typical Wetted Surface by Irrigation Method
 #'
-#' Typical percentages of soil surface wetted by irrigation method:
-#' - Sprinkler: 100%
-#' - Basin: 100%
-#' - Border: 100%
-#' - Furrow (every furrow, narrow bed): 60-100%
-#' - Furrow (every furrow, wide bed): 40-60%
-#' - Furrow (alternated furrows): 30-50%
-#' - Drip/Micro irrigation: 15-40%
-#' - Subsurface drip: 0%
+#' The `wet_surface` parameter represents the percentage of soil surface wetted by irrigation.
+#' Typical values by irrigation method:
+#'
+#' | Irrigation Method | Typical wet_surface (%) |
+#' |-------------------|-------------------------|
+#' | Sprinkler | 100 |
+#' | Basin | 100 |
+#' | Border | 100 |
+#' | Furrow (every furrow, narrow bed) | 60-100 |
+#' | Furrow (every furrow, wide bed) | 40-60 |
+#' | Furrow (alternated furrows) | 30-50 |
+#' | Drip/Micro irrigation | 15-40 |
+#' | Subsurface drip | 0 |
 #'
 #' ## Irrigation Modes
 #'
@@ -70,12 +76,13 @@
 #' )
 #'
 #' write_irr(
-#'   path = "IRRIGATION/",
+#'   path = "MANAGEMENT/",
 #'   irrigation_name = "ouaga-fixed",
-#'   var_01 = 5,  # Drip irrigation
-#'   var_02 = 30, # 30% surface wetted
-#'   var_03 = 1,  # Specified events
-#'   irr_data = events
+#'   method = 5,        # Drip irrigation
+#'   wet_surface = 30,  # 30% surface wetted
+#'   mode = 1,          # Specified events
+#'   irr_data = events,
+#'   crop_length = 120  # Optional: validate against 120-day cycle
 #' )
 #'
 #' # Example 2: Generated schedule with fixed interval (Mode 2)
@@ -89,11 +96,11 @@
 #' )
 #'
 #' write_irr(
-#'   path = "IRRIGATION/",
+#'   path = "MANAGEMENT/",
 #'   irrigation_name = "bobo-schedule",
-#'   var_01 = 1,   # Sprinkler
-#'   var_02 = 100, # 100% surface wetted
-#'   var_03 = 2,   # Generated schedule
+#'   method = 1,         # Sprinkler
+#'   wet_surface = 100,  # 100% surface wetted
+#'   mode = 2,           # Generated schedule
 #'   irr_data = schedule
 #' )
 #'
@@ -108,48 +115,84 @@
 #' )
 #'
 #' write_irr(
-#'   path = "IRRIGATION/",
+#'   path = "MANAGEMENT/",
 #'   irrigation_name = "auto-raw",
-#'   var_01 = 5,
-#'   var_02 = 30,
-#'   var_03 = 2,
+#'   method = 5,
+#'   wet_surface = 30,
+#'   mode = 2,
 #'   irr_data = schedule_raw
 #' )
 #'
 #' # Example 4: Net irrigation requirement (Mode 3)
 #' write_irr(
-#'   path = "IRRIGATION/",
+#'   path = "MANAGEMENT/",
 #'   irrigation_name = "koudougou-netreq",
-#'   var_01 = 1,   # Sprinkler
-#'   var_02 = 100,
-#'   var_03 = 3,   # Net requirement
-#'   irr_data = 50 # Do not deplete below 50% RAW
+#'   method = 1,         # Sprinkler
+#'   wet_surface = 100,
+#'   mode = 3,           # Net requirement
+#'   irr_data = 50       # Do not deplete below 50% RAW
 #' )
 #' }
 #'
 #' @family AquaCrop file writers
 #' @export
 write_irr <- function(
-    path = "IRRIGATION/",
+    path = "MANAGEMENT/",
     irrigation_name,
-    var_01,
-    var_02,
-    var_03,
+    method,
+    wet_surface,
+    mode,
     irr_data,
     version = 7.1,
-    eol = NULL) {
+    eol = NULL,
+    crop_length = NULL) {
 
   # Validation
-  if (!var_01 %in% 1:5) {
-    stop("var_01 (irrigation method) must be 1-5", call. = FALSE)
+  if (!method %in% 1:5) {
+    stop("method must be 1-5", call. = FALSE)
   }
 
-  if (var_02 < 0 || var_02 > 100) {
-    stop("var_02 (wet surface %) must be 0-100", call. = FALSE)
+  if (wet_surface < 0 || wet_surface > 100) {
+    stop("wet_surface must be 0-100", call. = FALSE)
   }
 
-  if (!var_03 %in% 1:3) {
-    stop("var_03 (irrigation mode) must be 1-3", call. = FALSE)
+  if (!mode %in% 1:3) {
+    stop("mode must be 1-3", call. = FALSE)
+  }
+
+  # Validate irrigation days against crop cycle length
+  if (!is.null(crop_length) && mode == 1) {
+    max_day <- max(irr_data$day)
+
+    if (max_day > crop_length) {
+      offseason_events <- sum(irr_data$day > crop_length)
+
+      warning(
+        sprintf(
+          "%d irrigation event(s) beyond crop cycle (day %d > %d). ",
+          offseason_events, max_day, crop_length
+        ),
+        "These will be ignored. Consider creating a separate .OFF file for off-season irrigation.",
+        call. = FALSE
+      )
+    }
+  }
+
+  if (!is.null(crop_length) && mode == 2) {
+    max_from_day <- max(irr_data$from_day)
+
+    if (max_from_day > crop_length) {
+      offseason_rules <- sum(irr_data$from_day > crop_length)
+
+      warning(
+        sprintf(
+          "%d schedule rule(s) start beyond crop cycle (day %d > %d). ",
+          offseason_rules, max_from_day, crop_length
+        ),
+        "These will be ignored. Consider creating a separate .OFF file for off-season irrigation.",
+        call. = FALSE
+      )
+    }
   }
 
   # Setup
@@ -164,17 +207,17 @@ write_irr <- function(
   content <- paste0(
     irrigation_name, sep,
     .format_string2(version, '%.1f', 7), "  : AquaCrop Version (August 2023)", sep,
-    .format_string2(var_01, '%d', 7), "  : ", method_names[var_01], " irrigation", sep,
-    .format_string2(var_02, '%d', 7), "  : Percentage of soil surface wetted", sep,
-    .format_string2(var_03, '%d', 7), "  : ", mode_names[var_03], sep
+    .format_string2(method, '%d', 7), "  : ", method_names[method], " irrigation", sep,
+    .format_string2(wet_surface, '%d', 7), "  : Percentage of soil surface wetted", sep,
+    .format_string2(mode, '%d', 7), "  : ", mode_names[mode], sep
   )
 
   # Add data section based on mode
-  if (var_03 == 1) {
+  if (mode == 1) {
     content <- paste0(content, .build_irr_events(irr_data, sep))
-  } else if (var_03 == 2) {
+  } else if (mode == 2) {
     content <- paste0(content, .build_irr_schedule(irr_data, sep))
-  } else if (var_03 == 3) {
+  } else if (mode == 3) {
     content <- paste0(content, .build_irr_netreq(irr_data, sep))
   }
 
@@ -196,6 +239,8 @@ write_irr <- function(
 #' @param depth Numeric vector. Net irrigation application depth in mm for each event.
 #'   This is the net amount only - do not include conveyance losses.
 #' @param ecw Numeric vector. Electrical conductivity of irrigation water in dS/m for each event
+#' @param crop_length Integer. Optional. Length of crop cycle in days for validation.
+#'   If provided, warns about irrigation events beyond crop harvest.
 #'
 #' @return A tibble with columns `day`, `depth`, `ecw`, ready for use with [write_irr()]
 #'
@@ -205,7 +250,8 @@ write_irr <- function(
 #' events <- create_irr_events(
 #'   day = c(10, 20, 30, 40, 50, 60, 70, 80),
 #'   depth = c(40, 40, 50, 50, 50, 40, 40, 30),
-#'   ecw = rep(0.5, 8)  # Good quality water
+#'   ecw = rep(0.5, 8),
+#'   crop_length = 120  # Optional: validate against 120-day cycle
 #' )
 #'
 #' # Variable water quality scenario
@@ -217,7 +263,7 @@ write_irr <- function(
 #' }
 #'
 #' @export
-create_irr_events <- function(day, depth, ecw) {
+create_irr_events <- function(day, depth, ecw, crop_length = NULL) {
 
   # Validation
   if (length(day) != length(depth) || length(day) != length(ecw)) {
@@ -234,6 +280,24 @@ create_irr_events <- function(day, depth, ecw) {
 
   if (any(ecw < 0)) {
     stop("ecw values must be positive", call. = FALSE)
+  }
+
+  # Validate against crop cycle length
+  if (!is.null(crop_length)) {
+    max_day <- max(day)
+
+    if (max_day > crop_length) {
+      offseason_events <- sum(day > crop_length)
+
+      warning(
+        sprintf(
+          "%d irrigation event(s) beyond crop cycle (day %d > %d). ",
+          offseason_events, max_day, crop_length
+        ),
+        "These will be ignored. Consider creating a separate .OFF file for off-season irrigation.",
+        call. = FALSE
+      )
+    }
   }
 
   tibble::tibble(
@@ -267,6 +331,8 @@ create_irr_events <- function(day, depth, ecw) {
 #' @param depth_crit_code Integer. Depth criterion type (applies to all rules):
 #'   - 1 = Back to Field Capacity (with optional adjustment)
 #'   - 2 = Fixed net application depth
+#' @param crop_length Integer. Optional. Length of crop cycle in days for validation.
+#'   If provided, warns about schedule rules starting beyond crop harvest.
 #'
 #' @return A tibble with columns `from_day`, `time_crit`, `depth_crit`, `ecw`
 #'   and attributes `time_crit_code` and `depth_crit_code`, ready for use with [write_irr()]
@@ -284,7 +350,8 @@ create_irr_events <- function(day, depth, ecw) {
 #'   depth_crit = c(0, 40, 0),        # 40mm each time
 #'   ecw = c(0.5, 0.5, 0.5),
 #'   time_crit_code = 1,              # Fixed interval
-#'   depth_crit_code = 2              # Fixed depth
+#'   depth_crit_code = 2,             # Fixed depth
+#'   crop_length = 120                # Optional validation
 #' )
 #'
 #' # RAW-based irrigation (back to FC)
@@ -310,7 +377,8 @@ create_irr_events <- function(day, depth, ecw) {
 #'
 #' @export
 create_irr_schedule <- function(from_day, time_crit, depth_crit, ecw,
-                                time_crit_code, depth_crit_code) {
+                                time_crit_code, depth_crit_code,
+                                crop_length = NULL) {
 
   # Validation
   if (length(from_day) != length(time_crit) ||
@@ -329,6 +397,24 @@ create_irr_schedule <- function(from_day, time_crit, depth_crit, ecw,
 
   if (from_day[1] != 1) {
     stop("First from_day must be 1", call. = FALSE)
+  }
+
+  # Validate against crop cycle length
+  if (!is.null(crop_length)) {
+    max_from_day <- max(from_day)
+
+    if (max_from_day > crop_length) {
+      offseason_rules <- sum(from_day > crop_length)
+
+      warning(
+        sprintf(
+          "%d schedule rule(s) start beyond crop cycle (day %d > %d). ",
+          offseason_rules, max_from_day, crop_length
+        ),
+        "These will be ignored. Consider creating a separate .OFF file for off-season irrigation.",
+        call. = FALSE
+      )
+    }
   }
 
   # Create tibble with attributes
@@ -380,6 +466,8 @@ create_irr_schedule <- function(from_day, time_crit, depth_crit, ecw,
 
   section
 }
+
+
 #' Build irrigation schedule section
 #' @noRd
 .build_irr_schedule <- function(irr_data, sep) {

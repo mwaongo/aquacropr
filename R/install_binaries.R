@@ -7,6 +7,7 @@
 #' @param version Character string specifying the AquaCrop version to install.
 #'   If \code{NULL} (default), installs the latest available version.
 #'   Version must be >= 7.0. Accepts formats like "7.1", "v7.1", or "7.1.0".
+#'   Use "dev" to compile from latest source code.
 #'   If requested version is < 7.0 or > latest, falls back to latest version.
 #' @param os Character string specifying the operating system: "windows", "linux",
 #'   or "macos". If \code{NULL} (default), automatically detects the current OS.
@@ -14,6 +15,10 @@
 #'   the AquaCrop executable will be installed.
 #' @param force Logical. If \code{TRUE}, reinstalls even if executable already exists.
 #'   If \code{FALSE} (default), skips installation if executable is present.
+#' @param compiler Character. Fortran compiler for dev builds. Default: "gfortran".
+#'   Only used when version = "dev".
+#' @param keep_source Logical. Keep source code after compilation. Default: FALSE.
+#'   Only used when version = "dev".
 #'
 #' @return Invisibly returns the installed version number as a character string.
 #'
@@ -27,6 +32,14 @@
 #'   \item Validates cached downloads to detect corruption
 #'   \item Extracts and installs the executable
 #'   \item Sets appropriate permissions on Unix systems
+#' }
+#'
+#' For \code{version = "dev"}:
+#' \itemize{
+#'   \item Downloads latest source code from GitHub
+#'   \item Checks for required build tools (make, gfortran)
+#'   \item Compiles AquaCrop executable
+#'   \item Installs binary and cleans up source files
 #' }
 #'
 #' Fallback behavior:
@@ -44,11 +57,14 @@
 #' # Install specific version
 #' install_binaries(version = "7.1", path = "~/aquacrop")
 #'
+#' # Install dev version (compile from source)
+#' install_binaries(version = "dev", path = "~/aquacrop")
+#'
+#' # Dev version with Intel compiler
+#' install_binaries(version = "dev", path = "~/aquacrop", compiler = "ifort")
+#'
 #' # Force reinstall
 #' install_binaries(version = "7.1", path = "~/aquacrop", force = TRUE)
-#'
-#' # Specify OS explicitly
-#' install_binaries(version = "7.1", os = "linux", path = "~/aquacrop")
 #' }
 #'
 #' @importFrom gh gh
@@ -57,7 +73,26 @@
 #' @importFrom utils download.file unzip
 #'
 #' @export
-install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
+install_binaries <- function(
+    version = NULL,
+    os = NULL,
+    path,
+    force = FALSE,
+    compiler = "gfortran",
+    keep_source = FALSE) {
+
+
+  # Handle dev version (compile from source)
+  if (!is.null(version) && tolower(version) == "dev") {
+    message("Installing development version from source...")
+    return(install_source(
+      dest_dir = path,
+      compiler = compiler,
+      keep_source = keep_source,
+      force = force
+    ))
+  }
+
   # Detect OS
   if (is.null(os)) os <- get_os()
 
@@ -84,10 +119,10 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
     version <- latest_version
     tag <- latest_tag
     message("Installing latest version: ", version)
+
   } else {
     # Clean version
     version <- gsub("^v", "", as.character(version))
-    tag <- paste0("v", version)
 
     # Validate version >= 7.0
     version_parts <- strsplit(version, "\\.")[[1]]
@@ -98,6 +133,7 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
       message("Falling back to latest version: ", latest_version)
       version <- latest_version
       tag <- latest_tag
+
     } else {
       # Check if requested version > latest
       if (numeric_version(version) > numeric_version(latest_version)) {
@@ -105,6 +141,10 @@ install_binaries <- function(version = NULL, os = NULL, path, force = FALSE) {
         message("Falling back to latest version: ", latest_version)
         version <- latest_version
         tag <- latest_tag
+
+      } else {
+        # Valid, supported version → resolve tag via helper
+        tag <- .get_version_tag(version)
       }
     }
   }
