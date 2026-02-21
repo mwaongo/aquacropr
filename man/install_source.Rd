@@ -4,69 +4,56 @@
 \alias{install_source}
 \title{Install AquaCrop from Source}
 \usage{
-install_source(
-  dest_dir,
-  compiler = "gfortran",
-  keep_source = FALSE,
-  force = FALSE
-)
+install_source(dest_dir, compiler = NULL, keep_source = FALSE, force = FALSE)
 }
 \arguments{
-\item{dest_dir}{Character. Destination directory for the AquaCrop executable.}
+\item{dest_dir}{Character. Destination directory for the AquaCrop
+executable.}
 
-\item{compiler}{Character. Fortran compiler to use. Options: "gfortran" (default), "ifort".}
+\item{compiler}{Character or NULL. Fortran compiler to use. If NULL
+(default), auto-detected once via R CMD config FC and reused across
+all steps. Can be set explicitly (e.g., "gfortran", "ifort", or a
+full path such as "/usr/local/bin/gfortran-13").}
 
-\item{keep_source}{Logical. If TRUE, keeps source code after compilation. Default: FALSE.}
+\item{keep_source}{Logical. If TRUE, keeps source code after compilation.
+Default: FALSE.}
 
-\item{force}{Logical. If TRUE, overwrites existing installation. Default: FALSE.}
+\item{force}{Logical. If TRUE, overwrites existing installation.
+Default: FALSE.}
 }
 \value{
 Invisibly returns "dev" as the version string.
 }
 \description{
-Complete workflow to download, compile, and install AquaCrop executable from source.
-Always compiles from the latest development version (main branch).
-This function is called by install_binaries(version = "dev").
+Complete workflow to download, compile, and install the AquaCrop executable
+from source. Always compiles from the latest development version (main
+branch). This function is called internally by
+install_binaries(version = "dev").
 }
 \details{
-\subsection{System Requirements}{
+System requirements on Linux and macOS: GNU Make (>= 3.82) and a Fortran
+compiler (gfortran >= 6.4.0 or ifort >= 18.0.1). On Windows, installing
+Rtools is sufficient as it provides both make (mingw32-make) and gfortran.
 
-\strong{Linux/macOS:}
-\itemize{
-\item GNU Make (>= 3.82)
-\item GNU Fortran (gfortran >= 6.4.0) or Intel Fortran (ifort >= 18.0.1)
-}
-
-\strong{Windows:}
-\itemize{
-\item MinGW with gfortran
-\item GNU Make
-}
-}
-
-\subsection{Installation Steps}{
-\enumerate{
-\item Checks for required build tools (make, compiler)
-\item Downloads latest source code from GitHub main branch
-\item Compiles AquaCrop executable
-\item Installs binary to destination directory
-\item Cleans up source files (unless keep_source = TRUE)
-}
-}
+The function first checks for required build tools and detects the Fortran
+compiler once via R CMD config FC, then downloads the latest source code
+from the GitHub main branch, compiles the executable, installs the binary
+to the destination directory, and cleans up source files unless
+keep_source is TRUE.
 }
 \examples{
 \dontrun{
-# Usually called via install_binaries(version = "dev")
+# Usually called via install_binaries
 install_binaries(version = "dev", path = "~/aquacrop")
 
-# Direct call (advanced users)
+# Direct call with auto-detected compiler
 install_source(dest_dir = "~/aquacrop")
 
-# Keep source code for development
+# Keep source code after compilation
 install_source(dest_dir = "~/aquacrop", keep_source = TRUE)
 
-# Use Intel Fortran compiler
-install_source(dest_dir = "~/aquacrop", compiler = "ifort")
+# Force reinstall with explicit compiler
+install_source(dest_dir = "~/aquacrop", compiler = "gfortran", force = TRUE)
 }
 
 }

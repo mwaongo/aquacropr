@@ -108,6 +108,7 @@ write_man_batch(
 \code{\link{ManData}} for complete parameter reference
 
 Other batch operations: 
+\code{\link{write_irrig_batch}()},
 \code{\link{write_prm_batch}()},
 \code{\link{write_sol_batch}()}
 }

@@ -6,21 +6,24 @@
 \usage{
 download_source(
   dest_dir = fs::path_temp("aquacrop_source"),
-  url = "https://github.com/KUL-RSDA/AquaCrop/archive/refs/heads/main.zip"
+  url = "https://github.com/KUL-RSDA/AquaCrop/archive/refs/heads/main.zip",
+  timeout = 120
 )
 }
 \arguments{
 \item{dest_dir}{Character. Directory where source will be extracted.
-Default: temporary directory.}
+Default: a temporary directory.}
 
 \item{url}{Character. URL to download source code.
 Default: official GitHub repository main branch.}
+
+\item{timeout}{Integer. Download timeout in seconds. Default: 120.}
 }
 \value{
-Path to extracted AquaCrop source directory.
+Character. Path to the extracted AquaCrop source directory.
 }
 \description{
-Downloads and extracts AquaCrop source code from GitHub main branch.
+Downloads and extracts AquaCrop source code from the GitHub main branch.
 }
 \examples{
 \dontrun{

@@ -131,7 +131,7 @@
     if (is.null(s$path)) return(NULL)
     nm   <- if (!is.null(s$name)) s$name else station_name
     file <- fs::path(base_path, s$path, paste0(nm, ".", s$ext))
-    setNames(file, s$ext)
+    stats::setNames(file, s$ext)
   }))
   if (length(optional_files) > 0) {
     .validate_files_exist(unlist(optional_files))
