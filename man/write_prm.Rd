@@ -2,18 +2,22 @@
 % Please edit documentation in R/write_prm.R
 \name{write_prm}
 \alias{write_prm}
-\title{Write AquaCrop Parameter Files for Multiple Years (Batch)}
+\title{Write AquaCrop Parameter Files for Multiple Years}
 \usage{
 write_prm(
   station_name,
   path = "LIST/",
   planting_schedule,
-  crop_name,
+  crop_name = NULL,
   crop_path = "CROP/",
   crop_duration = 90,
   climate_path = "CLIMATE/",
   management_path = "MANAGEMENT/",
+  irrigation_path = "MANAGEMENT/",
   soil_path = "SOIL/",
+  gwt_path = NULL,
+  offseason_path = NULL,
+  obs_path = NULL,
   simulation_start_doy = NULL,
   scenario = "hist",
   eol = "windows",
@@ -22,39 +26,71 @@ write_prm(
 )
 }
 \arguments{
-\item{station_name}{Station identifier}
+\item{station_name}{Station identifier.}
 
-\item{path}{Output directory path}
+\item{path}{Output directory path for PRM files. Default: "LIST/".}
 
-\item{planting_schedule}{data.frame with: year, planting_doy}
+\item{planting_schedule}{data.frame with at least two columns:
+\describe{
+\item{year}{Numeric. Year of cultivation.}
+\item{planting_doy}{Numeric. Day of year for planting (1-365/366).}
+}}
 
-\item{crop_name}{Crop name (e.g., "maize_90days")}
+\item{crop_name}{Crop name (e.g., "maize_90days").
+If NULL, section 3 is written as (None). Default: NULL.}
 
-\item{crop_path}{Path to crop file directory}
+\item{crop_path}{Path to crop file directory. Default: "CROP/".
+If crop_name is NULL, crop_path is ignored and section 3 is written
+as (None).}
 
-\item{crop_duration}{Growing season length in days}
+\item{crop_duration}{Growing season length in days. Default: 90.}
 
-\item{climate_path}{Path to climate file directory}
+\item{climate_path}{Path to climate file directory. Default: "CLIMATE/".}
 
-\item{management_path}{Path to management file directory}
+\item{management_path}{Path to field management file directory.
+Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
 
-\item{soil_path}{Path to soil file directory}
+\item{irrigation_path}{Path to irrigation management file directory.
+Default: "MANAGEMENT/". If NULL, section 4 is written as (None).}
 
-\item{simulation_start_doy}{Day of year for simulation start}
+\item{soil_path}{Path to soil file directory. Required, cannot be NULL.
+Default: "SOIL/".}
 
-\item{scenario}{Climate scenario}
+\item{gwt_path}{Path to groundwater table file directory.
+Default: NULL. If NULL, section 7 is written as (None).}
 
-\item{eol}{End-of-line type}
+\item{offseason_path}{Path to off-season conditions file directory.
+Default: NULL. If NULL, section 9 is written as (None).}
 
-\item{use_standalone}{Logical. Whether running in standalone mode}
+\item{obs_path}{Path to field data file directory.
+Default: NULL. If NULL, section 10 is written as (None).}
 
-\item{base_path}{Character. Base absolute path (required)}
+\item{simulation_start_doy}{Day of year for simulation start.
+If NULL (default), uses April 1st (DOY 91, or 92 for leap years).}
+
+\item{scenario}{Climate scenario. One of: "hist", "rcp26", "rcp45",
+"rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585".
+Default: "hist".}
+
+\item{eol}{End-of-line character style. One of "windows", "linux",
+"macos". Default: "windows".}
+
+\item{use_standalone}{Logical. Whether running AquaCrop in standalone mode.
+Default: TRUE.}
+
+\item{base_path}{Character. Base absolute path used for file existence
+checking. Default: getwd().}
 }
 \value{
-Invisibly returns the output file path
+Invisibly returns the output file path.
 }
 \description{
-Creates a single \code{.PRM} file with header once + multiple year blocks.
+Creates a single .PRM file with the header written once, followed by
+one year block per row in planting_schedule.
+
+Climate files (CLI, Tnx, ETo, PLU) and soil files (SOL, SW0) are always
+required. All other sections are optional: if their path is NULL,
+"(None)" is written in the PRM file.
 }
 \seealso{
 Other AquaCrop file writers: 
