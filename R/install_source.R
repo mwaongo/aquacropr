@@ -71,13 +71,13 @@ install_source <- function(
   # Step 1: Check dependencies
   message("Step 1/4: Checking system dependencies...")
   check_sys_deps(compiler = compiler)
-  message("✓ All dependencies satisfied\n")
+  message("All dependencies satisfied\n")
 
   # Step 2: Download source
   message("Step 2/4: Downloading source code from main branch...")
   temp_dir <- fs::path_temp("aquacrop_build")
   source_dir <- download_source(dest_dir = temp_dir)
-  message("✓ Source downloaded\n")
+  message("Source downloaded\n")
 
   # Step 3: Build
   message("Step 3/4: Compiling AquaCrop...")
@@ -85,7 +85,7 @@ install_source <- function(
     source_dir = source_dir,
     compiler = compiler
   )
-  message("✓ Compilation successful\n")
+  message("Compilation successful\n")
 
   # Step 4: Install and clean
   message("Step 4/4: Installing binary...")
@@ -93,7 +93,7 @@ install_source <- function(
   if (fs::file_exists(exe_path)) {
     fs::file_copy(exe_path, final_exe, overwrite = TRUE)
     fs::file_chmod(final_exe, "755")
-    message("✓ Binary installed to: ", final_exe)
+    message("Binary installed to: ", final_exe)
   } else {
     stop("Compilation succeeded but executable not found", call. = FALSE)
   }
@@ -102,7 +102,7 @@ install_source <- function(
   if (!keep_source) {
     message("Cleaning up source files...")
     fs::dir_delete(temp_dir)
-    message("✓ Cleanup complete")
+    message("Cleanup complete")
   } else {
     message("Source code kept at: ", source_dir)
   }
@@ -130,7 +130,7 @@ install_source <- function(
 #' check_sys_deps(compiler = "ifort")
 #' }
 #'
-#' @export
+#' @noRd
 check_sys_deps <- function(compiler = "gfortran") {
 
   if (!compiler %in% c("gfortran", "ifort")) {
@@ -142,14 +142,14 @@ check_sys_deps <- function(compiler = "gfortran") {
   # Check make
   make_path <- Sys.which("make")
   if (make_path == "") {
-    message("✗ GNU Make not found")
+    message("error: GNU Make not found")
     deps_ok <- FALSE
   } else {
     make_version <- tryCatch(
       system2("make", "--version", stdout = TRUE, stderr = FALSE)[1],
       error = function(e) "unknown"
     )
-    message("✓ make: ", make_path)
+    message("make: ", make_path)
     if (make_version != "unknown") {
       message("  ", make_version)
     }
@@ -158,14 +158,14 @@ check_sys_deps <- function(compiler = "gfortran") {
   # Check compiler
   fc_path <- Sys.which(compiler)
   if (fc_path == "") {
-    message("✗ ", compiler, " not found")
+    message("error:", compiler, " not found")
     deps_ok <- FALSE
   } else {
     fc_version <- tryCatch(
       system2(compiler, "--version", stdout = TRUE, stderr = FALSE)[1],
       error = function(e) "unknown"
     )
-    message("✓ ", compiler, ": ", fc_path)
+    message("ok : ", compiler, ": ", fc_path)
     if (fc_version != "unknown") {
       message("  ", fc_version)
     }
@@ -274,8 +274,10 @@ find_make <- function() {
 #' @param source_dir Character. Path to AquaCrop source directory.
 #' @param compiler Character. Fortran compiler. Default: "gfortran".
 #' @param target Character. Build target: "bin" (default), "lib", or "all".
+#' @param verbose Logical. If TRUE will print building informations.
 #'
 #' @return Path to compiled executable.
+#' @importFrom withr with_dir
 #'
 #' @examples
 #' \dontrun{
@@ -304,7 +306,7 @@ build_source <- function(
   }
 
   os   <- get_os()
-  make <- find_make(os)
+  make <- find_make()
 
   # ---- check compiler ----
   fc <- Sys.which(compiler)
@@ -333,12 +335,14 @@ build_source <- function(
   }
 
   # ---- run build ----
-  result <- system2(
-    command = make,
-    args    = make_args,
-    stdout = TRUE,
-    stderr = TRUE,
-    wd     = src_dir
+  result <- withr::with_dir(src_dir, {
+    system2(
+      command = make,
+      args    = make_args,
+      stdout  = TRUE,
+      stderr  = TRUE
+    )
+  }
   )
 
   status <- attr(result, "status")

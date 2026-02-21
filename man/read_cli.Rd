@@ -40,30 +40,12 @@ The CLI file structure:
 \item Line 5: Rainfall file (.PLU)
 \item Line 6: CO2 file (.CO2)
 }
-
-File path resolution:
-\itemize{
-\item If filename only (e.g., "grid_005.Tnx"), looks in the same directory
-as the CLI file
-\item If absolute path (e.g., "/data/weather/grid_005.Tnx"), uses that path
-\item If relative path (e.g., "../weather/grid_005.Tnx"), resolves relative
-to CLI file location
-}
-
-The function reads all three weather files and joins them by date columns
-(station, year, month, day) using left joins.
 }
 \examples{
 \dontrun{
 # Read CLI file and get complete weather data
 climate <- read_cli("data/default.CLI")
 head(climate)
-
-# Check for missing data
-summary(climate)
-
-# Filter complete cases
-complete_data <- climate[complete.cases(climate), ]
 }
 
 }
@@ -71,13 +53,11 @@ complete_data <- climate[complete.cases(climate), ]
 Other AquaCrop readers: 
 \code{\link{read_eto}()},
 \code{\link{read_plu}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 
 Other AquaCrop readers: 
 \code{\link{read_eto}()},
 \code{\link{read_plu}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 }
 \concept{AquaCrop readers}

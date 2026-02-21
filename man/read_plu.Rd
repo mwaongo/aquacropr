@@ -22,23 +22,6 @@ A tibble with columns:
 \description{
 Reads and parses an AquaCrop PLU (rainfall) file into a tidy data frame.
 }
-\details{
-The function:
-\itemize{
-\item Validates the file using \code{is_plu()}
-\item Parses header information (station, record type, start date)
-\item Reads rainfall values
-\item Generates dates based on record type (daily, 10-day, or monthly)
-\item Converts -9 (missing data indicator) to NA
-}
-
-Record types:
-\itemize{
-\item 1: Daily data
-\item 2: 10-day (dekadal) data
-\item 3: Monthly data
-}
-}
 \examples{
 \dontrun{
 rainfall <- read_plu("data/station1.plu")
@@ -49,7 +32,6 @@ head(rainfall)
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_eto}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 }
 \concept{AquaCrop readers}

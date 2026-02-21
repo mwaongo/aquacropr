@@ -27,33 +27,10 @@ converted to NA.
 Reads and parses an AquaCrop ETo (reference evapotranspiration) file into
 a tidy data frame.
 }
-\details{
-The function:
-\itemize{
-\item Validates the file using \code{is_eto()}
-\item Parses header information (station, record type, start date)
-\item Reads ETo values
-\item Generates dates based on record type (daily, 10-day, or monthly)
-\item Converts -9 (missing data indicator) to NA
-}
-
-Record types:
-\itemize{
-\item 1: Daily data
-\item 2: 10-day (dekadal) data
-\item 3: Monthly data
-}
-}
 \examples{
 \dontrun{
 eto_data <- read_eto("data/grid_003.ETo")
 head(eto_data)
-
-# Filter complete cases
-complete_data <- eto_data[!is.na(eto_data$eto), ]
-
-# Summary statistics
-summary(eto_data$eto)
 }
 
 }
@@ -61,19 +38,16 @@ summary(eto_data$eto)
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
-\code{\link{read_season_out}()},
 \code{\link{read_tnx}()}
 }
 \concept{AquaCrop readers}

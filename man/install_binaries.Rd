@@ -4,12 +4,20 @@
 \alias{install_binaries}
 \title{Install AquaCrop Binary}
 \usage{
-install_binaries(version = NULL, os = NULL, path, force = FALSE)
+install_binaries(
+  version = NULL,
+  os = NULL,
+  path,
+  force = FALSE,
+  compiler = "gfortran",
+  keep_source = FALSE
+)
 }
 \arguments{
 \item{version}{Character string specifying the AquaCrop version to install.
 If \code{NULL} (default), installs the latest available version.
 Version must be >= 7.0. Accepts formats like "7.1", "v7.1", or "7.1.0".
+Use "dev" to compile from latest source code.
 If requested version is < 7.0 or > latest, falls back to latest version.}
 
 \item{os}{Character string specifying the operating system: "windows", "linux",
@@ -20,6 +28,12 @@ the AquaCrop executable will be installed.}
 
 \item{force}{Logical. If \code{TRUE}, reinstalls even if executable already exists.
 If \code{FALSE} (default), skips installation if executable is present.}
+
+\item{compiler}{Character. Fortran compiler for dev builds. Default: "gfortran".
+Only used when version = "dev".}
+
+\item{keep_source}{Logical. Keep source code after compilation. Default: FALSE.
+Only used when version = "dev".}
 }
 \value{
 Invisibly returns the installed version number as a character string.
@@ -41,6 +55,14 @@ The function performs the following steps:
 \item Sets appropriate permissions on Unix systems
 }
 
+For \code{version = "dev"}:
+\itemize{
+\item Downloads latest source code from GitHub
+\item Checks for required build tools (make, gfortran)
+\item Compiles AquaCrop executable
+\item Installs binary and cleans up source files
+}
+
 Fallback behavior:
 \itemize{
 \item Version < 7.0 → falls back to latest
@@ -56,11 +78,14 @@ install_binaries(path = "~/aquacrop")
 # Install specific version
 install_binaries(version = "7.1", path = "~/aquacrop")
 
+# Install dev version (compile from source)
+install_binaries(version = "dev", path = "~/aquacrop")
+
+# Dev version with Intel compiler
+install_binaries(version = "dev", path = "~/aquacrop", compiler = "ifort")
+
 # Force reinstall
 install_binaries(version = "7.1", path = "~/aquacrop", force = TRUE)
-
-# Specify OS explicitly
-install_binaries(version = "7.1", os = "linux", path = "~/aquacrop")
 }
 
 }

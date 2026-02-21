@@ -23,36 +23,10 @@ A tibble with columns:
 \description{
 Reads and parses an AquaCrop Tnx (temperature) file into a tidy data frame.
 }
-\details{
-The function:
-\itemize{
-\item Validates the file using \code{is_tnx()}
-\item Parses header information (station, record type, start date)
-\item Reads Tmin and Tmax values
-\item Generates dates based on record type (daily, 10-day, or monthly)
-\item Converts -9 (missing data indicator) to NA
-}
-
-Record types:
-\itemize{
-\item 1: Daily data
-\item 2: 10-day (dekadal) data
-\item 3: Monthly data
-}
-}
 \examples{
 \dontrun{
 temp_data <- read_tnx("data/grid_005.Tnx")
 head(temp_data)
-
-# Filter complete cases
-complete_data <- temp_data[!is.na(temp_data$tmin) & !is.na(temp_data$tmax), ]
-
-# Calculate daily temperature range
-temp_data$temp_range <- temp_data$tmax - temp_data$tmin
-
-# Summary statistics
-summary(temp_data[, c("tmin", "tmax")])
 }
 
 }
@@ -60,13 +34,11 @@ summary(temp_data[, c("tmin", "tmax")])
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_eto}()},
-\code{\link{read_plu}()},
-\code{\link{read_season_out}()}
+\code{\link{read_plu}()}
 
 Other AquaCrop readers: 
 \code{\link{read_cli}()},
 \code{\link{read_eto}()},
-\code{\link{read_plu}()},
-\code{\link{read_season_out}()}
+\code{\link{read_plu}()}
 }
 \concept{AquaCrop readers}

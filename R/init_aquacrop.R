@@ -227,6 +227,7 @@ init_aquacrop <- function(path = ".",
 #' @param version Character string or NULL. AquaCrop version number. If NULL, displays "latest"
 #' @param pkg_name Character string. Name of the package calling this function. Default is "aquacroptools"
 #' @keywords internal
+#' @noRd
 #'
 .create_readme <- function(path, dirs = .AQUACROP_DIRS, version = NULL, pkg_name = "aquacroptools") {
   readme_path <- file.path(path, "README.txt")
@@ -247,7 +248,7 @@ init_aquacrop <- function(path = ".",
 
   # Package version
   pkg_version <- tryCatch(
-    as.character(packageVersion(pkg_name)),
+    as.character(utils::packageVersion(pkg_name)),
     error = function(e) "development"
   )
 

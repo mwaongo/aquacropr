@@ -110,6 +110,7 @@ write_cli(
 Other AquaCrop file writers: 
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},
+\code{\link{write_irr}()},
 \code{\link{write_man}()},
 \code{\link{write_plu}()},
 \code{\link{write_prm}()},
