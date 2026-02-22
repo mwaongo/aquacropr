@@ -4,16 +4,18 @@
 \alias{build_source}
 \title{Build AquaCrop from Source}
 \usage{
-build_source(source_dir, compiler = NULL, target = "bin", verbose = TRUE)
+build_source(source_dir, compiler = NULL, target = "all", verbose = TRUE)
 }
 \arguments{
 \item{source_dir}{Character. Path to the AquaCrop source directory.}
 
 \item{compiler}{Character or NULL. Fortran compiler binary name or full
-path. If NULL (default), auto-detected via R CMD config FC.}
+path, optionally including flags (e.g., "gfortran -arch x86_64").
+If NULL (default), auto-detected via .detect_fc().}
 
-\item{target}{Character. Build target passed to make. One of "bin"
-(default), "lib", or "all".}
+\item{target}{Character. Build target passed to make. One of "all"
+(default, produces both executable and library), "bin" (executable
+only), or "lib" (library only).}
 
 \item{verbose}{Logical. If TRUE (default), prints build information.}
 }
@@ -23,12 +25,12 @@ Character. Path to the compiled executable.
 \description{
 Compiles the AquaCrop executable from source code using make and a
 Fortran compiler. Accepts a pre-resolved compiler to avoid redundant
-calls to R CMD config FC when called from install_source.
+detection calls when invoked from install_source.
 }
 \examples{
 \dontrun{
 exe_path <- build_source("AquaCrop")
-exe_path <- build_source("AquaCrop", compiler = "ifort")
+exe_path <- build_source("AquaCrop", compiler = "ifort", target = "bin")
 }
 
 }

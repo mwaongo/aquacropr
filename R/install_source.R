@@ -1,29 +1,80 @@
-#' Detect Fortran Compiler via R CMD config FC
+#' Extract Fortran Compiler Binary Name from FC String
 #'
-#' Calls R CMD config FC to retrieve the Fortran compiler R itself was built
-#' with. This is the canonical cross-platform approach: it reads directly from
-#' R own Makeconf and requires no manual PATH handling.
+#' R CMD config FC may return flags alongside the binary name, for example
+#' "gfortran -arch x86_64" on macOS. This helper extracts only the first
+#' token (the binary name or path) for use with Sys.which() and file.exists().
 #'
-#' @return Character. Full path or name of the detected Fortran compiler.
-#'   Stops with an informative message if none is found.
+#' @param compiler Character. Raw FC string from R CMD config FC.
+#'
+#' @return Character. Binary name or path, stripped of flags.
+#'
+#' @noRd
+.fc_binary <- function(compiler) {
+  trimws(strsplit(compiler, " ")[[1]][1])
+}
+
+
+#' Detect Fortran Compiler
+#'
+#' Attempts to locate a usable Fortran compiler using a three-step strategy:
+#'
+#' 1. Query R CMD config FC (the compiler R itself was built with).
+#' 2. Search known absolute paths not always in PATH (macOS toolchains).
+#' 3. Fail with actionable installation instructions.
+#'
+#' This approach is necessary on macOS where the R toolchain installs gfortran
+#' to /opt/gfortran/bin/ and Homebrew installs versioned binaries such as
+#' gfortran-14, neither of which appear in the default PATH.
+#'
+#' @return Character. Full path or name of the detected Fortran compiler,
+#'   including any flags returned by R CMD config FC (e.g.,
+#'   "gfortran -arch x86_64"). Stops with an informative error if not found.
 #'
 #' @noRd
 .detect_fc <- function() {
-  compiler <- tryCatch(
+
+  # Step 1: ask R what compiler it was built with
+  fc_raw <- tryCatch(
     system2("R", args = c("CMD", "config", "FC"), stdout = TRUE, stderr = FALSE),
     error = function(e) ""
   )
-  compiler <- compiler[nzchar(compiler)][1]
+  fc_raw <- fc_raw[nzchar(fc_raw)][1]
 
-  if (is.na(compiler) || !nzchar(compiler)) {
-    stop(
-      "Could not detect a Fortran compiler via 'R CMD config FC'.\n",
-      "Please specify one explicitly, e.g.: compiler = 'gfortran'",
-      call. = FALSE
-    )
+  if (!is.na(fc_raw) && nzchar(fc_raw)) {
+    bin <- .fc_binary(fc_raw)
+    # Accept if findable via PATH or as an absolute path
+    if (nzchar(Sys.which(bin)) || file.exists(bin)) {
+      return(fc_raw)
+    }
   }
 
-  compiler
+  # Step 2: search known locations not always in PATH.
+  # Covers the official R macOS toolchain (mac.r-project.org) and Homebrew
+  # on both Intel and Apple Silicon Macs.
+  known_paths <- c(
+    "/opt/gfortran/bin/gfortran",                  # official R macOS toolchain
+    paste0("/opt/homebrew/bin/gfortran-", 15:6),   # Homebrew Apple Silicon
+    paste0("/usr/local/bin/gfortran-", 15:6)       # Homebrew Intel Mac
+  )
+
+  for (path in known_paths) {
+    if (file.exists(path)) {
+      message("  gfortran found at: ", path)
+      return(path)
+    }
+  }
+
+  # Step 3: fail with actionable instructions
+  stop(
+    "No Fortran compiler found.\n\n",
+    "On macOS, install the official R toolchain (recommended for x86_64):\n",
+    "  https://mac.r-project.org/tools/\n\n",
+    "Or install via Homebrew:\n",
+    "  brew install gcc\n\n",
+    "Or specify the compiler explicitly:\n",
+    "  install_source(compiler = '/opt/gfortran/bin/gfortran')",
+    call. = FALSE
+  )
 }
 
 
@@ -63,17 +114,15 @@ find_make <- function() {
 #'
 #' Verifies that required build tools (make and a Fortran compiler) are
 #' available on the system before attempting to compile AquaCrop. The
-#' Fortran compiler is auto-detected via R CMD config FC, which reads the
-#' same compiler R itself was built with.
+#' Fortran compiler is auto-detected via R CMD config FC first, then by
+#' searching known installation paths on macOS.
 #'
-#' Calling this function once and reusing its return value avoids redundant
-#' calls to R CMD config FC across the install workflow.
+#' Returns the detected values so that install_source can reuse them
+#' without triggering redundant detection calls.
 #'
 #' @return Invisibly returns a named list with two elements:
-#'   \describe{
-#'     \item{compiler}{Character. Detected Fortran compiler (full path or name).}
-#'     \item{make}{Character. Full path to the make executable.}
-#'   }
+#'   compiler (Character, detected Fortran compiler) and
+#'   make (Character, full path to the make executable).
 #'   Stops with an informative message if any dependency is missing.
 #'
 #' @noRd
@@ -97,18 +146,24 @@ check_sys_deps <- function() {
     if (make_version != "unknown") message("  ", make_version)
   }
 
-  # Detect Fortran compiler via R CMD config FC
+  # Detect Fortran compiler
   fc_out <- tryCatch(.detect_fc(), error = function(e) "")
   if (!nzchar(fc_out)) {
-    message("error: no Fortran compiler detected via R CMD config FC")
+    message("error: no Fortran compiler found")
     deps_ok <- FALSE
   } else {
-    compiler_bin <- basename(fc_out)
+    compiler_bin <- .fc_binary(fc_out)
     fc_version <- tryCatch(
       system2(compiler_bin, "--version", stdout = TRUE, stderr = FALSE)[1],
-      error = function(e) "unknown"
+      error = function(e) {
+        # Binary may be an absolute path not in PATH; try directly
+        tryCatch(
+          system2(fc_out, "--version", stdout = TRUE, stderr = FALSE)[1],
+          error = function(e2) "unknown"
+        )
+      }
     )
-    message("ok: ", compiler_bin, ": ", Sys.which(compiler_bin))
+    message("ok: ", compiler_bin, ": ", fc_out)
     if (fc_version != "unknown") message("  ", fc_version)
   }
 
@@ -119,7 +174,9 @@ check_sys_deps <- function() {
       "  sudo apt-get install make gfortran\n\n",
       "Fedora/RHEL:\n",
       "  sudo dnf install make gcc-gfortran\n\n",
-      "macOS:\n",
+      "macOS (official R toolchain, recommended):\n",
+      "  https://mac.r-project.org/tools/\n\n",
+      "macOS (Homebrew):\n",
       "  brew install make gcc\n\n",
       "Windows:\n",
       "  Install Rtools (includes make and gfortran)",
@@ -159,7 +216,7 @@ download_source <- function(
   fs::dir_create(dest_dir, recurse = TRUE)
   zip_file <- fs::path(dest_dir, "aquacrop_main.zip")
 
-  # Apply timeout and restore on exit
+  # Apply timeout and restore original value on exit
   old_timeout <- getOption("timeout")
   on.exit(options(timeout = old_timeout), add = TRUE)
   options(timeout = timeout)
@@ -198,13 +255,15 @@ download_source <- function(
 #'
 #' Compiles the AquaCrop executable from source code using make and a
 #' Fortran compiler. Accepts a pre-resolved compiler to avoid redundant
-#' calls to R CMD config FC when called from install_source.
+#' detection calls when invoked from install_source.
 #'
 #' @param source_dir Character. Path to the AquaCrop source directory.
 #' @param compiler Character or NULL. Fortran compiler binary name or full
-#'   path. If NULL (default), auto-detected via R CMD config FC.
-#' @param target Character. Build target passed to make. One of "bin"
-#'   (default), "lib", or "all".
+#'   path, optionally including flags (e.g., "gfortran -arch x86_64").
+#'   If NULL (default), auto-detected via .detect_fc().
+#' @param target Character. Build target passed to make. One of "all"
+#'   (default, produces both executable and library), "bin" (executable
+#'   only), or "lib" (library only).
 #' @param verbose Logical. If TRUE (default), prints build information.
 #'
 #' @return Character. Path to the compiled executable.
@@ -214,19 +273,19 @@ download_source <- function(
 #' @examples
 #' \dontrun{
 #' exe_path <- build_source("AquaCrop")
-#' exe_path <- build_source("AquaCrop", compiler = "ifort")
+#' exe_path <- build_source("AquaCrop", compiler = "ifort", target = "bin")
 #' }
 #'
 #' @export
 build_source <- function(
     source_dir,
     compiler = NULL,
-    target   = "bin",
+    target   = "all",
     verbose  = TRUE
 ) {
 
-  if (!target %in% c("bin", "lib", "all")) {
-    stop("target must be 'bin', 'lib', or 'all'.", call. = FALSE)
+  if (!target %in% c("all", "bin", "lib")) {
+    stop("target must be 'all', 'bin', or 'lib'.", call. = FALSE)
   }
 
   source_dir <- fs::path_expand(source_dir)
@@ -244,10 +303,10 @@ build_source <- function(
     compiler <- .detect_fc()
   }
 
-  # basename handles full paths (e.g., /usr/local/bin/gfortran-13)
-  # Sys.which validates availability; full path is passed to FC= in make
-  compiler_bin <- basename(compiler)
-  if (!nzchar(Sys.which(compiler_bin))) {
+  # .fc_binary strips flags to get the binary name for validation.
+  # The full compiler string (with flags) is passed to FC= in make args.
+  compiler_bin <- .fc_binary(compiler)
+  if (!nzchar(Sys.which(compiler_bin)) && !file.exists(compiler_bin)) {
     stop("Fortran compiler not found: ", compiler_bin, call. = FALSE)
   }
 
@@ -314,9 +373,10 @@ build_source <- function(
 #' @param dest_dir Character. Destination directory for the AquaCrop
 #'   executable.
 #' @param compiler Character or NULL. Fortran compiler to use. If NULL
-#'   (default), auto-detected once via R CMD config FC and reused across
-#'   all steps. Can be set explicitly (e.g., "gfortran", "ifort", or a
-#'   full path such as "/usr/local/bin/gfortran-13").
+#'   (default), auto-detected once and reused across all steps. Can be set
+#'   explicitly as a binary name (e.g., "gfortran"), a versioned name
+#'   (e.g., "gfortran-14"), or a full absolute path
+#'   (e.g., "/opt/gfortran/bin/gfortran").
 #' @param keep_source Logical. If TRUE, keeps source code after compilation.
 #'   Default: FALSE.
 #' @param force Logical. If TRUE, overwrites existing installation.
@@ -324,14 +384,12 @@ build_source <- function(
 #'
 #' @details
 #' System requirements on Linux and macOS: GNU Make (>= 3.82) and a Fortran
-#' compiler (gfortran >= 6.4.0 or ifort >= 18.0.1). On Windows, installing
-#' Rtools is sufficient as it provides both make (mingw32-make) and gfortran.
+#' compiler (gfortran >= 6.4.0 or ifort >= 18.0.1). On macOS, the official
+#' R toolchain from mac.r-project.org/tools is recommended. On Windows,
+#' installing Rtools is sufficient as it provides both make and gfortran.
 #'
-#' The function first checks for required build tools and detects the Fortran
-#' compiler once via R CMD config FC, then downloads the latest source code
-#' from the GitHub main branch, compiles the executable, installs the binary
-#' to the destination directory, and cleans up source files unless
-#' keep_source is TRUE.
+#' The function detects the Fortran compiler once in step 1 and reuses the
+#' result in step 3, avoiding redundant calls to R CMD config FC.
 #'
 #' @return Invisibly returns "dev" as the version string.
 #'
@@ -346,8 +404,12 @@ build_source <- function(
 #' # Keep source code after compilation
 #' install_source(dest_dir = "~/aquacrop", keep_source = TRUE)
 #'
-#' # Force reinstall with explicit compiler
-#' install_source(dest_dir = "~/aquacrop", compiler = "gfortran", force = TRUE)
+#' # Force reinstall with explicit compiler path
+#' install_source(
+#'   dest_dir = "~/aquacrop",
+#'   compiler = "/opt/gfortran/bin/gfortran",
+#'   force    = TRUE
+#' )
 #' }
 #'
 #' @export
@@ -390,7 +452,7 @@ install_source <- function(
   source_dir <- download_source(dest_dir = temp_dir)
   message("Source downloaded\n")
 
-  # Pass resolved compiler directly: build_source will not call R CMD config FC again
+  # Pass resolved compiler directly so build_source does not detect again
   message("Step 3/4: Compiling AquaCrop...")
   exe_path <- build_source(source_dir = source_dir, compiler = compiler)
   message("Compilation successful\n")

@@ -93,10 +93,14 @@ write_eto(data = weather_with_station, path = "climate/")
 }
 \seealso{
 Other AquaCrop file writers: 
+\code{\link{write_cal}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
+\code{\link{write_gwt}()},
 \code{\link{write_irr}()},
 \code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
 \code{\link{write_plu}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()},

@@ -11,9 +11,10 @@ install_source(dest_dir, compiler = NULL, keep_source = FALSE, force = FALSE)
 executable.}
 
 \item{compiler}{Character or NULL. Fortran compiler to use. If NULL
-(default), auto-detected once via R CMD config FC and reused across
-all steps. Can be set explicitly (e.g., "gfortran", "ifort", or a
-full path such as "/usr/local/bin/gfortran-13").}
+(default), auto-detected once and reused across all steps. Can be set
+explicitly as a binary name (e.g., "gfortran"), a versioned name
+(e.g., "gfortran-14"), or a full absolute path
+(e.g., "/opt/gfortran/bin/gfortran").}
 
 \item{keep_source}{Logical. If TRUE, keeps source code after compilation.
 Default: FALSE.}
@@ -32,14 +33,12 @@ install_binaries(version = "dev").
 }
 \details{
 System requirements on Linux and macOS: GNU Make (>= 3.82) and a Fortran
-compiler (gfortran >= 6.4.0 or ifort >= 18.0.1). On Windows, installing
-Rtools is sufficient as it provides both make (mingw32-make) and gfortran.
+compiler (gfortran >= 6.4.0 or ifort >= 18.0.1). On macOS, the official
+R toolchain from mac.r-project.org/tools is recommended. On Windows,
+installing Rtools is sufficient as it provides both make and gfortran.
 
-The function first checks for required build tools and detects the Fortran
-compiler once via R CMD config FC, then downloads the latest source code
-from the GitHub main branch, compiles the executable, installs the binary
-to the destination directory, and cleans up source files unless
-keep_source is TRUE.
+The function detects the Fortran compiler once in step 1 and reuses the
+result in step 3, avoiding redundant calls to R CMD config FC.
 }
 \examples{
 \dontrun{
@@ -52,8 +51,12 @@ install_source(dest_dir = "~/aquacrop")
 # Keep source code after compilation
 install_source(dest_dir = "~/aquacrop", keep_source = TRUE)
 
-# Force reinstall with explicit compiler
-install_source(dest_dir = "~/aquacrop", compiler = "gfortran", force = TRUE)
+# Force reinstall with explicit compiler path
+install_source(
+  dest_dir = "~/aquacrop",
+  compiler = "/opt/gfortran/bin/gfortran",
+  force    = TRUE
+)
 }
 
 }

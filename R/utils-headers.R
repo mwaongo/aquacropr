@@ -527,3 +527,267 @@
     append = TRUE
   )
 }
+
+#' Get Groundwater Table File Header
+#'
+#' Internal function to generate the header for AquaCrop groundwater table
+#' files (.GWT). Covers all three codes: 0 (no groundwater), 1 (constant),
+#' and 2 (variable).
+#'
+#' @param code Integer. Groundwater table mode: 0, 1, or 2.
+#' @param description Character. Description written on the first line.
+#' @param version Numeric. AquaCrop version number.
+#' @param start_day Integer. First day of observations (code 2 only).
+#' @param start_month Integer. First month of observations (code 2 only).
+#' @param start_year Integer. First year of observations (code 2 only).
+#' @param eol End-of-line character style. If NULL, auto-detected.
+#'
+#' @return Character string containing the formatted header.
+#' @keywords internal
+#' @noRd
+.get_gwt_header <- function(
+    code,
+    description,
+    version     = 7.1,
+    start_day   = 1,
+    start_month = 1,
+    start_year  = 1901,
+    eol         = NULL
+) {
+
+  sep <- .get_eol(eol)
+
+  code_labels <- c(
+    "0" = "no groundwater table",
+    "1" = "groundwater table at fixed depth and with constant salinity",
+    "2" = "variable groundwater table"
+  )
+
+  line_1 <- description
+  line_2 <- paste0(
+    format(sprintf("%.1f", version), width = 7, justify = "centre"),
+    "  : AquaCrop Version"
+  )
+  line_3 <- paste0(
+    format(as.character(code), width = 7, justify = "centre"),
+    "  : ", code_labels[as.character(code)]
+  )
+
+  header <- paste0(line_1, sep, line_2, sep, line_3, sep)
+
+  if (code == 1) {
+    header <- paste0(
+      header,
+      sep,
+      "    Day    Depth (m)    ECw (dS/m)", sep,
+      "====================================", sep
+    )
+  }
+
+  if (code == 2) {
+    line_4 <- paste0(
+      format(as.character(start_day),   width = 7, justify = "centre"),
+      "  : first day of observations"
+    )
+    line_5 <- paste0(
+      format(as.character(start_month), width = 7, justify = "centre"),
+      "  : first month of observations"
+    )
+    line_6 <- paste0(
+      format(as.character(start_year),  width = 7, justify = "centre"),
+      "  : first year of observations (1901 if not linked to a specific year)"
+    )
+
+    header <- paste0(
+      header,
+      line_4, sep,
+      line_5, sep,
+      line_6, sep,
+      sep,
+      "    Day    Depth (m)    ECw (dS/m)", sep,
+      "====================================", sep
+    )
+  }
+
+  header
+}
+
+#' Get Off-Season Conditions File Header
+#'
+#' Internal function to generate the header for AquaCrop off-season
+#' conditions files (.OFF).
+#'
+#' @param description Character. Description written on the first line.
+#' @param version Numeric. AquaCrop version number.
+#' @param mulch_before Integer. Percentage of ground surface covered by
+#'   mulches before the growing period (0-100).
+#' @param mulch_after Integer. Percentage of ground surface covered by
+#'   mulches after the growing period (0-100).
+#' @param mulch_effect Integer. Effect of mulches on reduction of soil
+#'   evaporation in percent (10-100).
+#' @param n_before Integer. Number of irrigation events before growing period
+#'   (0-5).
+#' @param ecw_before Numeric. Electrical conductivity of irrigation water
+#'   before growing period (dS/m).
+#' @param n_after Integer. Number of irrigation events after growing period
+#'   (0-5).
+#' @param ecw_after Numeric. Electrical conductivity of irrigation water
+#'   after growing period (dS/m).
+#' @param wet_surface Integer. Percentage of soil surface wetted by
+#'   off-season irrigation (0-100).
+#' @param eol End-of-line character style. If NULL, auto-detected.
+#'
+#' @return Character string containing the formatted header.
+#' @keywords internal
+#' @noRd
+.get_off_header <- function(
+    description,
+    version     = 7.1,
+    mulch_before,
+    mulch_after,
+    mulch_effect,
+    n_before,
+    ecw_before,
+    n_after,
+    ecw_after,
+    wet_surface  = 100,
+    eol          = NULL
+) {
+
+  sep <- .get_eol(eol)
+
+  header <- paste0(
+    description, sep,
+    format(sprintf("%.1f", version), width = 7, justify = "centre"),
+    "  : AquaCrop Version", sep,
+    format(as.character(mulch_before), width = 7, justify = "centre"),
+    "  : percentage (%) of ground surface covered by mulches BEFORE growing period", sep,
+    format(as.character(mulch_after),  width = 7, justify = "centre"),
+    "  : percentage (%) of ground surface covered by mulches AFTER growing period", sep,
+    format(as.character(mulch_effect), width = 7, justify = "centre"),
+    "  : effect (%) of mulches on reduction of soil evaporation", sep,
+    format(as.character(n_before),     width = 7, justify = "centre"),
+    "  : number of irrigation events BEFORE growing period", sep,
+    format(sprintf("%.1f", ecw_before), width = 7, justify = "centre"),
+    "  : quality of irrigation water BEFORE growing period (dS/m)", sep,
+    format(as.character(n_after),      width = 7, justify = "centre"),
+    "  : number of irrigation events AFTER growing period", sep,
+    format(sprintf("%.1f", ecw_after),  width = 7, justify = "centre"),
+    "  : quality of irrigation water AFTER growing period (dS/m)", sep,
+    format(as.character(wet_surface),  width = 7, justify = "centre"),
+    "  : percentage (%) of soil surface wetted by off-season irrigation", sep,
+    sep,
+    "    Day    Depth(mm)    When", sep,
+    "=================================", sep
+  )
+
+  header
+}
+
+#' Get Observed Data File Header
+#'
+#' Internal function to generate the header for AquaCrop observed data
+#' files (.OBS). The first line is always "default" as AquaCrop ignores
+#' this label at runtime.
+#'
+#' @param version Numeric. AquaCrop version number.
+#' @param soil_depth Numeric. Depth of sampled soil profile in meters.
+#' @param start_day Integer. First day of observations.
+#' @param start_month Integer. First month of observations.
+#' @param start_year Integer. First year of observations.
+#'   Use 1901 if not linked to a specific year.
+#' @param eol End-of-line character style. If NULL, auto-detected.
+#'
+#' @return Character string containing the formatted header.
+#' @keywords internal
+#' @noRd
+.get_obs_header <- function(
+    version     = 7.1,
+    soil_depth,
+    start_day,
+    start_month,
+    start_year,
+    eol         = NULL
+) {
+
+  sep <- .get_eol(eol)
+
+  header <- paste0(
+    "default", sep,
+    format(sprintf("%.1f", version),    width = 7, justify = "centre"),
+    "  : AquaCrop Version", sep,
+    format(sprintf("%.2f", soil_depth), width = 7, justify = "centre"),
+    "  : depth of sampled soil profile", sep,
+    format(as.character(start_day),     width = 7, justify = "centre"),
+    "  : first day of observations", sep,
+    format(as.character(start_month),   width = 7, justify = "centre"),
+    "  : first month of observations", sep,
+    format(as.character(start_year),    width = 7, justify = "centre"),
+    "  : first year of observations (1901 if not linked to a specific year)", sep,
+    sep,
+    "   Day    Canopy cover (%)    dry Biomass (ton/ha)    Soil water content (mm)", sep,
+    "            Mean     Std         Mean       Std           Mean      Std", sep,
+    "=============================================================================", sep
+  )
+
+  header
+}
+
+#' Get Calendar File Header
+#'
+#' Internal function generating the full content of AquaCrop calendar files
+#' (.CAL). Dispatches to .build_cal_fixed or .build_cal_criterion.
+#'
+#' @param description Character. Description on the first line.
+#' @param onset_code Integer. 0 = fixed, 1 = criterion-based.
+#' @param version Numeric. AquaCrop version number.
+#' @param fixed_day Integer. Fixed calendar day (onset_code 0 only).
+#' @param window_start Integer. Start day of time window (onset_code 1 only).
+#' @param window_length Integer. Length of time window (onset_code 1 only).
+#' @param criterion_internal Integer. AquaCrop internal criterion number.
+#' @param preset_value Numeric. Threshold value.
+#' @param successive_days Integer. Successive days (criteria 2, 11, 12, 13).
+#' @param occurrences Integer. Number of occurrences (onset_code 1 only).
+#' @param eol End-of-line character style. If NULL, auto-detected.
+#'
+#' @return Character string containing the full formatted CAL file content.
+#' @keywords internal
+#' @noRd
+.get_cal_header <- function(
+    description,
+    onset_code,
+    version            = 7.1,
+    fixed_day          = NULL,
+    window_start       = NULL,
+    window_length      = NULL,
+    criterion_internal = NULL,
+    preset_value       = NULL,
+    successive_days    = NULL,
+    occurrences        = NULL,
+    eol                = NULL
+) {
+
+  sep <- .get_eol(eol)
+
+  line_3 <- if (onset_code == 0L) {
+    paste0(.fmt_cal_int(0L), "The onset of the growing period is fixed on a specific date")
+  } else {
+    paste0(.fmt_cal_int(1L), "The onset of the growing period is generated by a rainfall or air temperature criterion")
+  }
+
+  header <- paste0(
+    description, sep,
+    .fmt_cal_float(version), "AquaCrop Version", sep,
+    line_3, sep
+  )
+
+  data_lines <- if (onset_code == 0L) {
+    .build_cal_fixed(fixed_day, sep)
+  } else {
+    .build_cal_criterion(window_start, window_length, criterion_internal,
+                         preset_value, successive_days, occurrences, sep)
+  }
+
+  paste0(header, data_lines)
+}
+

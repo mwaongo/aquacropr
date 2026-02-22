@@ -141,8 +141,12 @@ write_prm_batch(
 \code{\link{write_prm}} for single station PRM file generation.
 
 Other batch operations: 
+\code{\link{write_cal_batch}()},
+\code{\link{write_gwt_batch}()},
 \code{\link{write_irrig_batch}()},
 \code{\link{write_man_batch}()},
+\code{\link{write_obs_batch}()},
+\code{\link{write_off_batch}()},
 \code{\link{write_sol_batch}()}
 }
 \concept{batch operations}
