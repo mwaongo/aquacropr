@@ -12,18 +12,24 @@
 #'   planting_doy, applied to all stations, or a list of data.frames (one per
 #'   station), each with columns year and planting_doy. The length of the list
 #'   must match the number of stations.
+#'   Optional when calendar_path is provided: the planting schedule is then
+#'   derived automatically from find_onset() for each station. If both are
+#'   supplied, calendar_path takes precedence and planting_schedule is ignored
+#'   with a warning.
 #' @param path Output directory path for PRM files. Default: "LIST/".
 #' @param crop_path Path to crop files directory. Default: "CROP/".
 #'   If crop_name is NULL, crop_path is ignored and section 3 is written
 #'   as (None).
 #' @param climate_path Path to climate files directory. Default: "CLIMATE/".
+#' @param calendar_path Path to calendar files directory. Default: NULL.
+#'   If NULL, section 2 is written as (None).
 #' @param management_path Path to field management files directory.
 #'   Default: "MANAGEMENT/". If NULL, section 5 is written as (None).
 #' @param irrigation_path Path to irrigation management files directory.
 #'   Default: "MANAGEMENT/". If NULL, section 4 is written as (None).
 #' @param soil_path Path to soil files directory. Required, cannot be NULL.
 #'   Default: "SOIL/".
-#' @param gwt_path Path to groundwater table files directory.
+#' @param groundwater_path Path to groundwater table files directory.
 #'   Default: NULL. If NULL, section 7 is written as (None).
 #' @param offseason_path Path to off-season conditions files directory.
 #'   Default: NULL. If NULL, section 9 is written as (None).
@@ -55,13 +61,14 @@
 #' @examples
 #' \dontrun{
 #' # Example 1: multiple stations, same planting schedule
-#' plsch <- data.frame(year = 1981:2020, planting_doy = 201)
+#' plsch    <- data.frame(year = 1981:2020, planting_doy = 201)
 #' stations <- c("grid_001", "grid_002")
+#'
 #' write_prm_batch(
-#'   station_name = stations,
-#'   crop_name    = "maize",
+#'   station_name      = stations,
+#'   crop_name         = "maize",
 #'   planting_schedule = plsch,
-#'   crop_duration = 90
+#'   crop_duration     = 90
 #' )
 #'
 #' # Example 2: multiple stations, different planting schedules
@@ -69,52 +76,52 @@
 #'   data.frame(year = 1981:2020, planting_doy = 201),
 #'   data.frame(year = 1981:2020, planting_doy = 205)
 #' )
+#'
 #' write_prm_batch(
-#'   station_name = stations,
-#'   crop_name    = "maize",
+#'   station_name      = stations,
+#'   crop_name         = "maize",
 #'   planting_schedule = plsch_list,
-#'   crop_duration = 120,
-#'   path = "LIST/"
+#'   crop_duration     = 120,
+#'   path              = "LIST/"
 #' )
 #'
-#' # Example 3: auto-discover all stations, silent mode, with groundwater
+#' # Example 3: calendar-based onset, no planting_schedule needed
 #' write_prm_batch(
-#'   station_name = NULL,
-#'   crop_name    = "wheat",
-#'   planting_schedule = plsch,
-#'   gwt_path  = "GWT/",
-#'   base_path = "/my/project/path",
-#'   verbose   = FALSE
+#'   station_name     = NULL,
+#'   crop_name        = "wheat",
+#'   calendar_path    = "CAL/",
+#'   groundwater_path = "GWT/",
+#'   base_path        = "/my/project/path",
+#'   verbose          = FALSE
 #' )
 #' }
 #'
 #' @seealso \code{\link{write_prm}} for single station PRM file generation.
 #'
-#' @importFrom purrr pwalk
-#' @importFrom tools file_path_sans_ext
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_prm_batch <- function(
-    station_name     = NULL,
-    crop_name        = NULL,
-    planting_schedule,
-    path             = "LIST/",
-    crop_path        = "CROP/",
-    climate_path     = "CLIMATE/",
-    management_path  = "MANAGEMENT/",
-    irrigation_path  = "MANAGEMENT/",
-    soil_path        = "SOIL/",
-    gwt_path         = NULL,
-    offseason_path   = NULL,
-    obs_path         = NULL,
-    crop_duration    = 90,
+    station_name         = NULL,
+    crop_name            = NULL,
+    planting_schedule    = NULL,
+    path                 = "LIST/",
+    crop_path            = "CROP/",
+    climate_path         = "CLIMATE/",
+    calendar_path        = NULL,
+    management_path      = "MANAGEMENT/",
+    irrigation_path      = "MANAGEMENT/",
+    soil_path            = "SOIL/",
+    groundwater_path     = NULL,
+    offseason_path       = NULL,
+    obs_path             = NULL,
+    crop_duration        = 90,
     simulation_start_doy = NULL,
-    scenario         = "hist",
-    eol              = NULL,
-    use_standalone   = TRUE,
-    base_path        = getwd(),
-    verbose          = TRUE,
-    clean            = FALSE
+    scenario             = "hist",
+    eol                  = NULL,
+    use_standalone       = TRUE,
+    base_path            = getwd(),
+    verbose              = TRUE,
+    clean                = FALSE
 ) {
 
   # Clean directory if requested
@@ -146,22 +153,49 @@ write_prm_batch <- function(
   n <- length(station_name)
   .warn_single_item(n, "write_prm_batch", "write_prm", verbose)
 
-  # Normalize planting schedule: single data.frame applied to all stations
-  if (is.data.frame(planting_schedule)) {
-    if (verbose) {
-      message("Applying the same planting schedule to all ", n, " station(s)")
+  # ---- Resolve planting schedule ----
+  if (!is.null(calendar_path)) {
+    if (!is.null(planting_schedule)) {
+      warning(
+        "Both calendar_path and planting_schedule were provided. ",
+        "calendar_path takes precedence; planting_schedule is ignored.",
+        call. = FALSE
+      )
     }
-    planting_schedule <- rep(list(planting_schedule), n)
-  }
-
-  if (!is.list(planting_schedule) || length(planting_schedule) != n) {
-    stop(
-      "planting_schedule must be either:\n",
-      "  - A single data.frame (applied to all stations), or\n",
-      "  - A list of data.frames with length matching station_name\n",
-      "Expected length: ", n, ", got: ", length(planting_schedule),
-      call. = FALSE
-    )
+    if (verbose) message("Computing onset days from CAL files...")
+    planting_schedule <- lapply(station_name, function(stn) {
+      onset <- find_onset(
+        cal_name     = stn,
+        station_name = stn,
+        cal_path     = calendar_path,
+        climate_path = climate_path,
+        base_path    = base_path
+      )
+      data.frame(year = onset$year, planting_doy = onset$onset_doy)
+    })
+  } else {
+    if (is.null(planting_schedule)) {
+      stop(
+        "planting_schedule is required when calendar_path is NULL.",
+        call. = FALSE
+      )
+    }
+    # Normalize: single data.frame applied to all stations
+    if (is.data.frame(planting_schedule)) {
+      if (verbose) {
+        message("Applying the same planting schedule to all ", n, " station(s)")
+      }
+      planting_schedule <- rep(list(planting_schedule), n)
+    }
+    if (!is.list(planting_schedule) || length(planting_schedule) != n) {
+      stop(
+        "planting_schedule must be either:\n",
+        "  - A single data.frame (applied to all stations), or\n",
+        "  - A list of data.frames with length matching station_name\n",
+        "Expected length: ", n, ", got: ", length(planting_schedule),
+        call. = FALSE
+      )
+    }
   }
 
   if (verbose) {
@@ -174,8 +208,9 @@ write_prm_batch <- function(
     verbose   = verbose,
     item_type = "station",
     fn = function(item, params, crop_name, path, base_path, crop_path,
-                  crop_duration, climate_path, management_path, irrigation_path,
-                  soil_path, gwt_path, offseason_path, obs_path,
+                  crop_duration, climate_path, calendar_path,
+                  management_path, irrigation_path, soil_path,
+                  groundwater_path, offseason_path, obs_path,
                   simulation_start_doy, scenario, eol, use_standalone) {
       write_prm(
         station_name         = item,
@@ -186,10 +221,11 @@ write_prm_batch <- function(
         crop_path            = crop_path,
         crop_duration        = crop_duration,
         climate_path         = climate_path,
+        calendar_path        = calendar_path,
         management_path      = management_path,
         irrigation_path      = irrigation_path,
         soil_path            = soil_path,
-        gwt_path             = gwt_path,
+        groundwater_path     = groundwater_path,
         offseason_path       = offseason_path,
         obs_path             = obs_path,
         simulation_start_doy = simulation_start_doy,
@@ -204,10 +240,11 @@ write_prm_batch <- function(
     crop_path            = crop_path,
     crop_duration        = crop_duration,
     climate_path         = climate_path,
+    calendar_path        = calendar_path,
     management_path      = management_path,
     irrigation_path      = irrigation_path,
     soil_path            = soil_path,
-    gwt_path             = gwt_path,
+    groundwater_path     = groundwater_path,
     offseason_path       = offseason_path,
     obs_path             = obs_path,
     simulation_start_doy = simulation_start_doy,

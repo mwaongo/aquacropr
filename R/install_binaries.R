@@ -1,53 +1,26 @@
 #' Install AquaCrop Binary
 #'
-#' Downloads and installs the AquaCrop executable for the current operating system.
-#' Automatically detects OS, manages versioning with intelligent fallbacks, and caches
-#' downloads to avoid repeated transfers.
+#' Downloads and installs the AquaCrop executable for the current operating
+#' system. Automatically detects OS, manages versioning with intelligent
+#' fallbacks, and caches downloads to avoid repeated transfers.
 #'
 #' @param version Character string specifying the AquaCrop version to install.
-#'   If \code{NULL} (default), installs the latest available version.
+#'   If NULL (default), installs the latest available version.
 #'   Version must be >= 7.0. Accepts formats like "7.1", "v7.1", or "7.1.0".
 #'   Use "dev" to compile from latest source code.
 #'   If requested version is < 7.0 or > latest, falls back to latest version.
-#' @param os Character string specifying the operating system: "windows", "linux",
-#'   or "macos". If \code{NULL} (default), automatically detects the current OS.
-#' @param path Character string specifying the installation directory path where
-#'   the AquaCrop executable will be installed.
-#' @param force Logical. If \code{TRUE}, reinstalls even if executable already exists.
-#'   If \code{FALSE} (default), skips installation if executable is present.
-#' @param compiler Character. Fortran compiler for dev builds. Default: "gfortran".
-#'   Only used when version = "dev".
-#' @param keep_source Logical. Keep source code after compilation. Default: FALSE.
-#'   Only used when version = "dev".
+#' @param os Character string specifying the operating system: "windows",
+#'   "linux", or "macos". If NULL (default), automatically detects current OS.
+#' @param path Character string specifying the installation directory path
+#'   where the AquaCrop executable will be installed.
+#' @param force Logical. If TRUE, reinstalls even if executable already exists.
+#'   Default: FALSE.
+#' @param compiler Character. Fortran compiler for dev builds.
+#'   Default: "gfortran". Only used when version = "dev".
+#' @param keep_source Logical. Keep source code after compilation.
+#'   Default: FALSE. Only used when version = "dev".
 #'
 #' @return Invisibly returns the installed version number as a character string.
-#'
-#' @details
-#' The function performs the following steps:
-#' \itemize{
-#'   \item Detects the operating system if not specified
-#'   \item Queries GitHub for the latest AquaCrop release
-#'   \item Validates the requested version (minimum 7.0)
-#'   \item Downloads the binary from GitHub releases (with 5-minute timeout)
-#'   \item Validates cached downloads to detect corruption
-#'   \item Extracts and installs the executable
-#'   \item Sets appropriate permissions on Unix systems
-#' }
-#'
-#' For \code{version = "dev"}:
-#' \itemize{
-#'   \item Downloads latest source code from GitHub
-#'   \item Checks for required build tools (make, gfortran)
-#'   \item Compiles AquaCrop executable
-#'   \item Installs binary and cleans up source files
-#' }
-#'
-#' Fallback behavior:
-#' \itemize{
-#'   \item Version < 7.0 → falls back to latest
-#'   \item Version > latest → falls back to latest
-#'   \item Download failure → retries with latest version
-#' }
 #'
 #' @examples
 #' \dontrun{
@@ -60,9 +33,6 @@
 #' # Install dev version (compile from source)
 #' install_binaries(version = "dev", path = "~/aquacrop")
 #'
-#' # Dev version with Intel compiler
-#' install_binaries(version = "dev", path = "~/aquacrop", compiler = "ifort")
-#'
 #' # Force reinstall
 #' install_binaries(version = "7.1", path = "~/aquacrop", force = TRUE)
 #' }
@@ -71,31 +41,29 @@
 #' @importFrom glue glue
 #' @importFrom rappdirs user_cache_dir
 #' @importFrom utils download.file unzip
-#'
 #' @export
 install_binaries <- function(
-    version = NULL,
-    os = NULL,
+    version     = NULL,
+    os          = NULL,
     path,
-    force = FALSE,
-    compiler = "gfortran",
-    keep_source = FALSE) {
-
+    force       = FALSE,
+    compiler    = "gfortran",
+    keep_source = FALSE
+) {
 
   # Handle dev version (compile from source)
   if (!is.null(version) && tolower(version) == "dev") {
     message("Installing development version from source...")
     return(install_source(
-      dest_dir = path,
-      compiler = compiler,
+      install_dir = path,
+      compiler    = compiler,
       keep_source = keep_source,
-      force = force
+      force       = force
     ))
   }
 
   # Detect OS
   if (is.null(os)) os <- get_os()
-
   os <- match.arg(tolower(os), choices = c("windows", "linux", "macos"))
 
   # Get latest version info from GitHub
@@ -110,50 +78,40 @@ install_binaries <- function(
       )
     }
   )
-  latest_tag <- latest_release$tag_name
+  latest_tag     <- latest_release$tag_name
   latest_version <- gsub("^v", "", latest_tag)
 
   # Determine version to install
   if (is.null(version)) {
-    # Use latest
     version <- latest_version
-    tag <- latest_tag
+    tag     <- latest_tag
     message("Installing latest version: ", version)
 
   } else {
-    # Clean version
-    version <- gsub("^v", "", as.character(version))
-
-    # Validate version >= 7.0
+    version       <- gsub("^v", "", as.character(version))
     version_parts <- strsplit(version, "\\.")[[1]]
-    major <- as.numeric(version_parts[1])
+    major         <- as.numeric(version_parts[1])
 
     if (is.na(major) || major < 7) {
-      message("Requested version (", version, ") is below minimum supported version (7.0)")
-      message("Falling back to latest version: ", latest_version)
+      message("Requested version (", version, ") is below minimum (7.0), ",
+              "falling back to latest: ", latest_version)
       version <- latest_version
-      tag <- latest_tag
+      tag     <- latest_tag
+
+    } else if (numeric_version(version) > numeric_version(latest_version)) {
+      message("Requested version (", version, ") is above latest (",
+              latest_version, "), falling back to latest")
+      version <- latest_version
+      tag     <- latest_tag
 
     } else {
-      # Check if requested version > latest
-      if (numeric_version(version) > numeric_version(latest_version)) {
-        message("Requested version (", version, ") is higher than latest (", latest_version, ")")
-        message("Falling back to latest version: ", latest_version)
-        version <- latest_version
-        tag <- latest_tag
-
-      } else {
-        # Valid, supported version → resolve tag via helper
-        tag <- .get_version_tag(version)
-      }
+      tag <- .get_version_tag(version)
     }
   }
 
-  # Executable name
   exe_name <- if (os == "windows") "aquacrop.exe" else "aquacrop"
   exe_path <- file.path(path, exe_name)
 
-  # Check if exists
   if (file.exists(exe_path)) {
     if (force) {
       message("Removing existing binary...")
@@ -167,99 +125,78 @@ install_binaries <- function(
 
   # Build download URL
   zip_name <- glue::glue("aquacrop-{version}-x86_64-{os}.zip")
-  url <- glue::glue(
+  url      <- glue::glue(
     "https://github.com/KUL-RSDA/AquaCrop/releases/download/{tag}/{zip_name}"
   )
 
-  # Cache directory for downloads
-  cache_dir <- rappdirs::user_cache_dir("aquacroptools")
+  # Cache
+  cache_dir  <- rappdirs::user_cache_dir("aquacroptools")
   dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
   cached_zip <- file.path(cache_dir, zip_name)
 
-  # Download or use cache
   use_cache <- FALSE
   if (file.exists(cached_zip) && !force) {
-    # Validate cached file
-    is_valid_cache <- tryCatch(
-      {
-        zip_files <- utils::unzip(cached_zip, list = TRUE)
-        nrow(zip_files) > 0
-      },
+    is_valid <- tryCatch(
+      { nrow(utils::unzip(cached_zip, list = TRUE)) > 0 },
       error = function(e) FALSE
     )
-
-    if (is_valid_cache) {
+    if (is_valid) {
       message("Using cached download: ", basename(cached_zip))
       use_cache <- TRUE
     } else {
-      message("Cached file is corrupted, re-downloading...")
+      message("Cached file corrupted, re-downloading...")
       unlink(cached_zip)
     }
   }
 
   if (!use_cache) {
     message("Downloading AquaCrop ", version, " for ", os, "...")
-
-    # Set timeout (default is 60 seconds, increase to 300 for large files)
     old_timeout <- getOption("timeout")
     on.exit(options(timeout = old_timeout), add = TRUE)
     options(timeout = 300)
 
-    download_success <- tryCatch(
+    success <- tryCatch(
       {
-        download.file(url, cached_zip, mode = "wb", quiet = TRUE)
+        utils::download.file(url, cached_zip, mode = "wb", quiet = TRUE)
         message("Downloaded: ", basename(cached_zip))
         TRUE
       },
       error = function(e) {
-        # If download fails, try latest as fallback
         if (version != latest_version) {
-          message("Download failed for version ", version)
-          message("Trying latest version (", latest_version, ") instead...")
+          message("Download failed, retrying with latest (", latest_version, ")...")
           return(FALSE)
         }
-        stop("Download failed. Check version and OS.\nURL: ", url, "\nError: ", e$message)
+        stop("Download failed.\nURL: ", url, "\nError: ", e$message, call. = FALSE)
       }
     )
 
-    # If download failed and we need to retry with latest version
-    if (!download_success) {
+    if (!success) {
       return(install_binaries(
-        version = latest_version,
-        os = os,
-        path = path,
-        force = force
+        version = latest_version, os = os, path = path, force = force
       ))
     }
   }
 
-  # Extract to path
+  # Extract
   message("Extracting...")
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
   utils::unzip(cached_zip, exdir = path)
 
-  # Find executable
-  files <- list.files(path, recursive = TRUE, full.names = TRUE)
+  # Locate executable
+  files       <- list.files(path, recursive = TRUE, full.names = TRUE)
   exe_pattern <- if (os == "windows") "aquacrop\\.exe$" else "/aquacrop$"
-  exe_found <- grep(exe_pattern, files, value = TRUE, ignore.case = TRUE)
+  exe_found   <- grep(exe_pattern, files, value = TRUE, ignore.case = TRUE)
 
   if (length(exe_found) == 0) {
-    stop("Executable not found after extraction")
+    stop("Executable not found after extraction.", call. = FALSE)
   }
 
-  # Move to root of path if nested and clean extraction dir
   if (exe_found[1] != exe_path) {
     extracted_dir <- file.path(path, glue::glue("aquacrop-{version}-x86_64-{os}"))
-
     file.rename(exe_found[1], exe_path)
-
-    if (dir.exists(extracted_dir)) {
-      unlink(extracted_dir, recursive = TRUE)
-      message("Cleaned extraction directory")
-    }
+    if (dir.exists(extracted_dir)) unlink(extracted_dir, recursive = TRUE)
   }
 
-  # Set permissions (Unix)
   if (os != "windows") Sys.chmod(exe_path, mode = "0755")
 
   message("Installed: ", exe_path)

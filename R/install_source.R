@@ -1,80 +1,44 @@
+#' Detect Fortran Compiler via R CMD config FC
+#'
+#' Calls R CMD config FC to retrieve the Fortran compiler R itself was built
+#' with. This is the canonical cross-platform approach: it reads directly from
+#' R own Makeconf and requires no manual PATH handling.
+#'
+#' @return Character. Full path or name of the detected Fortran compiler.
+#'   Stops with an informative message if none is found.
+#'
+#' @noRd
+.detect_fc <- function() {
+  compiler <- tryCatch(
+    system2("R", args = c("CMD", "config", "FC"), stdout = TRUE, stderr = FALSE),
+    error = function(e) ""
+  )
+  compiler <- compiler[nzchar(compiler)][1]
+
+  if (is.na(compiler) || !nzchar(compiler)) {
+    stop(
+      "Could not detect a Fortran compiler via 'R CMD config FC'.\n",
+      "Please specify one explicitly, e.g.: compiler = 'gfortran'",
+      call. = FALSE
+    )
+  }
+
+  compiler
+}
+
+
 #' Extract Fortran Compiler Binary Name from FC String
 #'
-#' R CMD config FC may return flags alongside the binary name, for example
-#' "gfortran -arch x86_64" on macOS. This helper extracts only the first
-#' token (the binary name or path) for use with Sys.which() and file.exists().
+#' R CMD config FC may return flags alongside the binary name (e.g.,
+#' "gfortran -arch x86_64" on macOS). This helper extracts only the first
+#' token for use with Sys.which() and file.exists().
 #'
-#' @param compiler Character. Raw FC string from R CMD config FC.
-#'
+#' @param compiler Character. Raw FC string.
 #' @return Character. Binary name or path, stripped of flags.
 #'
 #' @noRd
 .fc_binary <- function(compiler) {
   trimws(strsplit(compiler, " ")[[1]][1])
-}
-
-
-#' Detect Fortran Compiler
-#'
-#' Attempts to locate a usable Fortran compiler using a three-step strategy:
-#'
-#' 1. Query R CMD config FC (the compiler R itself was built with).
-#' 2. Search known absolute paths not always in PATH (macOS toolchains).
-#' 3. Fail with actionable installation instructions.
-#'
-#' This approach is necessary on macOS where the R toolchain installs gfortran
-#' to /opt/gfortran/bin/ and Homebrew installs versioned binaries such as
-#' gfortran-14, neither of which appear in the default PATH.
-#'
-#' @return Character. Full path or name of the detected Fortran compiler,
-#'   including any flags returned by R CMD config FC (e.g.,
-#'   "gfortran -arch x86_64"). Stops with an informative error if not found.
-#'
-#' @noRd
-.detect_fc <- function() {
-
-  # Step 1: ask R what compiler it was built with
-  fc_raw <- tryCatch(
-    system2("R", args = c("CMD", "config", "FC"), stdout = TRUE, stderr = FALSE),
-    error = function(e) ""
-  )
-  fc_raw <- fc_raw[nzchar(fc_raw)][1]
-
-  if (!is.na(fc_raw) && nzchar(fc_raw)) {
-    bin <- .fc_binary(fc_raw)
-    # Accept if findable via PATH or as an absolute path
-    if (nzchar(Sys.which(bin)) || file.exists(bin)) {
-      return(fc_raw)
-    }
-  }
-
-  # Step 2: search known locations not always in PATH.
-  # Covers the official R macOS toolchain (mac.r-project.org) and Homebrew
-  # on both Intel and Apple Silicon Macs.
-  known_paths <- c(
-    "/opt/gfortran/bin/gfortran",                  # official R macOS toolchain
-    paste0("/opt/homebrew/bin/gfortran-", 15:6),   # Homebrew Apple Silicon
-    paste0("/usr/local/bin/gfortran-", 15:6)       # Homebrew Intel Mac
-  )
-
-  for (path in known_paths) {
-    if (file.exists(path)) {
-      message("  gfortran found at: ", path)
-      return(path)
-    }
-  }
-
-  # Step 3: fail with actionable instructions
-  stop(
-    "No Fortran compiler found.\n\n",
-    "On macOS, install the official R toolchain (recommended for x86_64):\n",
-    "  https://mac.r-project.org/tools/\n\n",
-    "Or install via Homebrew:\n",
-    "  brew install gcc\n\n",
-    "Or specify the compiler explicitly:\n",
-    "  install_source(compiler = '/opt/gfortran/bin/gfortran')",
-    call. = FALSE
-  )
 }
 
 
@@ -113,20 +77,20 @@ find_make <- function() {
 #' Check System Dependencies for Building AquaCrop
 #'
 #' Verifies that required build tools (make and a Fortran compiler) are
-#' available on the system before attempting to compile AquaCrop. The
-#' Fortran compiler is auto-detected via R CMD config FC first, then by
-#' searching known installation paths on macOS.
+#' available on the system. The Fortran compiler is auto-detected via
+#' R CMD config FC, then by searching known installation paths on macOS.
 #'
 #' Returns the detected values so that install_source can reuse them
 #' without triggering redundant detection calls.
 #'
+#' @param verbose Logical. If TRUE (default), prints detected tool versions.
+#'
 #' @return Invisibly returns a named list with two elements:
-#'   compiler (Character, detected Fortran compiler) and
-#'   make (Character, full path to the make executable).
+#'   compiler (Character) and make (Character).
 #'   Stops with an informative message if any dependency is missing.
 #'
 #' @noRd
-check_sys_deps <- function() {
+check_sys_deps <- function(verbose = TRUE) {
 
   deps_ok  <- TRUE
   make_out <- ""
@@ -137,7 +101,7 @@ check_sys_deps <- function() {
   if (!nzchar(make_out)) {
     message("error: GNU Make not found")
     deps_ok <- FALSE
-  } else {
+  } else if (verbose) {
     make_version <- tryCatch(
       system2("make", "--version", stdout = TRUE, stderr = FALSE)[1],
       error = function(e) "unknown"
@@ -149,14 +113,13 @@ check_sys_deps <- function() {
   # Detect Fortran compiler
   fc_out <- tryCatch(.detect_fc(), error = function(e) "")
   if (!nzchar(fc_out)) {
-    message("error: no Fortran compiler found")
+    message("error: no Fortran compiler detected via R CMD config FC")
     deps_ok <- FALSE
-  } else {
+  } else if (verbose) {
     compiler_bin <- .fc_binary(fc_out)
     fc_version <- tryCatch(
       system2(compiler_bin, "--version", stdout = TRUE, stderr = FALSE)[1],
       error = function(e) {
-        # Binary may be an absolute path not in PATH; try directly
         tryCatch(
           system2(fc_out, "--version", stdout = TRUE, stderr = FALSE)[1],
           error = function(e2) "unknown"
@@ -197,6 +160,7 @@ check_sys_deps <- function() {
 #' @param url Character. URL to download source code.
 #'   Default: official GitHub repository main branch.
 #' @param timeout Integer. Download timeout in seconds. Default: 120.
+#' @param verbose Logical. If TRUE (default), prints download progress.
 #'
 #' @return Character. Path to the extracted AquaCrop source directory.
 #'
@@ -210,29 +174,28 @@ check_sys_deps <- function() {
 download_source <- function(
     dest_dir = fs::path_temp("aquacrop_source"),
     url      = "https://github.com/KUL-RSDA/AquaCrop/archive/refs/heads/main.zip",
-    timeout  = 120
+    timeout  = 120,
+    verbose  = TRUE
 ) {
 
   fs::dir_create(dest_dir, recurse = TRUE)
   zip_file <- fs::path(dest_dir, "aquacrop_main.zip")
 
-  # Apply timeout and restore original value on exit
   old_timeout <- getOption("timeout")
   on.exit(options(timeout = old_timeout), add = TRUE)
   options(timeout = timeout)
 
-  message("Downloading from: ", url)
+  if (verbose) message("Downloading from: ", url)
   tryCatch(
-    utils::download.file(url, zip_file, mode = "wb", quiet = FALSE),
+    utils::download.file(url, zip_file, mode = "wb", quiet = !verbose),
     error = function(e) {
       stop("Failed to download AquaCrop source: ", e$message, call. = FALSE)
     }
   )
 
-  message("Extracting...")
+  if (verbose) message("Extracting...")
   utils::unzip(zip_file, exdir = dest_dir)
 
-  # GitHub appends -main suffix to the extracted folder
   extracted_name <- fs::path(dest_dir, "AquaCrop-main")
   final_dir      <- fs::path(dest_dir, "AquaCrop")
 
@@ -298,26 +261,17 @@ build_source <- function(
   os   <- get_os()
   make <- find_make()
 
-  # Use provided compiler or detect once
   if (is.null(compiler)) {
     compiler <- .detect_fc()
   }
 
-  # .fc_binary strips flags to get the binary name for validation.
-  # The full compiler string (with flags) is passed to FC= in make args.
   compiler_bin <- .fc_binary(compiler)
   if (!nzchar(Sys.which(compiler_bin)) && !file.exists(compiler_bin)) {
     stop("Fortran compiler not found: ", compiler_bin, call. = FALSE)
   }
 
-  make_args <- c(
-    target,
-    paste0("FC=", compiler)
-  )
-
-  if (os == "windows") {
-    make_args <- c(make_args, "CPPFLAGS=-D_WINDOWS")
-  }
+  make_args <- c(target, paste0("FC=", compiler))
+  if (os == "windows") make_args <- c(make_args, "CPPFLAGS=-D_WINDOWS")
 
   if (verbose) {
     message(
@@ -330,12 +284,7 @@ build_source <- function(
   }
 
   result <- withr::with_dir(src_dir, {
-    system2(
-      command = make,
-      args    = make_args,
-      stdout  = TRUE,
-      stderr  = TRUE
-    )
+    system2(command = make, args = make_args, stdout = TRUE, stderr = TRUE)
   })
 
   status <- attr(result, "status")
@@ -351,10 +300,7 @@ build_source <- function(
   exe_path <- fs::path(src_dir, exe_name)
 
   if (!fs::file_exists(exe_path)) {
-    stop(
-      "Build succeeded but executable not found:\n  ", exe_path,
-      call. = FALSE
-    )
+    stop("Build succeeded but executable not found:\n  ", exe_path, call. = FALSE)
   }
 
   if (verbose) message("Build successful: ", exe_path)
@@ -370,17 +316,19 @@ build_source <- function(
 #' branch). This function is called internally by
 #' install_binaries(version = "dev").
 #'
-#' @param dest_dir Character. Destination directory for the AquaCrop
-#'   executable.
+#' @param install_dir Character. Destination directory for the AquaCrop
+#'   executable. Default: current working directory.
 #' @param compiler Character or NULL. Fortran compiler to use. If NULL
-#'   (default), auto-detected once and reused across all steps. Can be set
-#'   explicitly as a binary name (e.g., "gfortran"), a versioned name
-#'   (e.g., "gfortran-14"), or a full absolute path
+#'   (default), auto-detected once via R CMD config FC and reused across
+#'   all steps. Can be set explicitly as a binary name (e.g., "gfortran"),
+#'   a versioned name (e.g., "gfortran-14"), or a full absolute path
 #'   (e.g., "/opt/gfortran/bin/gfortran").
 #' @param keep_source Logical. If TRUE, keeps source code after compilation.
 #'   Default: FALSE.
 #' @param force Logical. If TRUE, overwrites existing installation.
 #'   Default: FALSE.
+#' @param verbose Logical. If TRUE (default), prints progress messages.
+#'   If FALSE, runs silently except for errors.
 #'
 #' @details
 #' System requirements on Linux and macOS: GNU Make (>= 3.82) and a Fortran
@@ -398,33 +346,37 @@ build_source <- function(
 #' # Usually called via install_binaries
 #' install_binaries(version = "dev", path = "~/aquacrop")
 #'
-#' # Direct call with auto-detected compiler
-#' install_source(dest_dir = "~/aquacrop")
+#' # Install to current directory with auto-detected compiler
+#' install_source()
+#'
+#' # Install to specific directory, silent
+#' install_source(install_dir = "~/aquacrop", verbose = FALSE)
 #'
 #' # Keep source code after compilation
-#' install_source(dest_dir = "~/aquacrop", keep_source = TRUE)
+#' install_source(install_dir = "~/aquacrop", keep_source = TRUE)
 #'
 #' # Force reinstall with explicit compiler path
 #' install_source(
-#'   dest_dir = "~/aquacrop",
-#'   compiler = "/opt/gfortran/bin/gfortran",
-#'   force    = TRUE
+#'   install_dir = "~/aquacrop",
+#'   compiler    = "/opt/gfortran/bin/gfortran",
+#'   force       = TRUE
 #' )
 #' }
 #'
 #' @export
 install_source <- function(
-    dest_dir,
+    install_dir = getwd(),
     compiler    = NULL,
     keep_source = FALSE,
-    force       = FALSE
+    force       = FALSE,
+    verbose     = TRUE
 ) {
 
-  dest_dir  <- fs::path_expand(dest_dir)
-  fs::dir_create(dest_dir, recurse = TRUE)
+  install_dir <- fs::path_expand(install_dir)
+  fs::dir_create(install_dir, recurse = TRUE)
 
   exe_name  <- if (.Platform$OS.type == "windows") "aquacrop.exe" else "aquacrop"
-  final_exe <- fs::path(dest_dir, exe_name)
+  final_exe <- fs::path(install_dir, exe_name)
 
   if (fs::file_exists(final_exe) && !force) {
     message("AquaCrop already installed at: ", final_exe)
@@ -432,54 +384,36 @@ install_source <- function(
     return(invisible("dev"))
   }
 
-  message("=== Installing AquaCrop from Source (Development Version) ===\n")
+  # Step 1: check build tools, detect compiler once
+  if (verbose) message("[1/4] Checking dependencies...")
+  deps <- check_sys_deps(verbose = FALSE)
 
-  # Step 1: check build tools and detect compiler once.
-  # check_sys_deps() returns list(compiler, make) so subsequent steps
-  # reuse the detected values without calling R CMD config FC again.
-  message("Step 1/4: Checking system dependencies...")
-  deps <- check_sys_deps()
-  message("All dependencies satisfied\n")
+  if (is.null(compiler)) compiler <- deps$compiler
+  if (verbose) message("      compiler: ", .fc_binary(compiler))
 
-  # Use user-provided compiler if given, otherwise reuse what check_sys_deps found
-  if (is.null(compiler)) {
-    compiler <- deps$compiler
-    message("  Fortran compiler: ", compiler)
-  }
-
-  message("Step 2/4: Downloading source code from main branch...")
+  # Step 2: download
+  if (verbose) message("[2/4] Downloading source...")
   temp_dir   <- fs::path_temp("aquacrop_build")
-  source_dir <- download_source(dest_dir = temp_dir)
-  message("Source downloaded\n")
+  source_dir <- download_source(dest_dir = temp_dir, verbose = FALSE)
 
-  # Pass resolved compiler directly so build_source does not detect again
-  message("Step 3/4: Compiling AquaCrop...")
-  exe_path <- build_source(source_dir = source_dir, compiler = compiler)
-  message("Compilation successful\n")
+  # Step 3: compile
+  if (verbose) message("[3/4] Compiling...")
+  exe_path <- build_source(source_dir = source_dir, compiler = compiler,
+                           verbose = FALSE)
 
-  message("Step 4/4: Installing binary...")
-  if (fs::file_exists(exe_path)) {
-    fs::file_copy(exe_path, final_exe, overwrite = TRUE)
-    # file_chmod is Unix only; Windows manages permissions differently
-    if (.Platform$OS.type != "windows") {
-      fs::file_chmod(final_exe, "755")
-    }
-    message("Binary installed to: ", final_exe)
-  } else {
+  # Step 4: install
+  if (!fs::file_exists(exe_path)) {
     stop("Compilation succeeded but executable not found.", call. = FALSE)
   }
+  fs::file_copy(exe_path, final_exe, overwrite = TRUE)
+  if (.Platform$OS.type != "windows") fs::file_chmod(final_exe, "755")
 
-  if (!keep_source) {
-    message("Cleaning up source files...")
-    fs::dir_delete(temp_dir)
-    message("Cleanup complete")
-  } else {
-    message("Source code kept at: ", source_dir)
+  if (!keep_source) fs::dir_delete(temp_dir)
+
+  if (verbose) {
+    message("[4/4] Installed: ", final_exe)
+    if (keep_source) message("      source  : ", source_dir)
   }
-
-  message("\n=== Installation Complete ===")
-  message("AquaCrop version: dev (latest from main branch)")
-  message("Executable: ", final_exe)
 
   invisible("dev")
 }

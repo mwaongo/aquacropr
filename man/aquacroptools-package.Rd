@@ -4,15 +4,15 @@
 \name{aquacroptools-package}
 \alias{aquacroptools}
 \alias{aquacroptools-package}
-\title{aquacroptools: Tools that make AquaCropv7 files handling easier}
+\title{aquacroptools: R interface to the FAO AquaCrop crop water productivity model (v7.0+).}
 \description{
 Tools that make AquaCropv7 files handling easier.In other words, some functions that can allow you to handle aquacrop v7 data really quicly. AquaCrop is a crop growth model developed by the Land and Water Division of FAO to address food security and to assess the effect of environment and management on crop production.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/oousmane/aquacroptools}
-  \item Report bugs at \url{https://github.com/oousmane/aquacroptools/issues}
+  \item \url{https://github.com/mwaongo/aquacroptools}
+  \item Report bugs at \url{https://github.com/mwaongo/aquacroptools/issues}
 }
 
 }

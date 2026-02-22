@@ -36,16 +36,19 @@ head(eto_data)
 }
 \seealso{
 Other AquaCrop readers: 
+\code{\link{read_cal}()},
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
 \code{\link{read_tnx}()}
 
 Other AquaCrop readers: 
+\code{\link{read_cal}()},
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
 \code{\link{read_tnx}()}
 
 Other AquaCrop readers: 
+\code{\link{read_cal}()},
 \code{\link{read_cli}()},
 \code{\link{read_plu}()},
 \code{\link{read_tnx}()}

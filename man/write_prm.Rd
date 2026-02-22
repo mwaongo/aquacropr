@@ -7,15 +7,16 @@
 write_prm(
   station_name,
   path = "LIST/",
-  planting_schedule,
+  planting_schedule = NULL,
   crop_name = NULL,
   crop_path = "CROP/",
   crop_duration = 90,
   climate_path = "CLIMATE/",
+  calendar_path = NULL,
   management_path = "MANAGEMENT/",
   irrigation_path = "MANAGEMENT/",
   soil_path = "SOIL/",
-  gwt_path = NULL,
+  groundwater_path = NULL,
   offseason_path = NULL,
   obs_path = NULL,
   simulation_start_doy = NULL,
@@ -34,7 +35,11 @@ write_prm(
 \describe{
 \item{year}{Numeric. Year of cultivation.}
 \item{planting_doy}{Numeric. Day of year for planting (1-365/366).}
-}}
+}
+Optional when calendar_path is provided: the planting schedule is then
+derived automatically from find_onset(). If both are supplied,
+calendar_path takes precedence and planting_schedule is ignored with a
+warning.}
 
 \item{crop_name}{Crop name (e.g., "maize_90days").
 If NULL, section 3 is written as (None). Default: NULL.}
@@ -47,6 +52,9 @@ as (None).}
 
 \item{climate_path}{Path to climate file directory. Default: "CLIMATE/".}
 
+\item{calendar_path}{Path to calendar file directory. Default: NULL.
+If NULL, section 2 is written as (None).}
+
 \item{management_path}{Path to field management file directory.
 Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
 
@@ -56,7 +64,7 @@ Default: "MANAGEMENT/". If NULL, section 4 is written as (None).}
 \item{soil_path}{Path to soil file directory. Required, cannot be NULL.
 Default: "SOIL/".}
 
-\item{gwt_path}{Path to groundwater table file directory.
+\item{groundwater_path}{Path to groundwater table file directory.
 Default: NULL. If NULL, section 7 is written as (None).}
 
 \item{offseason_path}{Path to off-season conditions file directory.

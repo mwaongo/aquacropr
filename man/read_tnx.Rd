@@ -32,11 +32,13 @@ head(temp_data)
 }
 \seealso{
 Other AquaCrop readers: 
+\code{\link{read_cal}()},
 \code{\link{read_cli}()},
 \code{\link{read_eto}()},
 \code{\link{read_plu}()}
 
 Other AquaCrop readers: 
+\code{\link{read_cal}()},
 \code{\link{read_cli}()},
 \code{\link{read_eto}()},
 \code{\link{read_plu}()}

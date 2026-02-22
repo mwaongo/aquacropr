@@ -219,3 +219,98 @@ read_plu <- function(file) {
 #' @family AquaCrop readers
 #' @export
 read_et0 <- read_eto
+
+
+#' Parse an AquaCrop Calendar (.CAL) File
+#'
+#' Reads a .CAL file and returns a structured list of onset parameters.
+#'
+#' @param file Character. Full path to the .CAL file.
+#'
+#' @return A named list with elements:
+#'   \describe{
+#'     \item{onset}{Character. "fixed", "rainfall", or "thermal".}
+#'     \item{fixed_day}{Integer or NA. Fixed calendar day (onset "fixed" only).}
+#'     \item{window_start}{Integer or NA.}
+#'     \item{window_length}{Integer or NA.}
+#'     \item{criterion_internal}{Integer or NA. AquaCrop internal criterion number.}
+#'     \item{criterion}{Integer or NA. User-facing criterion number (1-4).}
+#'     \item{preset_value}{Numeric or NA.}
+#'     \item{successive_days}{Integer or NA. NA when not applicable.}
+#'     \item{occurrences}{Integer or NA.}
+#'   }
+#'
+#' @examples
+#' \dontrun{
+#' cal <- read_cal("CAL/station_01.CAL")
+#' cal$onset        # "rainfall"
+#' cal$criterion    # 2
+#' cal$preset_value # 30
+#' }
+#' @family AquaCrop readers
+#'
+#' @export
+read_cal <- function(file) {
+  
+  if (!fs::file_exists(file)) {
+    stop("CAL file not found: ", file, call. = FALSE)
+  }
+  
+  lines <- readLines(file, warn = FALSE)
+  lines <- lines[nzchar(trimws(lines))]
+  
+  # Extract the numeric value at the start of a line ("  value  : description")
+  .parse_value <- function(line) {
+    suppressWarnings(as.numeric(trimws(strsplit(line, ":")[[1]][1])))
+  }
+  
+  onset_code <- as.integer(.parse_value(lines[3]))
+  
+  if (onset_code == 0L) {
+    return(list(
+      onset              = "fixed",
+      fixed_day          = as.integer(.parse_value(lines[6])),
+      window_start       = NA_integer_,
+      window_length      = NA_integer_,
+      criterion_internal = NA_integer_,
+      criterion          = NA_integer_,
+      preset_value       = NA_real_,
+      successive_days    = NA_integer_,
+      occurrences        = NA_integer_
+    ))
+  }
+  
+  window_start       <- as.integer(.parse_value(lines[4]))
+  window_length      <- as.integer(.parse_value(lines[5]))
+  criterion_internal <- as.integer(.parse_value(lines[6]))
+  preset_value       <- as.numeric(.parse_value(lines[7]))
+  successive_days    <- as.integer(.parse_value(lines[8]))
+  occurrences        <- as.integer(.parse_value(lines[9]))
+  
+  # -9 means not applicable
+  if (!is.na(successive_days) && successive_days == -9L) {
+    successive_days <- NA_integer_
+  }
+  
+  if (criterion_internal %in% 1L:4L) {
+    onset     <- "rainfall"
+    criterion <- criterion_internal
+  } else if (criterion_internal %in% 11L:14L) {
+    onset     <- "thermal"
+    criterion <- criterion_internal - 10L
+  } else {
+    stop("Unknown criterion number: ", criterion_internal, call. = FALSE)
+  }
+  
+  list(
+    onset              = onset,
+    fixed_day          = NA_integer_,
+    window_start       = window_start,
+    window_length      = window_length,
+    criterion_internal = criterion_internal,
+    criterion          = criterion,
+    preset_value       = preset_value,
+    successive_days    = successive_days,
+    occurrences        = occurrences
+  )
+}

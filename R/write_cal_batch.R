@@ -23,7 +23,7 @@
 #'   rainfall criterion 2 and thermal criteria 1, 2, and 3. Default: NULL.
 #' @param occurrences Integer. Number of occurrences before onset is triggered
 #'   (1-3). Default: 1.
-#' @param path Output directory path for CAL files. Default: "CLIMATE/".
+#' @param path Output directory path for CAL files. Default: "CAL/".
 #' @param climate_path Path to climate files directory, used for station
 #'   discovery. Default: "CLIMATE/".
 #' @param description Character. Description on the first line. Default:

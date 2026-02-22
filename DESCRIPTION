@@ -1,8 +1,8 @@
 Type: Package
 Package: aquacroptools
 Language: en-GB
-Title: Tools that make AquaCropv7 files handling easier
-Version: 0.1.0
+Title: R interface to the FAO AquaCrop crop water productivity model (v7.0+).
+Version: 0.2.0
 Author: 
     c(person(given = "Ousmane",
            family = "Ouedraogo",
@@ -41,8 +41,8 @@ Imports:
     magrittr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://github.com/oousmane/aquacroptools
-BugReports: https://github.com/oousmane/aquacroptools/issues
+URL: https://github.com/mwaongo/aquacroptools
+BugReports: https://github.com/mwaongo/aquacroptools/issues
 Depends: 
     R (>= 3.5)
 Suggests: 

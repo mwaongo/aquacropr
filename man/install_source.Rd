@@ -4,16 +4,22 @@
 \alias{install_source}
 \title{Install AquaCrop from Source}
 \usage{
-install_source(dest_dir, compiler = NULL, keep_source = FALSE, force = FALSE)
+install_source(
+  install_dir = getwd(),
+  compiler = NULL,
+  keep_source = FALSE,
+  force = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
-\item{dest_dir}{Character. Destination directory for the AquaCrop
-executable.}
+\item{install_dir}{Character. Destination directory for the AquaCrop
+executable. Default: current working directory.}
 
 \item{compiler}{Character or NULL. Fortran compiler to use. If NULL
-(default), auto-detected once and reused across all steps. Can be set
-explicitly as a binary name (e.g., "gfortran"), a versioned name
-(e.g., "gfortran-14"), or a full absolute path
+(default), auto-detected once via R CMD config FC and reused across
+all steps. Can be set explicitly as a binary name (e.g., "gfortran"),
+a versioned name (e.g., "gfortran-14"), or a full absolute path
 (e.g., "/opt/gfortran/bin/gfortran").}
 
 \item{keep_source}{Logical. If TRUE, keeps source code after compilation.
@@ -21,6 +27,9 @@ Default: FALSE.}
 
 \item{force}{Logical. If TRUE, overwrites existing installation.
 Default: FALSE.}
+
+\item{verbose}{Logical. If TRUE (default), prints progress messages.
+If FALSE, runs silently except for errors.}
 }
 \value{
 Invisibly returns "dev" as the version string.
@@ -45,17 +54,20 @@ result in step 3, avoiding redundant calls to R CMD config FC.
 # Usually called via install_binaries
 install_binaries(version = "dev", path = "~/aquacrop")
 
-# Direct call with auto-detected compiler
-install_source(dest_dir = "~/aquacrop")
+# Install to current directory with auto-detected compiler
+install_source()
+
+# Install to specific directory, silent
+install_source(install_dir = "~/aquacrop", verbose = FALSE)
 
 # Keep source code after compilation
-install_source(dest_dir = "~/aquacrop", keep_source = TRUE)
+install_source(install_dir = "~/aquacrop", keep_source = TRUE)
 
 # Force reinstall with explicit compiler path
 install_source(
-  dest_dir = "~/aquacrop",
-  compiler = "/opt/gfortran/bin/gfortran",
-  force    = TRUE
+  install_dir = "~/aquacrop",
+  compiler    = "/opt/gfortran/bin/gfortran",
+  force       = TRUE
 )
 }
 

@@ -7,7 +7,8 @@
 download_source(
   dest_dir = fs::path_temp("aquacrop_source"),
   url = "https://github.com/KUL-RSDA/AquaCrop/archive/refs/heads/main.zip",
-  timeout = 120
+  timeout = 120,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -18,6 +19,8 @@ Default: a temporary directory.}
 Default: official GitHub repository main branch.}
 
 \item{timeout}{Integer. Download timeout in seconds. Default: 120.}
+
+\item{verbose}{Logical. If TRUE (default), prints download progress.}
 }
 \value{
 Character. Path to the extracted AquaCrop source directory.

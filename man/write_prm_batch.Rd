@@ -7,14 +7,15 @@
 write_prm_batch(
   station_name = NULL,
   crop_name = NULL,
-  planting_schedule,
+  planting_schedule = NULL,
   path = "LIST/",
   crop_path = "CROP/",
   climate_path = "CLIMATE/",
+  calendar_path = NULL,
   management_path = "MANAGEMENT/",
   irrigation_path = "MANAGEMENT/",
   soil_path = "SOIL/",
-  gwt_path = NULL,
+  groundwater_path = NULL,
   offseason_path = NULL,
   obs_path = NULL,
   crop_duration = 90,
@@ -39,7 +40,11 @@ If NULL, section 3 is written as (None). Default: NULL.}
 \item{planting_schedule}{Either a single data.frame with columns year and
 planting_doy, applied to all stations, or a list of data.frames (one per
 station), each with columns year and planting_doy. The length of the list
-must match the number of stations.}
+must match the number of stations.
+Optional when calendar_path is provided: the planting schedule is then
+derived automatically from find_onset() for each station. If both are
+supplied, calendar_path takes precedence and planting_schedule is ignored
+with a warning.}
 
 \item{path}{Output directory path for PRM files. Default: "LIST/".}
 
@@ -48,6 +53,9 @@ If crop_name is NULL, crop_path is ignored and section 3 is written
 as (None).}
 
 \item{climate_path}{Path to climate files directory. Default: "CLIMATE/".}
+
+\item{calendar_path}{Path to calendar files directory. Default: NULL.
+If NULL, section 2 is written as (None).}
 
 \item{management_path}{Path to field management files directory.
 Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
@@ -58,7 +66,7 @@ Default: "MANAGEMENT/". If NULL, section 4 is written as (None).}
 \item{soil_path}{Path to soil files directory. Required, cannot be NULL.
 Default: "SOIL/".}
 
-\item{gwt_path}{Path to groundwater table files directory.
+\item{groundwater_path}{Path to groundwater table files directory.
 Default: NULL. If NULL, section 7 is written as (None).}
 
 \item{offseason_path}{Path to off-season conditions files directory.
@@ -103,13 +111,14 @@ to all stations.
 \examples{
 \dontrun{
 # Example 1: multiple stations, same planting schedule
-plsch <- data.frame(year = 1981:2020, planting_doy = 201)
+plsch    <- data.frame(year = 1981:2020, planting_doy = 201)
 stations <- c("grid_001", "grid_002")
+
 write_prm_batch(
-  station_name = stations,
-  crop_name    = "maize",
+  station_name      = stations,
+  crop_name         = "maize",
   planting_schedule = plsch,
-  crop_duration = 90
+  crop_duration     = 90
 )
 
 # Example 2: multiple stations, different planting schedules
@@ -117,22 +126,23 @@ plsch_list <- list(
   data.frame(year = 1981:2020, planting_doy = 201),
   data.frame(year = 1981:2020, planting_doy = 205)
 )
+
 write_prm_batch(
-  station_name = stations,
-  crop_name    = "maize",
+  station_name      = stations,
+  crop_name         = "maize",
   planting_schedule = plsch_list,
-  crop_duration = 120,
-  path = "LIST/"
+  crop_duration     = 120,
+  path              = "LIST/"
 )
 
-# Example 3: auto-discover all stations, silent mode, with groundwater
+# Example 3: calendar-based onset, no planting_schedule needed
 write_prm_batch(
-  station_name = NULL,
-  crop_name    = "wheat",
-  planting_schedule = plsch,
-  gwt_path  = "GWT/",
-  base_path = "/my/project/path",
-  verbose   = FALSE
+  station_name     = NULL,
+  crop_name        = "wheat",
+  calendar_path    = "CAL/",
+  groundwater_path = "GWT/",
+  base_path        = "/my/project/path",
+  verbose          = FALSE
 )
 }
 

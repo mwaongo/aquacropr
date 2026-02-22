@@ -54,7 +54,7 @@ rainfall criterion 2 and thermal criteria 1, 2, and 3. Default: NULL.}
 \item{occurrences}{Integer. Number of occurrences before onset is triggered
 (1-3). Default: 1.}
 
-\item{path}{Output directory path for CAL files. Default: "CLIMATE/".}
+\item{path}{Output directory path for CAL files. Default: "CAL/".}
 
 \item{climate_path}{Path to climate files directory, used for station
 discovery. Default: "CLIMATE/".}
