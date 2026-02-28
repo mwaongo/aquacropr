@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop groundwater table files for multiple stations.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -49,20 +49,20 @@
 #'
 #' # Code 0: no groundwater table for all stations
 #' write_gwt_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   code         = 0
 #' )
 #'
 #' # Code 1: same constant groundwater for all stations
 #' write_gwt_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   code         = 1,
 #'   gwt_data     = data.frame(day = 1, depth = 1.50, ecw = 1.5)
 #' )
 #'
 #' # Code 2: different variable groundwater per station
 #' write_gwt_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   code         = 2,
 #'   gwt_data     = list(
 #'     data.frame(day = c(50, 100), depth = c(1.0, 2.0), ecw = c(1.0, 2.0)),
@@ -77,7 +77,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_gwt_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     code,
     gwt_data     = NULL,
     path         = "MANAGEMENT/",
@@ -99,15 +99,15 @@ write_gwt_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_gwt_batch", "write_gwt", verbose)
 
   # Normalize gwt_data: code 0 needs no data
@@ -116,7 +116,7 @@ write_gwt_batch <- function(
   } else {
     if (is.data.frame(gwt_data)) {
       if (verbose) {
-        message("Applying the same groundwater data to all ", n, " station(s)")
+        message("Applying the same groundwater data to all ", n, " site(s)")
       }
       gwt_data <- rep(list(gwt_data), n)
     }
@@ -125,7 +125,7 @@ write_gwt_batch <- function(
       stop(
         "gwt_data must be either:\n",
         "  - A single data.frame (applied to all stations), or\n",
-        "  - A list of data.frames with length matching station_name\n",
+        "  - A list of data.frames with length matching site_name\n",
         "Expected length: ", n, ", got: ", length(gwt_data),
         call. = FALSE
       )
@@ -133,18 +133,18 @@ write_gwt_batch <- function(
   }
 
   if (verbose) {
-    message("Writing GWT files for ", n, " station(s)...")
+    message("Writing GWT files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
+    items     = site_name,
     params    = gwt_data,
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, code, path, start_day, start_month,
                   start_year, description, version, eol) {
       write_gwt(
-        gwt_name    = item,
+        site_name    = item,
         code        = code,
         gwt_data    = params,
         path        = path,
@@ -167,7 +167,7 @@ write_gwt_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created GWT files for ", n, " station(s)")
+    message("Successfully created GWT files for ", n, " site(s)")
   }
 
   invisible(NULL)

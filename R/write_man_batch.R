@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop MAN files for multiple stations in a batch.
 #'
-#' @param station_name Character vector or `NULL`. Names of stations to process:
+#' @param site_name Character vector or `NULL`. Names of stations to process:
 #'   - If `NULL`, all stations are automatically discovered from `.CLI` files in the `CLIMATE/` directory.
 #'   - If a vector, only the specified stations will be processed; all must have corresponding climate files.
 #' @param params Either:
@@ -38,7 +38,7 @@
 #' base_params <- list(var_03 = 20, var_04 = 60, var_05 = 50)
 #' stations <- c("grid_001", "grid_002")
 #' write_man_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   params = base_params
 #' )
 #'
@@ -48,14 +48,14 @@
 #'   list(var_03 = 60, var_04 = 80, var_05 = 70) # High fertility, heavy mulch
 #' )
 #' write_man_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   params = params_list,
 #'   path = "MANAGEMENT/"
 #' )
 #'
 #' # Example 3: Auto-discover all stations, default parameters
 #' write_man_batch(
-#'   station_name = NULL,
+#'   site_name = NULL,
 #'   params = NULL,
 #'   base_path = "/my/project/path",
 #'   verbose = FALSE
@@ -68,7 +68,7 @@
 #'   list(var_05 = 90) # Station 3: high fertility
 #' )
 #' write_man_batch(
-#'   station_name = c("site_A", "site_B", "site_C"),
+#'   site_name = c("site_A", "site_B", "site_C"),
 #'   params = params_list
 #' )
 #' }
@@ -82,7 +82,7 @@
 #' @importFrom fs dir_exists dir_ls file_delete
 #' @export
 write_man_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     params = NULL,
     path = "MANAGEMENT/",
     eol = NULL,
@@ -97,16 +97,16 @@ write_man_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names = site_name,
     climate_path = climate_path,
     base_path = base_path,
-    item_type = "station",
+    item_type = "site",
     verbose = verbose
   )
 
   # Warn if single item
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_man_batch", "write_man", verbose)
 
   # Normalize params to list of lists
@@ -114,17 +114,17 @@ write_man_batch <- function(
 
   # Write MAN files
   if (verbose) {
-    message("Writing MAN files for ", n, " station(s)...")
+    message("Writing MAN files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items = station_name,
+    items = site_name,
     params = params,
     verbose = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, path, eol) {
       write_man(
-        management_name = item,
+        site_name = item,
         params = params,
         path = path,
         eol = eol
@@ -135,7 +135,7 @@ write_man_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created MAN files for ", n, " station(s)")
+    message("Successfully created MAN files for ", n, " site(s)")
   }
 
   invisible(NULL)

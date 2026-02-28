@@ -5,7 +5,7 @@
 \title{Write AquaCrop Calendar (.CAL) Files for Multiple Stations}
 \usage{
 write_cal_batch(
-  station_name = NULL,
+  site_name = NULL,
   onset,
   fixed_day = NULL,
   window_start = NULL,
@@ -25,7 +25,7 @@ write_cal_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -89,14 +89,14 @@ stations <- c("grid_001", "grid_002", "grid_003")
 
 # Fixed onset on day 212 for all stations
 write_cal_batch(
-  station_name = stations,
+  site_name = stations,
   onset        = "fixed",
   fixed_day    = 212
 )
 
 # Rainfall criterion 2 for all stations: 30 mm in 3 successive days
 write_cal_batch(
-  station_name    = stations,
+  site_name    = stations,
   onset           = "rainfall",
   window_start    = 121,
   window_length   = 92,
@@ -108,7 +108,7 @@ write_cal_batch(
 
 # Thermal criterion 1 for all stations: daily Tmin >= 5 degC for 4 days
 write_cal_batch(
-  station_name    = stations,
+  site_name    = stations,
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,

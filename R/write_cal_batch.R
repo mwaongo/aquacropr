@@ -3,7 +3,7 @@
 #' Generate AquaCrop calendar files for multiple stations. All stations share
 #' the same onset type, criterion, and parameters.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -46,14 +46,14 @@
 #'
 #' # Fixed onset on day 212 for all stations
 #' write_cal_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   onset        = "fixed",
 #'   fixed_day    = 212
 #' )
 #'
 #' # Rainfall criterion 2 for all stations: 30 mm in 3 successive days
 #' write_cal_batch(
-#'   station_name    = stations,
+#'   site_name    = stations,
 #'   onset           = "rainfall",
 #'   window_start    = 121,
 #'   window_length   = 92,
@@ -65,7 +65,7 @@
 #'
 #' # Thermal criterion 1 for all stations: daily Tmin >= 5 degC for 4 days
 #' write_cal_batch(
-#'   station_name    = stations,
+#'   site_name    = stations,
 #'   onset           = "thermal",
 #'   window_start    = 1,
 #'   window_length   = 60,
@@ -82,7 +82,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_cal_batch <- function(
-    station_name    = NULL,
+    site_name    = NULL,
     onset,
     fixed_day       = NULL,
     window_start    = NULL,
@@ -105,32 +105,32 @@ write_cal_batch <- function(
     .clean_directory(path, "\\.CAL$", verbose)
   }
 
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_cal_batch", "write_cal", verbose)
 
   if (verbose) {
-    message("Writing CAL files for ", n, " station(s)...")
+    message("Writing CAL files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
-    params    = station_name,
+    items     = site_name,
+    params    = site_name,
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, onset, fixed_day, window_start,
                   window_length, criterion, preset_value,
                   successive_days, occurrences, path, description,
                   version, eol) {
       write_cal(
-        cal_name        = item,
+        site_name        = item,
         onset           = onset,
         fixed_day       = fixed_day,
         window_start    = window_start,
@@ -160,7 +160,7 @@ write_cal_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created CAL files for ", n, " station(s)")
+    message("Successfully created CAL files for ", n, " site(s)")
   }
 
   invisible(NULL)

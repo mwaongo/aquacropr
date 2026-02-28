@@ -5,7 +5,7 @@
 \title{Write AquaCrop Groundwater Table (.GWT) Files for Multiple Stations}
 \usage{
 write_gwt_batch(
-  station_name = NULL,
+  site_name = NULL,
   code,
   gwt_data = NULL,
   path = "MANAGEMENT/",
@@ -22,7 +22,7 @@ write_gwt_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -85,20 +85,20 @@ stations <- c("grid_001", "grid_002")
 
 # Code 0: no groundwater table for all stations
 write_gwt_batch(
-  station_name = stations,
+  site_name = stations,
   code         = 0
 )
 
 # Code 1: same constant groundwater for all stations
 write_gwt_batch(
-  station_name = stations,
+  site_name = stations,
   code         = 1,
   gwt_data     = data.frame(day = 1, depth = 1.50, ecw = 1.5)
 )
 
 # Code 2: different variable groundwater per station
 write_gwt_batch(
-  station_name = stations,
+  site_name = stations,
   code         = 2,
   gwt_data     = list(
     data.frame(day = c(50, 100), depth = c(1.0, 2.0), ecw = c(1.0, 2.0)),

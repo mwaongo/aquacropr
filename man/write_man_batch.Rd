@@ -5,7 +5,7 @@
 \title{Write AquaCrop MAN files in batch}
 \usage{
 write_man_batch(
-  station_name = NULL,
+  site_name = NULL,
   params = NULL,
   path = "MANAGEMENT/",
   eol = NULL,
@@ -16,7 +16,7 @@ write_man_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or \code{NULL}. Names of stations to process:
+\item{site_name}{Character vector or \code{NULL}. Names of stations to process:
 \itemize{
 \item If \code{NULL}, all stations are automatically discovered from \code{.CLI} files in the \verb{CLIMATE/} directory.
 \item If a vector, only the specified stations will be processed; all must have corresponding climate files.
@@ -66,7 +66,7 @@ Use this function when you need to create MAN files for \strong{multiple station
 base_params <- list(var_03 = 20, var_04 = 60, var_05 = 50)
 stations <- c("grid_001", "grid_002")
 write_man_batch(
-  station_name = stations,
+  site_name = stations,
   params = base_params
 )
 
@@ -76,14 +76,14 @@ params_list <- list(
   list(var_03 = 60, var_04 = 80, var_05 = 70) # High fertility, heavy mulch
 )
 write_man_batch(
-  station_name = stations,
+  site_name = stations,
   params = params_list,
   path = "MANAGEMENT/"
 )
 
 # Example 3: Auto-discover all stations, default parameters
 write_man_batch(
-  station_name = NULL,
+  site_name = NULL,
   params = NULL,
   base_path = "/my/project/path",
   verbose = FALSE
@@ -96,7 +96,7 @@ params_list <- list(
   list(var_05 = 90) # Station 3: high fertility
 )
 write_man_batch(
-  station_name = c("site_A", "site_B", "site_C"),
+  site_name = c("site_A", "site_B", "site_C"),
   params = params_list
 )
 }

@@ -5,7 +5,7 @@
 \title{Write AquaCrop Observed Data (.OBS) File}
 \usage{
 write_obs(
-  obs_name,
+  site_name,
   obs_data,
   path = "OBS/",
   soil_depth = 1,
@@ -17,7 +17,7 @@ write_obs(
 )
 }
 \arguments{
-\item{obs_name}{Character. Name of the OBS file (without extension).
+\item{site_name}{Character. Name of the OBS file (without extension).
 Typically the station name.}
 
 \item{obs_data}{data.frame. Observed data with columns:
@@ -71,7 +71,7 @@ obs <- data.frame(
 )
 
 write_obs(
-  obs_name    = "Ottawa",
+  site_name    = "Ottawa",
   obs_data    = obs,
   soil_depth  = 1.00,
   start_day   = 1,

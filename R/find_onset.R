@@ -208,9 +208,8 @@
 #' automatically reads the ETo file via read_eto(). Thermal onset is not
 #' yet supported.
 #'
-#' @param cal_name Character. Station name used to locate the CAL file.
-#' @param station_name Character. Station name used to locate climate files.
-#'   Default: same as cal_name.
+#' @param site_name Character. Station name used to locate both the CAL file
+#'   and the climate files (.PLU, .Tnx, .ETo).
 #' @param cal_path Path to the CAL directory. Default: "CAL/".
 #' @param climate_path Path to the climate directory. Default: "CLIMATE/".
 #' @param years Integer vector or NULL. Years to compute onset for. If NULL
@@ -230,34 +229,33 @@
 #' @examples
 #' \dontrun{
 #' # Criterion 2: 30 mm in 3 successive days
-#' onset <- find_onset("station_01")
+#' onset <- find_onset("site_01")
 #' head(onset)
 #'
 #' # Fixed onset: same DOY every year
-#' onset_fixed <- find_onset("station_01_fixed", years = 1981:2020)
+#' onset_fixed <- find_onset("site_01_fixed", years = 1981:2020)
 #'
 #' # Criterion 4: 10-day rain >= 50 % of ETo (ETo read automatically)
-#' onset_c4 <- find_onset("station_01_c4")
+#' onset_c4 <- find_onset("site_01_c4")
 #' }
 #'
 #' @seealso \code{\link{read_cal}}, \code{\link{read_plu}},
 #'   \code{\link{read_eto}}, \code{\link{read_tnx}}
 #' @export
 find_onset <- function(
-    cal_name,
-    station_name = cal_name,
+    site_name,
     cal_path     = "CAL/",
     climate_path = "CLIMATE/",
     years        = NULL,
     base_path    = getwd()
 ) {
-  
-  cal <- read_cal(fs::path(base_path, cal_path, paste0(cal_name, ".CAL")))
+
+  cal <- read_cal(fs::path(base_path, cal_path, paste0(site_name, ".CAL")))
   
   # ---- Fixed onset ----
   if (cal$onset == "fixed") {
     if (is.null(years)) {
-      plu_years <- read_plu(fs::path(base_path, climate_path, paste0(station_name, ".PLU"))) |>
+      plu_years <- read_plu(fs::path(base_path, climate_path, paste0(site_name, ".PLU"))) |>
         dplyr::pull(year) |>
         unique() |>
         sort()
@@ -275,10 +273,10 @@ find_onset <- function(
   
   # ---- Read climate data and resolve years ----
   if (cal$onset == "rainfall") {
-    clim_data <- read_plu(fs::path(base_path, climate_path, paste0(station_name, ".PLU"))) |>
+    clim_data <- read_plu(fs::path(base_path, climate_path, paste0(site_name, ".PLU"))) |>
       dplyr::mutate(doy = lubridate::yday(lubridate::make_date(year, month, day)))
   } else {
-    clim_data <- read_tnx(fs::path(base_path, climate_path, paste0(station_name, ".Tnx"))) |>
+    clim_data <- read_tnx(fs::path(base_path, climate_path, paste0(site_name, ".Tnx"))) |>
       dplyr::mutate(doy = lubridate::yday(lubridate::make_date(year, month, day)))
   }
   
@@ -300,7 +298,7 @@ find_onset <- function(
   # Read ETo only if rainfall criterion 4 needs it
   eto_data <- NULL
   if (cal$criterion_internal == 4L) {
-    eto_data <- read_eto(fs::path(base_path, climate_path, paste0(station_name, ".ETo"))) |>
+    eto_data <- read_eto(fs::path(base_path, climate_path, paste0(site_name, ".ETo"))) |>
       dplyr::mutate(doy = lubridate::yday(lubridate::make_date(year, month, day)))
   }
   

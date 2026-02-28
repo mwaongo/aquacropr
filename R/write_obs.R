@@ -5,7 +5,7 @@
 #' validation. Missing values must be set to -9.0. Entire columns can be
 #' -9.0 when a variable was not measured.
 #'
-#' @param obs_name Character. Name of the OBS file (without extension).
+#' @param site_name Character. Name of the OBS file (without extension).
 #'   Typically the station name.
 #' @param obs_data data.frame. Observed data with columns:
 #'   \describe{
@@ -44,7 +44,7 @@
 #' )
 #'
 #' write_obs(
-#'   obs_name    = "Ottawa",
+#'   site_name    = "Ottawa",
 #'   obs_data    = obs,
 #'   soil_depth  = 1.00,
 #'   start_day   = 1,
@@ -56,7 +56,7 @@
 #' @family AquaCrop file writers
 #' @export
 write_obs <- function(
-    obs_name,
+    site_name,
     obs_data,
     path        = "OBS/",
     soil_depth  = 1.00,
@@ -134,7 +134,7 @@ write_obs <- function(
   # ---- Write file ----
   path <- .add_trailing_slash(path)
   fs::dir_create(path, recurse = TRUE)
-  output_file <- paste0(path, obs_name, ".OBS")
+  output_file <- paste0(path, site_name, ".OBS")
 
   readr::write_file(x = content, file = output_file)
 

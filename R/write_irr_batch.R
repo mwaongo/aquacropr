@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop irrigation files for multiple stations.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -48,7 +48,7 @@
 #' irr <- data.frame(day = c(20, 40, 60), depth = c(30, 30, 25))
 #' stations <- c("grid_001", "grid_002")
 #' write_irrig_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   method       = 1,
 #'   wet_surface  = 100,
 #'   mode         = 1,
@@ -61,7 +61,7 @@
 #'   data.frame(day = c(25, 45), depth = c(35, 30))
 #' )
 #' write_irrig_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   method       = 1,
 #'   wet_surface  = 100,
 #'   mode         = 1,
@@ -71,7 +71,7 @@
 #'
 #' # Example 3: auto-discover all stations, silent mode
 #' write_irrig_batch(
-#'   station_name = NULL,
+#'   site_name = NULL,
 #'   method       = 4,
 #'   wet_surface  = 60,
 #'   mode         = 2,
@@ -86,7 +86,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_irrig_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     method,
     wet_surface,
     mode,
@@ -107,21 +107,21 @@ write_irrig_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_irrig_batch", "write_irr", verbose)
 
   # Normalize irr_data: single data.frame applied to all stations
   if (is.data.frame(irr_data)) {
     if (verbose) {
-      message("Applying the same irrigation data to all ", n, " station(s)")
+      message("Applying the same irrigation data to all ", n, " site(s)")
     }
     irr_data <- rep(list(irr_data), n)
   }
@@ -130,25 +130,25 @@ write_irrig_batch <- function(
     stop(
       "irr_data must be either:\n",
       "  - A single data.frame (applied to all stations), or\n",
-      "  - A list of data.frames with length matching station_name\n",
+      "  - A list of data.frames with length matching site_name\n",
       "Expected length: ", n, ", got: ", length(irr_data),
       call. = FALSE
     )
   }
 
   if (verbose) {
-    message("Writing IRR files for ", n, " station(s)...")
+    message("Writing IRR files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
+    items     = site_name,
     params    = irr_data,
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, method, wet_surface, mode, path,
                   version, crop_length, eol) {
       write_irr(
-        irrigation_name = item,
+        site_name = item,
         method          = method,
         wet_surface     = wet_surface,
         mode            = mode,
@@ -169,7 +169,7 @@ write_irrig_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created IRR files for ", n, " station(s)")
+    message("Successfully created IRR files for ", n, " site(s)")
   }
 
   invisible(NULL)

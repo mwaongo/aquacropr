@@ -6,7 +6,7 @@
 #' `write_tnx()`, eliminating code duplication while maintaining consistent behavior.
 #'
 #' @param path Directory path where the output file will be written.
-#' @param stn Station name or identifier for the weather station.
+#' @param site_name Station name or identifier for the weather station.
 #'   If `NULL`, extracted from data if available, otherwise defaults to "station".
 #' @param data Data frame containing the climate data with columns:
 #'   year, month, day, and the variable(s) specified by `var_cols`.
@@ -47,7 +47,7 @@
 #' @noRd
 .write_climate_file <- function(
     path,
-    stn,
+    site_name,
     data,
     var_cols,
     header_var_name,
@@ -82,7 +82,7 @@
   }
 
   # Extract station name from data if not provided
-  stn <- .extract_station(stn, data)
+  site_name <- .extract_station(site_name, data)
 
   # Extract year range from data if not provided
   years <- .extract_years(data, syear, eyear)
@@ -95,13 +95,12 @@
   # Create directory if it doesn't exist
   fs::dir_create(path, recurse = TRUE)
 
-  # Format station name for filename
-  stn_formatted <- snakecase::to_any_case(stn, case = "snake", sep_out = "_")
+  # Use station name as-is for filename
 
   # Get header
   header <- .get_header(
     var_name = header_var_name,
-    stn = stn,
+    site_name = site_name,
     syear = syear,
     eyear = eyear,
     eol = eol,
@@ -115,7 +114,7 @@
     dplyr::select(dplyr::all_of(var_cols))
 
   # Write file
-  output_file <- paste0(path, stn_formatted, file_ext)
+  output_file <- paste0(path, site_name, file_ext)
 
   readr::write_file(x = header, file = output_file)
 

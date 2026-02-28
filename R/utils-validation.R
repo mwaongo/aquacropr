@@ -64,58 +64,6 @@
 }
 
 
-#' Validate Climate Data Frame
-#'
-#' @description
-#' Internal helper function that validates a data frame contains required
-#' columns for climate file writing. Used by climate writers (write_plu,
-#' write_eto, write_tnx) to ensure consistent validation.
-#'
-#' @param data Data frame to validate
-#' @param var_name Name of the climate variable column (e.g., "rain", "et0", "tmin")
-#' @param require_station Logical. If `TRUE`, also checks for "station" column.
-#'
-#' @return Invisibly returns `TRUE` if validation passes, otherwise throws an error.
-#'
-#' @examples
-#' # Validate rainfall data
-#' .validate_climate_data(weather_df, "rain")
-#'
-#' # Validate temperature data
-#' .validate_climate_data(weather_df, "tmin")
-#'
-#' @keywords internal
-#' @noRd
-.validate_climate_data <- function(data, var_name, require_station = FALSE) {
-  # Check data is a data frame
- if (is.null(data) || !is.data.frame(data)) {
-    stop(
-      "data must be a data frame with columns: year, month, day, ", var_name,
-      "\nReceived: ", class(data)[1],
-      call. = FALSE
-    )
-  }
-
-  # Define required columns
-  required_cols <- c("year", "month", "day", var_name)
-  if (require_station) {
-    required_cols <- c("station", required_cols)
-  }
-
-  # Check for missing columns
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    stop(
-      "Missing required columns: ", paste(missing_cols, collapse = ", "),
-      "\nRequired columns are: ", paste(required_cols, collapse = ", "),
-      call. = FALSE
-    )
-  }
-
-  invisible(TRUE)
-}
-
-
 #' Extract Station Name from Data
 #'
 #' @description

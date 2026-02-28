@@ -5,7 +5,7 @@
 \title{Write AquaCrop Off-Season Conditions (.OFF) File}
 \usage{
 write_off(
-  off_name,
+  site_name,
   mulch_before = 0,
   mulch_after = 0,
   mulch_effect = 50,
@@ -21,7 +21,7 @@ write_off(
 )
 }
 \arguments{
-\item{off_name}{Character. Name of the OFF file (without extension).
+\item{site_name}{Character. Name of the OFF file (without extension).
 Typically the station name.}
 
 \item{mulch_before}{Integer. Percentage of ground surface covered by
@@ -81,7 +81,7 @@ cycle.
 \dontrun{
 # No mulches, one irrigation event before season
 write_off(
-  off_name   = "station_01",
+  site_name   = "station_01",
   mulch_after = 70,
   mulch_effect = 50,
   ecw_before = 1.5,
@@ -91,7 +91,7 @@ write_off(
 
 # Mulches and irrigation events both before and after
 write_off(
-  off_name     = "station_01",
+  site_name     = "station_01",
   mulch_before = 50,
   mulch_after  = 70,
   mulch_effect = 100,

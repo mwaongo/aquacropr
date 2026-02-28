@@ -1,3 +1,5 @@
+# TODO: used by future read_season() / read_day() / read_harvest() output readers (OUTP/).
+
 #' Validate File Existence and Suffix, essentially for OUTP/ files
 #' would write in future, solid checkers: is_season, is_day, is_harvest and so on.
 #' @param file Character. Path to the file.
@@ -18,6 +20,8 @@
     )
   }
 }
+
+# TODO: used by future read_season() output reader (OUTP/).
 
 #' Read Season Output Header
 #'

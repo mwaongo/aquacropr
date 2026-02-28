@@ -5,7 +5,7 @@
 \title{Write AquaCrop PRM files for Multiple Stations}
 \usage{
 write_prm_batch(
-  station_name = NULL,
+  site_name = NULL,
   crop_name = NULL,
   planting_schedule = NULL,
   path = "LIST/",
@@ -29,7 +29,7 @@ write_prm_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -55,7 +55,10 @@ as (None).}
 \item{climate_path}{Path to climate files directory. Default: "CLIMATE/".}
 
 \item{calendar_path}{Path to calendar files directory. Default: NULL.
-If NULL, section 2 is written as (None).}
+When provided, the planting schedule is derived automatically via
+find_onset() for each station, and planting_schedule can be NULL.
+Section 2 is always written as (None): the CAL file is used only to
+compute onset dates, not referenced in the PRM.}
 
 \item{management_path}{Path to field management files directory.
 Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
@@ -115,7 +118,7 @@ plsch    <- data.frame(year = 1981:2020, planting_doy = 201)
 stations <- c("grid_001", "grid_002")
 
 write_prm_batch(
-  station_name      = stations,
+  site_name      = stations,
   crop_name         = "maize",
   planting_schedule = plsch,
   crop_duration     = 90
@@ -128,7 +131,7 @@ plsch_list <- list(
 )
 
 write_prm_batch(
-  station_name      = stations,
+  site_name      = stations,
   crop_name         = "maize",
   planting_schedule = plsch_list,
   crop_duration     = 120,
@@ -137,7 +140,7 @@ write_prm_batch(
 
 # Example 3: calendar-based onset, no planting_schedule needed
 write_prm_batch(
-  station_name     = NULL,
+  site_name     = NULL,
   crop_name        = "wheat",
   calendar_path    = "CAL/",
   groundwater_path = "GWT/",

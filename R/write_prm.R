@@ -8,7 +8,7 @@
 #' required. All other sections are optional: if their path is NULL,
 #' "(None)" is written in the PRM file.
 #'
-#' @param station_name Station identifier (used to find CLI, Tnx, ETo, PLU,
+#' @param site_name Station identifier (used to find CLI, Tnx, ETo, PLU,
 #'   SOL, SW0 and other files).
 #' @param path Output directory path for PRM files. Default: "LIST/".
 #' @param year Year of cultivation.
@@ -52,7 +52,7 @@
 #' @keywords internal
 #' @noRd
 .write_prm <- function(
-    station_name,
+    site_name,
     path                 = "LIST/",
     year,
     planting_doy,
@@ -78,7 +78,7 @@
   # ---- Input validation ----
   stopifnot(
     is.character(path)         && length(path)         == 1,
-    is.character(station_name) && length(station_name) == 1,
+    is.character(site_name) && length(site_name) == 1,
     is.numeric(year)           && length(year)         == 1,
     is.numeric(planting_doy)   && length(planting_doy) == 1,
     is.numeric(crop_duration)  && length(crop_duration) == 1,
@@ -94,12 +94,12 @@
   sep <- .get_eol(eol)
 
   # ---- Always required files ----
-  cli_file <- fs::path(base_path, climate_path, paste0(station_name, ".CLI"))
-  tnx_file <- fs::path(base_path, climate_path, paste0(station_name, ".Tnx"))
-  eto_file <- fs::path(base_path, climate_path, paste0(station_name, ".ETo"))
-  plu_file <- fs::path(base_path, climate_path, paste0(station_name, ".PLU"))
-  sol_file <- fs::path(base_path, soil_path,    paste0(station_name, ".SOL"))
-  sw0_file <- fs::path(base_path, soil_path,    paste0(station_name, ".SW0"))
+  cli_file <- fs::path(base_path, climate_path, paste0(site_name, ".CLI"))
+  tnx_file <- fs::path(base_path, climate_path, paste0(site_name, ".Tnx"))
+  eto_file <- fs::path(base_path, climate_path, paste0(site_name, ".ETo"))
+  plu_file <- fs::path(base_path, climate_path, paste0(site_name, ".PLU"))
+  sol_file <- fs::path(base_path, soil_path,    paste0(site_name, ".SOL"))
+  sw0_file <- fs::path(base_path, soil_path,    paste0(site_name, ".SW0"))
 
   .validate_files_exist(c(
     CLI = cli_file,
@@ -112,7 +112,7 @@
 
   # ---- Dynamic sections (2 to 10) ----
   # Each entry: n = section number, label, ext, path (NULL = write "(None)"),
-  # name = file base name (defaults to station_name when absent).
+  # name = file base name (defaults to site_name when absent).
   prm_sections <- list(
     list(n = "2",  label = "Calendar (CAL) file",              ext = "CAL", path = calendar_path),
     list(n = "3",  label = "Crop (CRO) file",                  ext = "CRO", path = if (is.null(crop_name)) NULL else crop_path, name = crop_name),
@@ -128,7 +128,7 @@
   # Validate optional files that have a non-NULL path
   optional_files <- Filter(Negate(is.null), lapply(prm_sections, function(s) {
     if (is.null(s$path)) return(NULL)
-    nm   <- if (!is.null(s$name)) s$name else station_name
+    nm   <- if (!is.null(s$name)) s$name else site_name
     file <- fs::path(base_path, s$path, paste0(nm, ".", s$ext))
     stats::setNames(file, s$ext)
   }))
@@ -156,7 +156,7 @@
 
   # ---- Build content ----
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
-  output_file <- file.path(path, paste0(station_name, ".PRM"))
+  output_file <- file.path(path, paste0(site_name, ".PRM"))
 
   climate_path_prm <- path_for_prm(climate_path, use_standalone = use_standalone, base_path = base_path)
 
@@ -187,7 +187,7 @@
   )
 
   dynamic_lines <- unlist(lapply(prm_sections, function(s) {
-    nm       <- if (!is.null(s$name)) s$name else station_name
+    nm       <- if (!is.null(s$name)) s$name else site_name
     file_nm  <- if (is.null(s$path)) "(None)" else paste0(nm, ".", s$ext)
     path_prm <- if (is.null(s$path)) "(None)" else path_for_prm(s$path, use_standalone, base_path)
 
@@ -201,7 +201,7 @@
   prm_lines <- c(date_lines, climate_lines, dynamic_lines)
 
   if (write_header) {
-    .write_prm_header(path = path, crop = crop_name, station_name = station_name, eol = eol)
+    .write_prm_header(path = path, crop = crop_name, site_name = site_name, eol = eol)
   }
 
   readr::write_file(
@@ -224,7 +224,7 @@
 #' required. All other sections are optional: if their path is NULL,
 #' "(None)" is written in the PRM file.
 #'
-#' @param station_name Station identifier.
+#' @param site_name Station identifier.
 #' @param path Output directory path for PRM files. Default: "LIST/".
 #' @param planting_schedule data.frame with at least two columns:
 #'   \describe{
@@ -243,7 +243,10 @@
 #' @param crop_duration Growing season length in days. Default: 90.
 #' @param climate_path Path to climate file directory. Default: "CLIMATE/".
 #' @param calendar_path Path to calendar file directory. Default: NULL.
-#'   If NULL, section 2 is written as (None).
+#'   When provided, the planting schedule is derived automatically via
+#'   find_onset() and planting_schedule can be NULL. Section 2 is always
+#'   written as (None): the CAL file is used only to compute onset dates,
+#'   not referenced in the PRM.
 #' @param management_path Path to field management file directory.
 #'   Default: "MANAGEMENT/". If NULL, section 5 is written as (None).
 #' @param irrigation_path Path to irrigation management file directory.
@@ -272,7 +275,7 @@
 #' @return Invisibly returns the output file path.
 #' @export
 write_prm <- function(
-    station_name,
+    site_name,
     path                 = "LIST/",
     planting_schedule    = NULL,
     crop_name            = NULL,
@@ -296,7 +299,7 @@ write_prm <- function(
   # ---- Input validation ----
   stopifnot(
     is.character(path)         && length(path)         == 1,
-    is.character(station_name) && length(station_name) == 1,
+    is.character(site_name) && length(site_name) == 1,
     is.logical(use_standalone) && length(use_standalone) == 1
   )
 
@@ -314,8 +317,7 @@ write_prm <- function(
       )
     }
     onset <- find_onset(
-      cal_name     = station_name,
-      station_name = station_name,
+      site_name    = site_name,
       cal_path     = calendar_path,
       climate_path = climate_path,
       base_path    = base_path
@@ -344,13 +346,13 @@ write_prm <- function(
 
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
 
-  output_file <- file.path(path, paste0(station_name, ".PRM"))
+  output_file <- file.path(path, paste0(site_name, ".PRM"))
   if (file.exists(output_file)) file.remove(output_file)
 
   # Write one block per year; header written only for the first year
   for (i in seq_len(nrow(planting_schedule))) {
     .write_prm(
-      station_name         = station_name,
+      site_name         = site_name,
       path                 = path,
       year                 = planting_schedule$year[i],
       planting_doy         = planting_schedule$planting_doy[i],
@@ -358,7 +360,7 @@ write_prm <- function(
       crop_path            = crop_path,
       crop_duration        = crop_duration,
       climate_path         = climate_path,
-      calendar_path        = calendar_path,
+      calendar_path        = NULL,
       management_path      = management_path,
       irrigation_path      = irrigation_path,
       soil_path            = soil_path,

@@ -4,7 +4,7 @@
 #' management (mulches) and irrigation events before and after the growing
 #' cycle.
 #'
-#' @param off_name Character. Name of the OFF file (without extension).
+#' @param site_name Character. Name of the OFF file (without extension).
 #'   Typically the station name.
 #' @param mulch_before Integer. Percentage of ground surface covered by
 #'   mulches before the growing period (0-100). Default: 0.
@@ -46,7 +46,7 @@
 #' \dontrun{
 #' # No mulches, one irrigation event before season
 #' write_off(
-#'   off_name   = "station_01",
+#'   site_name   = "station_01",
 #'   mulch_after = 70,
 #'   mulch_effect = 50,
 #'   ecw_before = 1.5,
@@ -56,7 +56,7 @@
 #'
 #' # Mulches and irrigation events both before and after
 #' write_off(
-#'   off_name     = "station_01",
+#'   site_name     = "station_01",
 #'   mulch_before = 50,
 #'   mulch_after  = 70,
 #'   mulch_effect = 100,
@@ -70,7 +70,7 @@
 #' @family AquaCrop file writers
 #' @export
 write_off <- function(
-    off_name,
+    site_name,
     mulch_before = 0,
     mulch_after  = 0,
     mulch_effect = 50,
@@ -167,7 +167,7 @@ write_off <- function(
   # ---- Write file ----
   path <- .add_trailing_slash(path)
   fs::dir_create(path, recurse = TRUE)
-  output_file <- paste0(path, off_name, ".OFF")
+  output_file <- paste0(path, site_name, ".OFF")
 
   readr::write_file(x = content, file = output_file)
 

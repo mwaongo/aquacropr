@@ -6,7 +6,7 @@
 \usage{
 write_irr(
   path = "MANAGEMENT/",
-  irrigation_name,
+  site_name,
   method,
   wet_surface,
   mode,
@@ -20,7 +20,7 @@ write_irr(
 \item{path}{Character. Directory path where the .IRR file will be created.
 The directory is created automatically if it doesn't exist. Default: \code{"MANAGEMENT/"}.}
 
-\item{irrigation_name}{Character. Name identifier for the irrigation scenario.
+\item{site_name}{Character. Name identifier for the irrigation scenario.
 This name is used as the filename (e.g., \code{"drip-irrigation"} creates
 \code{"drip-irrigation.IRR"}).}
 
@@ -110,7 +110,7 @@ events <- create_irr_events(
 
 write_irr(
   path = "MANAGEMENT/",
-  irrigation_name = "ouaga-fixed",
+  site_name = "ouaga-fixed",
   method = 5,        # Drip irrigation
   wet_surface = 30,  # 30\% surface wetted
   mode = 1,          # Specified events
@@ -130,7 +130,7 @@ schedule <- create_irr_schedule(
 
 write_irr(
   path = "MANAGEMENT/",
-  irrigation_name = "bobo-schedule",
+  site_name = "bobo-schedule",
   method = 1,         # Sprinkler
   wet_surface = 100,  # 100\% surface wetted
   mode = 2,           # Generated schedule
@@ -149,7 +149,7 @@ schedule_raw <- create_irr_schedule(
 
 write_irr(
   path = "MANAGEMENT/",
-  irrigation_name = "auto-raw",
+  site_name = "auto-raw",
   method = 5,
   wet_surface = 30,
   mode = 2,
@@ -159,7 +159,7 @@ write_irr(
 # Example 4: Net irrigation requirement (Mode 3)
 write_irr(
   path = "MANAGEMENT/",
-  irrigation_name = "koudougou-netreq",
+  site_name = "koudougou-netreq",
   method = 1,         # Sprinkler
   wet_surface = 100,
   mode = 3,           # Net requirement

@@ -26,35 +26,6 @@
 }
 
 
-#' Validate and Normalize Path to Absolute
-#'
-#' @description
-#' Internal helper function to validate and convert paths to absolute paths.
-#'
-#' @param path Character string specifying a file or directory path
-#' @param param_name Character string for error messages identifying the parameter
-#'
-#' @return Character string containing the normalized absolute path with trailing slash
-#' @keywords internal
-#' @noRd
-.validate_and_normalize_path <- function(path, param_name) {
-  # Check if path is relative
-  if (!fs::is_absolute_path(path)) {
-    warning(
-      "Parameter '", param_name, "' is relative: '", path, "'\n",
-      "Converting to absolute path: '", fs::path_abs(path), "'"
-    )
-    path <- fs::path_abs(path)
-  }
-
-  # Use shared helper for trailing slash
-
-path <- .add_trailing_slash(path)
-
-  return(path)
-}
-
-
 #' Get CO2 File Based on Scenario
 #'
 #' @description

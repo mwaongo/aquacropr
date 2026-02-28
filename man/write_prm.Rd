@@ -5,7 +5,7 @@
 \title{Write AquaCrop Parameter Files for Multiple Years}
 \usage{
 write_prm(
-  station_name,
+  site_name,
   path = "LIST/",
   planting_schedule = NULL,
   crop_name = NULL,
@@ -27,7 +27,7 @@ write_prm(
 )
 }
 \arguments{
-\item{station_name}{Station identifier.}
+\item{site_name}{Station identifier.}
 
 \item{path}{Output directory path for PRM files. Default: "LIST/".}
 
@@ -53,7 +53,10 @@ as (None).}
 \item{climate_path}{Path to climate file directory. Default: "CLIMATE/".}
 
 \item{calendar_path}{Path to calendar file directory. Default: NULL.
-If NULL, section 2 is written as (None).}
+When provided, the planting schedule is derived automatically via
+find_onset() and planting_schedule can be NULL. Section 2 is always
+written as (None): the CAL file is used only to compute onset dates,
+not referenced in the PRM.}
 
 \item{management_path}{Path to field management file directory.
 Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}

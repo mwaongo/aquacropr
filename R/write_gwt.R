@@ -5,7 +5,7 @@
 #' no groundwater table (code 0), constant depth and salinity (code 1),
 #' and variable depth and salinity over time (code 2).
 #'
-#' @param gwt_name Character. Name of the GWT file (without extension).
+#' @param site_name Character. Name of the GWT file (without extension).
 #'   Typically the station name.
 #' @param code Integer. Groundwater table mode:
 #'   0 = no groundwater table,
@@ -42,18 +42,18 @@
 #' @examples
 #' \dontrun{
 #' # Code 0: no groundwater table
-#' write_gwt(gwt_name = "station_01", code = 0)
+#' write_gwt(site_name = "station_01", code = 0)
 #'
 #' # Code 1: constant depth and salinity
 #' write_gwt(
-#'   gwt_name = "station_01",
+#'   site_name = "station_01",
 #'   code     = 1,
 #'   gwt_data = data.frame(day = 1, depth = 1.50, ecw = 1.5)
 #' )
 #'
 #' # Code 2: variable depth and salinity
 #' write_gwt(
-#'   gwt_name    = "station_01",
+#'   site_name    = "station_01",
 #'   code        = 2,
 #'   gwt_data    = data.frame(
 #'     day   = c(50, 100, 200, 300),
@@ -69,7 +69,7 @@
 #' @family AquaCrop file writers
 #' @export
 write_gwt <- function(
-    gwt_name,
+    site_name,
     code,
     gwt_data    = NULL,
     path        = "MANAGEMENT/",
@@ -156,7 +156,7 @@ write_gwt <- function(
   # ---- Write file ----
   path <- .add_trailing_slash(path)
   fs::dir_create(path, recurse = TRUE)
-  output_file <- paste0(path, gwt_name, ".GWT")
+  output_file <- paste0(path, site_name, ".GWT")
 
   readr::write_file(x = content, file = output_file)
 

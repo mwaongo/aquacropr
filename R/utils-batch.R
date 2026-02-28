@@ -49,7 +49,7 @@
     item_names = NULL,
     climate_path = "CLIMATE/",
     base_path = getwd(),
-    item_type = "station",
+    item_type = "site",
     verbose = TRUE,
     stop_on_missing = TRUE) {
 
@@ -59,7 +59,7 @@
   available_items <- tools::file_path_sans_ext(cli_files)
 
   if (is.null(item_names)) {
-    # Auto-discovery mode
+    # Auto-discovery mode: return names exactly as found on disk
     if (length(available_items) == 0) {
       stop(
         "No ", item_type, "s to process.\n",
@@ -79,8 +79,8 @@
       )
     }
   } else {
-    # Validation mode
-    missing <- setdiff(item_names, available_items)
+    # Validation mode – compare case-insensitively, but preserve original casing
+    missing <- setdiff(tolower(item_names), tolower(available_items))
 
     if (length(missing) > 0) {
       msg <- paste0(
@@ -207,12 +207,12 @@
 #' @examples
 #' # Example usage in write_man_batch
 #' .batch_with_progress(
-#'   items = station_names,
+#'   items = site_names,
 #'   params = params_list,
 #'   verbose = TRUE,
-#'   item_type = "station",
+#'   item_type = "site",
 #'   fn = function(item, params, path, eol) {
-#'     write_man(management_name = item, params = params, path = path, eol = eol)
+#'     write_man(site_name = item, params = params, path = path, eol = eol)
 #'   },
 #'   path = "MANAGEMENT/",
 #'   eol = NULL
@@ -287,7 +287,7 @@
   n_removed <- 0
 
   if (fs::dir_exists(path)) {
-    files <- fs::dir_ls(path, regexp = pattern)
+    files <- fs::dir_ls(path, regexp = pattern, ignore.case = TRUE)
     if (length(files) > 0) {
       fs::file_delete(files)
       n_removed <- length(files)

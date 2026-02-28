@@ -5,8 +5,7 @@
 \title{Compute AquaCrop Growing Season Onset Day per Year}
 \usage{
 find_onset(
-  cal_name,
-  station_name = cal_name,
+  site_name,
   cal_path = "CAL/",
   climate_path = "CLIMATE/",
   years = NULL,
@@ -14,10 +13,8 @@ find_onset(
 )
 }
 \arguments{
-\item{cal_name}{Character. Station name used to locate the CAL file.}
-
-\item{station_name}{Character. Station name used to locate climate files.
-Default: same as cal_name.}
+\item{site_name}{Character. Station name used to locate both the CAL file
+and the climate files (.PLU, .Tnx, .ETo).}
 
 \item{cal_path}{Path to the CAL directory. Default: "CAL/".}
 
@@ -49,14 +46,14 @@ yet supported.
 \examples{
 \dontrun{
 # Criterion 2: 30 mm in 3 successive days
-onset <- find_onset("station_01")
+onset <- find_onset("site_01")
 head(onset)
 
 # Fixed onset: same DOY every year
-onset_fixed <- find_onset("station_01_fixed", years = 1981:2020)
+onset_fixed <- find_onset("site_01_fixed", years = 1981:2020)
 
 # Criterion 4: 10-day rain >= 50 \% of ETo (ETo read automatically)
-onset_c4 <- find_onset("station_01_c4")
+onset_c4 <- find_onset("site_01_c4")
 }
 
 }

@@ -6,7 +6,7 @@
 \usage{
 write_cli(
   path = "weather/",
-  stn = "station",
+  site_name = "station",
   eol = "windows",
   scenario = "hist",
   check_files = TRUE
@@ -15,7 +15,7 @@ write_cli(
 \arguments{
 \item{path}{Directory path where climate files are located and where .CLI will be written. Default = "weather/"}
 
-\item{stn}{Station name or identifier. The .Tnx, .ETo, and .PLU files with this
+\item{site_name}{Station name or identifier. The .Tnx, .ETo, and .PLU files with this
 station name must exist in the path. Default = "station"}
 
 \item{eol}{End-of-line character style for the output file.
@@ -74,28 +74,28 @@ exist before creating the .CLI file. Set \code{check_files = FALSE} to skip this
 \dontrun{
 # First, create the required climate files
 data("weather")
-write_plu(data = weather, stn = "Wakanda", path = "weather/")
-write_eto(data = weather, stn = "Wakanda", path = "weather/")
-write_tnx(data = weather, stn = "Wakanda", path = "weather/")
+write_plu(data = weather, site_name = "Wakanda", path = "weather/")
+write_eto(data = weather, site_name = "Wakanda", path = "weather/")
+write_tnx(data = weather, site_name = "Wakanda", path = "weather/")
 
 # Then write CLI file with historical CO2
 write_cli(
   path = "weather/",
-  stn = "Wakanda",
+  site_name = "Wakanda",
   scenario = "hist"
 )
 
 # Write CLI file with RCP 4.5 scenario
 write_cli(
   path = "weather/",
-  stn = "Wakanda",
+  site_name = "Wakanda",
   scenario = "rcp45"
 )
 
 # Skip validation (not recommended)
 write_cli(
   path = "weather/",
-  stn = "Wakanda",
+  site_name = "Wakanda",
   scenario = "hist",
   check_files = FALSE
 )

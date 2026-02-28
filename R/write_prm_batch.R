@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop PRM files for multiple stations.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -22,7 +22,10 @@
 #'   as (None).
 #' @param climate_path Path to climate files directory. Default: "CLIMATE/".
 #' @param calendar_path Path to calendar files directory. Default: NULL.
-#'   If NULL, section 2 is written as (None).
+#'   When provided, the planting schedule is derived automatically via
+#'   find_onset() for each station, and planting_schedule can be NULL.
+#'   Section 2 is always written as (None): the CAL file is used only to
+#'   compute onset dates, not referenced in the PRM.
 #' @param management_path Path to field management files directory.
 #'   Default: "MANAGEMENT/". If NULL, section 5 is written as (None).
 #' @param irrigation_path Path to irrigation management files directory.
@@ -65,7 +68,7 @@
 #' stations <- c("grid_001", "grid_002")
 #'
 #' write_prm_batch(
-#'   station_name      = stations,
+#'   site_name      = stations,
 #'   crop_name         = "maize",
 #'   planting_schedule = plsch,
 #'   crop_duration     = 90
@@ -78,7 +81,7 @@
 #' )
 #'
 #' write_prm_batch(
-#'   station_name      = stations,
+#'   site_name      = stations,
 #'   crop_name         = "maize",
 #'   planting_schedule = plsch_list,
 #'   crop_duration     = 120,
@@ -87,7 +90,7 @@
 #'
 #' # Example 3: calendar-based onset, no planting_schedule needed
 #' write_prm_batch(
-#'   station_name     = NULL,
+#'   site_name     = NULL,
 #'   crop_name        = "wheat",
 #'   calendar_path    = "CAL/",
 #'   groundwater_path = "GWT/",
@@ -101,7 +104,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_prm_batch <- function(
-    station_name         = NULL,
+    site_name         = NULL,
     crop_name            = NULL,
     planting_schedule    = NULL,
     path                 = "LIST/",
@@ -142,15 +145,15 @@ write_prm_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_prm_batch", "write_prm", verbose)
 
   # ---- Resolve planting schedule ----
@@ -163,10 +166,9 @@ write_prm_batch <- function(
       )
     }
     if (verbose) message("Computing onset days from CAL files...")
-    planting_schedule <- lapply(station_name, function(stn) {
+    planting_schedule <- lapply(site_name, function(site) {
       onset <- find_onset(
-        cal_name     = stn,
-        station_name = stn,
+        site_name    = site,
         cal_path     = calendar_path,
         climate_path = climate_path,
         base_path    = base_path
@@ -183,7 +185,7 @@ write_prm_batch <- function(
     # Normalize: single data.frame applied to all stations
     if (is.data.frame(planting_schedule)) {
       if (verbose) {
-        message("Applying the same planting schedule to all ", n, " station(s)")
+        message("Applying the same planting schedule to all ", n, " site(s)")
       }
       planting_schedule <- rep(list(planting_schedule), n)
     }
@@ -191,7 +193,7 @@ write_prm_batch <- function(
       stop(
         "planting_schedule must be either:\n",
         "  - A single data.frame (applied to all stations), or\n",
-        "  - A list of data.frames with length matching station_name\n",
+        "  - A list of data.frames with length matching site_name\n",
         "Expected length: ", n, ", got: ", length(planting_schedule),
         call. = FALSE
       )
@@ -199,21 +201,21 @@ write_prm_batch <- function(
   }
 
   if (verbose) {
-    message("Writing PRM files for ", n, " station(s)...")
+    message("Writing PRM files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
+    items     = site_name,
     params    = planting_schedule,
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, crop_name, path, base_path, crop_path,
-                  crop_duration, climate_path, calendar_path,
+                  crop_duration, climate_path,
                   management_path, irrigation_path, soil_path,
                   groundwater_path, offseason_path, obs_path,
                   simulation_start_doy, scenario, eol, use_standalone) {
       write_prm(
-        station_name         = item,
+        site_name            = item,
         crop_name            = crop_name,
         planting_schedule    = params,
         path                 = path,
@@ -221,7 +223,7 @@ write_prm_batch <- function(
         crop_path            = crop_path,
         crop_duration        = crop_duration,
         climate_path         = climate_path,
-        calendar_path        = calendar_path,
+        calendar_path        = NULL,
         management_path      = management_path,
         irrigation_path      = irrigation_path,
         soil_path            = soil_path,
@@ -240,7 +242,6 @@ write_prm_batch <- function(
     crop_path            = crop_path,
     crop_duration        = crop_duration,
     climate_path         = climate_path,
-    calendar_path        = calendar_path,
     management_path      = management_path,
     irrigation_path      = irrigation_path,
     soil_path            = soil_path,
@@ -254,7 +255,7 @@ write_prm_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created PRM files for ", n, " station(s)")
+    message("Successfully created PRM files for ", n, " site(s)")
   }
 
   invisible(NULL)

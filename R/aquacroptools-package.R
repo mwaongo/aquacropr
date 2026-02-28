@@ -19,7 +19,6 @@
 #' @importFrom readr write_delim
 #' @importFrom readr write_file
 #' @importFrom readr write_lines
-#' @importFrom snakecase to_any_case
 #' @importFrom stringr str_ends
 #' @importFrom tibble as_tibble
 #' @importFrom utils download.file

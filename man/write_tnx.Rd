@@ -6,7 +6,7 @@
 \usage{
 write_tnx(
   path = "CLIMATE/",
-  stn = NULL,
+  site_name = NULL,
   data = NULL,
   var_name_min = "tmin",
   var_name_max = "tmax",
@@ -21,7 +21,7 @@ write_tnx(
 \arguments{
 \item{path}{Directory path where the output .Tnx file will be written. Default = "CLIMATE/"}
 
-\item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
+\item{site_name}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 
 \item{data}{Data frame containing daily temperature data. Can have either:
 \itemize{
@@ -48,7 +48,7 @@ Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 }
 \value{
 Invisibly returns the full path to the created .Tnx file. Creates a formatted .Tnx file
-in the specified directory with the format: <\if{html}{\out{<stn>}}>.Tnx containing daily minimum and
+in the specified directory with the format: <<site_name>>.Tnx containing daily minimum and
 maximum temperature data as required by AquaCrop v7.0.
 }
 \description{
@@ -63,7 +63,7 @@ data("weather")
 # Write temperature file with default column names
 write_tnx(
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   data = weather
 )
 

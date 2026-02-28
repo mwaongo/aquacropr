@@ -5,7 +5,7 @@
 \title{Write AquaCrop Calendar (.CAL) File}
 \usage{
 write_cal(
-  cal_name,
+  site_name,
   onset,
   fixed_day = NULL,
   window_start = NULL,
@@ -21,7 +21,7 @@ write_cal(
 )
 }
 \arguments{
-\item{cal_name}{Character. Name of the CAL file (without extension).
+\item{site_name}{Character. Name of the CAL file (without extension).
 Typically the station name.}
 
 \item{onset}{Character. Onset type: "fixed", "rainfall", or "thermal".}
@@ -94,14 +94,14 @@ passes through as-is; thermal criterion c becomes c + 10).
 \dontrun{
 # Fixed onset on day 212
 write_cal(
-  cal_name  = "station_01",
+  site_name  = "station_01",
   onset     = "fixed",
   fixed_day = 212
 )
 
 # Rainfall criterion 1: cumulative rainfall >= 50 mm
 write_cal(
-  cal_name      = "station_01",
+  site_name      = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -112,7 +112,7 @@ write_cal(
 
 # Rainfall criterion 2: observed rainfall >= 30 mm in 3 successive days
 write_cal(
-  cal_name        = "station_01",
+  site_name        = "station_01",
   onset           = "rainfall",
   window_start    = 121,
   window_length   = 92,
@@ -124,7 +124,7 @@ write_cal(
 
 # Rainfall criterion 3: 10-day rainfall >= 40 mm
 write_cal(
-  cal_name      = "station_01",
+  site_name      = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -135,7 +135,7 @@ write_cal(
 
 # Rainfall criterion 4: 10-day rainfall >= 50 percent of ETo
 write_cal(
-  cal_name      = "station_01",
+  site_name      = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -146,7 +146,7 @@ write_cal(
 
 # Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
 write_cal(
-  cal_name        = "station_01",
+  site_name        = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -158,7 +158,7 @@ write_cal(
 
 # Thermal criterion 2: daily Tmean >= 10 degC for 3 successive days
 write_cal(
-  cal_name        = "station_01",
+  site_name        = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -170,7 +170,7 @@ write_cal(
 
 # Thermal criterion 3: cumulative GDD >= 20 degC in 8 successive days
 write_cal(
-  cal_name        = "station_01",
+  site_name        = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -182,7 +182,7 @@ write_cal(
 
 # Thermal criterion 4: cumulative GDD since start >= 600 degC
 write_cal(
-  cal_name      = "station_01",
+  site_name      = "station_01",
   onset         = "thermal",
   window_start  = 1,
   window_length = 60,

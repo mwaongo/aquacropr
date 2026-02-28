@@ -4,13 +4,13 @@
 \alias{write_man}
 \title{Write AquaCrop Management File}
 \usage{
-write_man(path = "MANAGEMENT/", management_name, eol = NULL, params = list())
+write_man(path = "MANAGEMENT/", site_name, eol = NULL, params = list())
 }
 \arguments{
 \item{path}{Character. Directory path where the .MAN file will be created.
 The directory is created automatically if it doesn't exist. Default: \code{"MANAGEMENT/"}.}
 
-\item{management_name}{Character. Name identifier for the management scenario.
+\item{site_name}{Character. Name identifier for the management scenario.
 This name is used as the filename (e.g., \code{"high-fertility"} creates
 \code{"high-fertility.MAN"}). Default: \code{"generic-management"}.}
 
@@ -53,7 +53,7 @@ parameters automatically use default values from \code{\link{ManData}}.
 
 The function creates a colon-delimited text file compatible with AquaCrop v7.0+:
 \itemize{
-\item Filename: \verb{<management_name>.MAN}
+\item Filename: \verb{<site_name>.MAN}
 \item Format: \code{value : description}
 \item Each parameter on a separate line
 \item Header contains management scenario name and key parameters
@@ -65,14 +65,14 @@ The function creates a colon-delimited text file compatible with AquaCrop v7.0+:
 # Example 1: Use all default values
 write_man(
   path = "MANAGEMENT/",
-  management_name = "default"
+  site_name = "default"
 )
 
 # Example 2: High fertility with moderate mulching
 # See ?ManData for parameter details
 write_man(
   path = "MANAGEMENT/",
-  management_name = "high-fertility",
+  site_name = "high-fertility",
   params = list(
     var_05 = 10, # Low fertility stress (high fertility)
     var_03 = 30, # 30\% mulch cover
@@ -83,7 +83,7 @@ write_man(
 # Example 3: Low fertility, no mulch
 write_man(
   path = "MANAGEMENT/",
-  management_name = "low-fertility",
+  site_name = "low-fertility",
   params = list(
     var_05 = 70, # High fertility stress (poor soil)
     var_03 = 0, # No mulch
@@ -95,7 +95,7 @@ write_man(
 # Check ?ManData for weed-related parameters
 write_man(
   path = "MANAGEMENT/",
-  management_name = "with-weeds",
+  site_name = "with-weeds",
   params = list(
     var_05 = 50, # Moderate fertility stress
     var_09 = 20, # Weed cover at closure
@@ -107,7 +107,7 @@ write_man(
 # Example 5: Multiple cutting management (e.g., forage)
 write_man(
   path = "MANAGEMENT/",
-  management_name = "multiple-cuts",
+  site_name = "multiple-cuts",
   params = list(
     var_13 = 1, # Enable multiple cuttings
     var_14 = 10, # Canopy after cut
@@ -130,7 +130,7 @@ irrigation_params <- list(
 
 write_man(
   path = "MANAGEMENT/",
-  management_name = "irrigated-field",
+  site_name = "irrigated-field",
   params = irrigation_params,
   eol = "linux"
 )
@@ -139,7 +139,7 @@ write_man(
 station <- "grid_001"
 write_man(
   path = "MANAGEMENT/",
-  management_name = station,
+  site_name = station,
   params = list(var_05 = 35)
 )
 }

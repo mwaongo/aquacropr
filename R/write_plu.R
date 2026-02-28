@@ -5,7 +5,7 @@
 #' precipitation data for use in crop simulations.
 #'
 #' @param path Directory path where the output .PLU file will be written. Default = "CLIMATE/"
-#' @param stn Station name or identifier for the weather station. Default = NULL (extracted from data if available)
+#' @param site_name Station name or identifier for the weather station. Default = NULL (extracted from data if available)
 #' @param data Data frame containing daily rainfall data. Can have either:
 #'   - Columns: station, year, month, day, rain (legacy format), or
 #'   - Columns: year, month, day, rain (new format)
@@ -21,7 +21,7 @@
 #' @family AquaCrop file writers
 #' @return
 #' Invisibly returns the full path to the created .PLU file. Creates a formatted .PLU file
-#' in the specified directory with the format: <<stn>>.PLU containing daily rainfall data
+#' in the specified directory with the format: <<site_name>>.PLU containing daily rainfall data
 #' as required by AquaCrop v7.0.
 #'
 #' @examples
@@ -32,7 +32,7 @@
 #' # Write rainfall file with default column name
 #' write_plu(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather
 #' )
 #'
@@ -48,7 +48,7 @@
 #' @export
 write_plu <- function(
     path = "CLIMATE/",
-    stn = NULL,
+    site_name = NULL,
     data = NULL,
     var_name = "rain",
     syear = NULL,
@@ -60,7 +60,7 @@ write_plu <- function(
 
   .write_climate_file(
     path = path,
-    stn = stn,
+    site_name = site_name,
     data = data,
     var_cols = var_name,
     header_var_name = "rain",

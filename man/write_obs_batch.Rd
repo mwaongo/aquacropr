@@ -5,7 +5,7 @@
 \title{Write AquaCrop Observed Data (.OBS) Files for Multiple Stations}
 \usage{
 write_obs_batch(
-  station_name = NULL,
+  site_name = NULL,
   obs_data,
   path = "OBS/",
   climate_path = "CLIMATE/",
@@ -21,7 +21,7 @@ write_obs_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -87,7 +87,7 @@ obs <- data.frame(
 
 # Same observations for all stations
 write_obs_batch(
-  station_name = c("grid_001", "grid_002"),
+  site_name = c("grid_001", "grid_002"),
   obs_data     = obs,
   soil_depth   = 1.00,
   start_day    = 1,
@@ -97,7 +97,7 @@ write_obs_batch(
 
 # Different observations per station
 write_obs_batch(
-  station_name = c("grid_001", "grid_002"),
+  site_name = c("grid_001", "grid_002"),
   obs_data     = list(obs, obs),
   start_year   = 2014
 )

@@ -7,7 +7,7 @@
 #'
 #' @param path Character. Directory path where the .IRR file will be created.
 #'   The directory is created automatically if it doesn't exist. Default: `"MANAGEMENT/"`.
-#' @param irrigation_name Character. Name identifier for the irrigation scenario.
+#' @param site_name Character. Name identifier for the irrigation scenario.
 #'   This name is used as the filename (e.g., `"drip-irrigation"` creates
 #'   `"drip-irrigation.IRR"`).
 #' @param method Integer. Irrigation method:
@@ -77,7 +77,7 @@
 #'
 #' write_irr(
 #'   path = "MANAGEMENT/",
-#'   irrigation_name = "ouaga-fixed",
+#'   site_name = "ouaga-fixed",
 #'   method = 5,        # Drip irrigation
 #'   wet_surface = 30,  # 30% surface wetted
 #'   mode = 1,          # Specified events
@@ -97,7 +97,7 @@
 #'
 #' write_irr(
 #'   path = "MANAGEMENT/",
-#'   irrigation_name = "bobo-schedule",
+#'   site_name = "bobo-schedule",
 #'   method = 1,         # Sprinkler
 #'   wet_surface = 100,  # 100% surface wetted
 #'   mode = 2,           # Generated schedule
@@ -116,7 +116,7 @@
 #'
 #' write_irr(
 #'   path = "MANAGEMENT/",
-#'   irrigation_name = "auto-raw",
+#'   site_name = "auto-raw",
 #'   method = 5,
 #'   wet_surface = 30,
 #'   mode = 2,
@@ -126,7 +126,7 @@
 #' # Example 4: Net irrigation requirement (Mode 3)
 #' write_irr(
 #'   path = "MANAGEMENT/",
-#'   irrigation_name = "koudougou-netreq",
+#'   site_name = "koudougou-netreq",
 #'   method = 1,         # Sprinkler
 #'   wet_surface = 100,
 #'   mode = 3,           # Net requirement
@@ -138,7 +138,7 @@
 #' @export
 write_irr <- function(
     path = "MANAGEMENT/",
-    irrigation_name,
+    site_name,
     method,
     wet_surface,
     mode,
@@ -205,7 +205,7 @@ write_irr <- function(
   mode_names <- c("Specified events", "Generated schedule", "Net requirement")
 
   content <- paste0(
-    irrigation_name, sep,
+    site_name, sep,
     .format_string2(version, '%.1f', 7), "  : AquaCrop Version (August 2023)", sep,
     .format_string2(method, '%d', 7), "  : ", method_names[method], " irrigation", sep,
     .format_string2(wet_surface, '%d', 7), "  : Percentage of soil surface wetted", sep,
@@ -222,7 +222,7 @@ write_irr <- function(
   }
 
   # Write
-  output_file <- paste0(path, irrigation_name, ".IRR")
+  output_file <- paste0(path, site_name, ".IRR")
   readr::write_file(x = content, file = output_file)
 
   invisible(output_file)
@@ -521,5 +521,5 @@ create_irr_schedule <- function(from_day, time_crit, depth_crit, ecw,
       irr_data >= 0 && irr_data <= 100
   )
 
-  paste0(.format_string2(irr_data, '%.0f', 7), "  : Allowable depletion of RAW (%)")
+  paste0(.format_string2(irr_data, '%.0f', 7), "  : Allowable depletion of RAW (%)", sep)
 }

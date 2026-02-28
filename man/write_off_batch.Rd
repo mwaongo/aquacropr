@@ -5,7 +5,7 @@
 \title{Write AquaCrop Off-Season Conditions (.OFF) Files for Multiple Stations}
 \usage{
 write_off_batch(
-  station_name = NULL,
+  site_name = NULL,
   mulch_before = 0,
   mulch_after = 0,
   mulch_effect = 50,
@@ -25,7 +25,7 @@ write_off_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -98,7 +98,7 @@ stations <- c("grid_001", "grid_002")
 
 # Same conditions for all stations
 write_off_batch(
-  station_name = stations,
+  site_name = stations,
   mulch_after  = 70,
   mulch_effect = 50,
   ecw_before   = 1.5,
@@ -108,7 +108,7 @@ write_off_batch(
 
 # Different irrigation events per station
 write_off_batch(
-  station_name = stations,
+  site_name = stations,
   ecw_before   = 1.5,
   irr_before   = list(
     data.frame(day = 10, depth = 40),

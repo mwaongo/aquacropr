@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop observed data files for multiple stations.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -53,7 +53,7 @@
 #'
 #' # Same observations for all stations
 #' write_obs_batch(
-#'   station_name = c("grid_001", "grid_002"),
+#'   site_name = c("grid_001", "grid_002"),
 #'   obs_data     = obs,
 #'   soil_depth   = 1.00,
 #'   start_day    = 1,
@@ -63,7 +63,7 @@
 #'
 #' # Different observations per station
 #' write_obs_batch(
-#'   station_name = c("grid_001", "grid_002"),
+#'   site_name = c("grid_001", "grid_002"),
 #'   obs_data     = list(obs, obs),
 #'   start_year   = 2014
 #' )
@@ -74,7 +74,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_obs_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     obs_data,
     path         = "OBS/",
     climate_path = "CLIMATE/",
@@ -95,21 +95,21 @@ write_obs_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_obs_batch", "write_obs", verbose)
 
   # Normalize obs_data: single data.frame or list of data.frames
   if (is.data.frame(obs_data)) {
     if (verbose) {
-      message("Applying the same observation data to all ", n, " station(s)")
+      message("Applying the same observation data to all ", n, " site(s)")
     }
     obs_data <- rep(list(obs_data), n)
   }
@@ -118,25 +118,25 @@ write_obs_batch <- function(
     stop(
       "obs_data must be either:\n",
       "  - A single data.frame (applied to all stations), or\n",
-      "  - A list of data.frames with length matching station_name\n",
+      "  - A list of data.frames with length matching site_name\n",
       "Expected length: ", n, ", got: ", length(obs_data),
       call. = FALSE
     )
   }
 
   if (verbose) {
-    message("Writing OBS files for ", n, " station(s)...")
+    message("Writing OBS files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
+    items     = site_name,
     params    = obs_data,
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, path, soil_depth, start_day,
                   start_month, start_year, version, eol) {
       write_obs(
-        obs_name    = item,
+        site_name    = item,
         obs_data    = params,
         path        = path,
         soil_depth  = soil_depth,
@@ -157,7 +157,7 @@ write_obs_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created OBS files for ", n, " station(s)")
+    message("Successfully created OBS files for ", n, " site(s)")
   }
 
   invisible(NULL)

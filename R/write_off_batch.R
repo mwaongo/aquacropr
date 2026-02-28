@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop off-season conditions files for multiple stations.
 #'
-#' @param station_name Character vector or NULL. Names of stations to process.
+#' @param site_name Character vector or NULL. Names of stations to process.
 #'   If NULL, all stations are automatically discovered from .CLI files in
 #'   the climate directory. If a vector, only the specified stations will be
 #'   processed; all must have corresponding climate files.
@@ -56,7 +56,7 @@
 #'
 #' # Same conditions for all stations
 #' write_off_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   mulch_after  = 70,
 #'   mulch_effect = 50,
 #'   ecw_before   = 1.5,
@@ -66,7 +66,7 @@
 #'
 #' # Different irrigation events per station
 #' write_off_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   ecw_before   = 1.5,
 #'   irr_before   = list(
 #'     data.frame(day = 10, depth = 40),
@@ -80,7 +80,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_off_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     mulch_before = 0,
     mulch_after  = 0,
     mulch_effect = 50,
@@ -105,15 +105,15 @@ write_off_batch <- function(
   }
 
   # Discover or validate stations from climate files
-  station_name <- .discover_or_validate_items(
-    item_names   = station_name,
+  site_name <- .discover_or_validate_items(
+    item_names   = site_name,
     climate_path = climate_path,
     base_path    = base_path,
-    item_type    = "station",
+    item_type    = "site",
     verbose      = verbose
   )
 
-  n <- length(station_name)
+  n <- length(site_name)
   .warn_single_item(n, "write_off_batch", "write_off", verbose)
 
   # Normalize irr_before: NULL, single data.frame, or list
@@ -121,19 +121,19 @@ write_off_batch <- function(
   irr_after  <- .normalize_off_irr(irr_after,  n, "irr_after",  verbose)
 
   if (verbose) {
-    message("Writing OFF files for ", n, " station(s)...")
+    message("Writing OFF files for ", n, " site(s)...")
   }
 
   .batch_with_progress(
-    items     = station_name,
+    items     = site_name,
     params    = seq_len(n),   # index to retrieve per-station irr data
     verbose   = verbose,
-    item_type = "station",
+    item_type = "site",
     fn = function(item, params, mulch_before, mulch_after, mulch_effect,
                   ecw_before, ecw_after, wet_surface, irr_before, irr_after,
                   path, description, version, eol) {
       write_off(
-        off_name     = item,
+        site_name     = item,
         mulch_before = mulch_before,
         mulch_after  = mulch_after,
         mulch_effect = mulch_effect,
@@ -163,7 +163,7 @@ write_off_batch <- function(
   )
 
   if (verbose) {
-    message("Successfully created OFF files for ", n, " station(s)")
+    message("Successfully created OFF files for ", n, " site(s)")
   }
 
   invisible(NULL)
@@ -190,7 +190,7 @@ write_off_batch <- function(
 
   if (is.data.frame(irr)) {
     if (verbose) {
-      message("Applying the same ", label, " to all ", n, " station(s)")
+      message("Applying the same ", label, " to all ", n, " site(s)")
     }
     return(rep(list(irr), n))
   }
@@ -200,7 +200,7 @@ write_off_batch <- function(
       label, " must be either:\n",
       "  - NULL (no events), or\n",
       "  - A single data.frame (applied to all stations), or\n",
-      "  - A list of data.frames with length matching station_name\n",
+      "  - A list of data.frames with length matching site_name\n",
       "Expected length: ", n, ", got: ", length(irr),
       call. = FALSE
     )

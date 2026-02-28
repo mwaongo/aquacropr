@@ -4,7 +4,7 @@
 #' Internal function to generate headers for AquaCrop climate files (.PLU, .ETo, .Tnx).
 #'
 #' @param var_name Character string specifying variable type: "rain", "et0", or "temperature". Default = NULL
-#' @param stn Station name or identifier. Default = "station"
+#' @param site_name Station name or identifier. Default = "station"
 #' @param syear Start year of the data period. Default = 1991
 #' @param eyear End year of the data period. Default = 2020
 #' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
@@ -18,7 +18,7 @@
 #' @noRd
 .get_header <- function(
     var_name = NULL,
-    stn = NULL,
+    site_name = NULL,
     syear = NULL,
     eyear = NULL,
     eol = NULL,
@@ -26,7 +26,7 @@
     first_day = 1,
     first_month = 1) {
   # Apply safe defaults
-  if (is.null(stn)) stn <- "station"
+  if (is.null(site_name)) site_name <- "station"
   if (is.null(syear)) syear <- 1991
   if (is.null(eyear)) eyear <- 2020
   if (is.null(var_name)) var_name <- "temperature"
@@ -67,12 +67,7 @@
     )
   }
 
-  # Format station name
-  stn_formatted <- snakecase::to_any_case(
-    stn,
-    case = "snake",
-    sep_out = "_"
-  )
+  # Use station name as-is
 
   # Build headline 1 based on variable type
   data_type <- dplyr::case_when(
@@ -82,7 +77,7 @@
   )
 
   headline_1 <- paste0(
-    stn_formatted,
+    site_name,
     " : Daily ", data_type, " data (1 Jan ", syear,
     " - 31 December ", eyear, ")"
   )
@@ -499,13 +494,13 @@
 #'
 #' @param path Character. Directory path
 #' @param crop Character. Crop name
-#' @param station_name Character. Station identifier
+#' @param site_name Character. Station identifier
 #' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
 #'
 #' @return NULL (writes to file)
 #' @keywords internal
 #' @noRd
-.write_prm_header <- function(path = path, crop = crop, station_name, eol = NULL) {
+.write_prm_header <- function(path = path, crop = crop, site_name, eol = NULL) {
 
   if (is.null(eol)) eol <- get_os()
 
@@ -516,7 +511,7 @@
   line1 <- paste0(.format_string2(crop, "%s", 16), "", sep)
   line2 <- paste0(.format_string2(7, "%.1f", 16), ":AquaCrop Version (August 2022)", sep)
 
-  output_file <- fs::path(path, paste0(station_name, ".PRM"))
+  output_file <- fs::path(path, paste0(site_name, ".PRM"))
   readr::write_file(
     x = line1,
     file = output_file

@@ -5,7 +5,7 @@
 \title{Write AquaCrop Irrigation (.IRR) Files for Multiple Stations}
 \usage{
 write_irrig_batch(
-  station_name = NULL,
+  site_name = NULL,
   method,
   wet_surface,
   mode,
@@ -21,7 +21,7 @@ write_irrig_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or NULL. Names of stations to process.
+\item{site_name}{Character vector or NULL. Names of stations to process.
 If NULL, all stations are automatically discovered from .CLI files in
 the climate directory. If a vector, only the specified stations will be
 processed; all must have corresponding climate files.}
@@ -82,7 +82,7 @@ The irrigation file for each station is named after the station
 irr <- data.frame(day = c(20, 40, 60), depth = c(30, 30, 25))
 stations <- c("grid_001", "grid_002")
 write_irrig_batch(
-  station_name = stations,
+  site_name = stations,
   method       = 1,
   wet_surface  = 100,
   mode         = 1,
@@ -95,7 +95,7 @@ irr_list <- list(
   data.frame(day = c(25, 45), depth = c(35, 30))
 )
 write_irrig_batch(
-  station_name = stations,
+  site_name = stations,
   method       = 1,
   wet_surface  = 100,
   mode         = 1,
@@ -105,7 +105,7 @@ write_irrig_batch(
 
 # Example 3: auto-discover all stations, silent mode
 write_irrig_batch(
-  station_name = NULL,
+  site_name = NULL,
   method       = 4,
   wet_surface  = 60,
   mode         = 2,

@@ -5,7 +5,7 @@
 #' minimum and maximum temperature data for use in crop simulations.
 #'
 #' @param path Directory path where the output .Tnx file will be written. Default = "CLIMATE/"
-#' @param stn Station name or identifier for the weather station. Default = NULL (extracted from data if available)
+#' @param site_name Station name or identifier for the weather station. Default = NULL (extracted from data if available)
 #' @param data Data frame containing daily temperature data. Can have either:
 #'   - Columns: station, year, month, day, tmin, tmax (legacy format), or
 #'   - Columns: year, month, day, tmin, tmax (new format)
@@ -22,7 +22,7 @@
 #' @family AquaCrop file writers
 #' @return
 #' Invisibly returns the full path to the created .Tnx file. Creates a formatted .Tnx file
-#' in the specified directory with the format: <<stn>>.Tnx containing daily minimum and
+#' in the specified directory with the format: <<site_name>>.Tnx containing daily minimum and
 #' maximum temperature data as required by AquaCrop v7.0.
 #'
 #' @examples
@@ -33,7 +33,7 @@
 #' # Write temperature file with default column names
 #' write_tnx(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather
 #' )
 #'
@@ -49,7 +49,7 @@
 #' @export
 write_tnx <- function(
     path = "CLIMATE/",
-    stn = NULL,
+    site_name = NULL,
     data = NULL,
     var_name_min = "tmin",
     var_name_max = "tmax",
@@ -62,7 +62,7 @@ write_tnx <- function(
 
   .write_climate_file(
     path = path,
-    stn = stn,
+    site_name = site_name,
     data = data,
     var_cols = c(var_name_min, var_name_max),
     header_var_name = "temperature",

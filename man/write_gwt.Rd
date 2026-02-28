@@ -5,7 +5,7 @@
 \title{Write AquaCrop Groundwater Table (.GWT) File}
 \usage{
 write_gwt(
-  gwt_name,
+  site_name,
   code,
   gwt_data = NULL,
   path = "MANAGEMENT/",
@@ -18,7 +18,7 @@ write_gwt(
 )
 }
 \arguments{
-\item{gwt_name}{Character. Name of the GWT file (without extension).
+\item{site_name}{Character. Name of the GWT file (without extension).
 Typically the station name.}
 
 \item{code}{Integer. Groundwater table mode:
@@ -71,18 +71,18 @@ and variable depth and salinity over time (code 2).
 \examples{
 \dontrun{
 # Code 0: no groundwater table
-write_gwt(gwt_name = "station_01", code = 0)
+write_gwt(site_name = "station_01", code = 0)
 
 # Code 1: constant depth and salinity
 write_gwt(
-  gwt_name = "station_01",
+  site_name = "station_01",
   code     = 1,
   gwt_data = data.frame(day = 1, depth = 1.50, ecw = 1.5)
 )
 
 # Code 2: variable depth and salinity
 write_gwt(
-  gwt_name    = "station_01",
+  site_name    = "station_01",
   code        = 2,
   gwt_data    = data.frame(
     day   = c(50, 100, 200, 300),

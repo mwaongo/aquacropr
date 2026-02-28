@@ -5,7 +5,7 @@
 #' containing daily ETo data for use in crop simulations.
 #'
 #' @param path Directory path where the output .ETo file will be written. Default = "CLIMATE/"
-#' @param stn Station name or identifier for the weather station. Default = NULL (extracted from data if available)
+#' @param site_name Station name or identifier for the weather station. Default = NULL (extracted from data if available)
 #' @param data Data frame containing daily ETo data. Can have either:
 #'   - Columns: station, year, month, day, et0 (legacy format), or
 #'   - Columns: year, month, day, et0 (new format)
@@ -20,7 +20,7 @@
 #'
 #' @return
 #' Invisibly returns the full path to the created .ETo file. Creates a formatted .ETo file
-#' in the specified directory with the format: <<stn>>.ETo containing daily reference
+#' in the specified directory with the format: <<site_name>>.ETo containing daily reference
 #' evapotranspiration data as required by AquaCrop v7.0.
 #'
 #' @examples
@@ -31,14 +31,14 @@
 #' # Write ETo file with default column name
 #' write_eto(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather
 #' )
 #'
 #' # Write ETo file with custom column name
 #' write_eto(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather,
 #'   var_name = "eto_calculated"
 #' )
@@ -52,7 +52,7 @@
 #'
 write_eto <- function(
     path = "CLIMATE/",
-    stn = NULL,
+    site_name = NULL,
     data = NULL,
     var_name = "et0",
     syear = NULL,
@@ -64,7 +64,7 @@ write_eto <- function(
 
   .write_climate_file(
     path = path,
-    stn = stn,
+    site_name = site_name,
     data = data,
     var_cols = var_name,
     header_var_name = "et0",
