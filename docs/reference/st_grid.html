@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -32,11 +32,17 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -51,7 +57,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create Grid from Points</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/grids.R" class="external-link"><code>R/grids.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/grids.R" class="external-link"><code>R/grids.R</code></a></small>
     <div class="hidden name"><code>st_grid.Rd</code></div>
     </div>
 
@@ -60,7 +66,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">st_grid</span><span class="op">(</span><span class="va">x</span>, cellsize <span class="op">=</span> <span class="fl">1</span>, square <span class="op">=</span> <span class="cn">TRUE</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">st_grid</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  cellsize <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  square <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>,</span>
+<span>  crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep_attributes <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -89,10 +102,16 @@ if x is a data frame. Default is c("x", "y").</p></dd>
 <dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
 <dd><p>Coordinate reference system. Used when coercing data frame to sf.</p></dd>
 
+
+<dt id="arg-keep-attributes">keep_attributes<a class="anchor" aria-label="anchor" href="#arg-keep-attributes"></a></dt>
+<dd><p>Logical. If TRUE (default), preserves all attribute
+columns from the input. If FALSE, returns only the grid geometry.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An sf object with POLYGON geometries representing grid cells.</p>
+    <p>An sf object with POLYGON geometries representing grid cells.
+If keep_attributes = TRUE, includes all original columns from x.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -111,8 +130,14 @@ cells centered on each point geometry.</p>
 <span class="r-in"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu">st_grid</span><span class="op">(</span><span class="va">points</span>, cellsize <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># From data frame</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu">st_grid</span><span class="op">(</span><span class="va">df</span>, cellsize <span class="op">=</span> <span class="fl">1</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Without attributes</span></span></span>
+<span class="r-in"><span><span class="va">grid_only</span> <span class="op">&lt;-</span> <span class="fu">st_grid</span><span class="op">(</span><span class="va">df</span>,</span></span>
+<span class="r-in"><span>  cellsize <span class="op">=</span> <span class="fl">1</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  crs <span class="op">=</span> <span class="fl">4326</span>, keep_attributes <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -129,7 +154,7 @@ cells centered on each point geometry.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

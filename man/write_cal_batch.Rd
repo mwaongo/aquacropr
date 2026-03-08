@@ -14,6 +14,12 @@ write_cal_batch(
   preset_value = NULL,
   successive_days = NULL,
   occurrences = 1L,
+  cum_rain_upper = NULL,
+  wet_days_lower = NULL,
+  wet_days_upper = NULL,
+  dry_spell_lower = NULL,
+  dry_spell_upper = NULL,
+  fuzzy_threshold = NULL,
   path = "CAL/",
   climate_path = "CLIMATE/",
   description = NULL,
@@ -41,18 +47,41 @@ onset is "rainfall" or "thermal".}
 \item{window_length}{Integer. Length of the time window in days. Required
 when onset is "rainfall" or "thermal".}
 
-\item{criterion}{Integer. Criterion number within the onset group (1-4).
-Required when onset is "rainfall" or "thermal".
-See write_cal() for full description of each criterion per onset group.}
+\item{criterion}{Integer. Criterion number within the onset group (1-4
+for thermal; 1-5 for rainfall). Required when onset is "rainfall" or
+"thermal". See \code{\link{write_cal}} for full description of each
+criterion per onset group.}
 
 \item{preset_value}{Numeric. Threshold value for the criterion. Required
-when onset is "rainfall" or "thermal".}
+when onset is "rainfall" or "thermal". For criterion 5 (fuzzy):
+lower bound of cumulative rainfall (mm), i.e. \code{cum_rain_lower}.}
 
 \item{successive_days}{Integer. Number of consecutive days. Required for
-rainfall criterion 2 and thermal criteria 1, 2, and 3. Default: NULL.}
+rainfall criteria 2 and 5 (where it represents \code{accum_days}) and
+thermal criteria 1, 2, and 3. Default: NULL.}
 
 \item{occurrences}{Integer. Number of occurrences before onset is triggered
-(1-3). Default: 1.}
+(1-3). Ignored for criterion 5. Default: 1.}
+
+\item{cum_rain_upper}{Numeric. Upper bound of cumulative rainfall (mm)
+for the fuzzy gamma_1 function. Required for criterion 5.
+Must be > \code{preset_value}.}
+
+\item{wet_days_lower}{Integer. Lower bound of wet-day count for the fuzzy
+gamma_2 function. Required for criterion 5.}
+
+\item{wet_days_upper}{Integer. Upper bound of wet-day count for the fuzzy
+gamma_2 function. Required for criterion 5.
+Must be > \code{wet_days_lower}.}
+
+\item{dry_spell_lower}{Integer. Lower bound of longest dry spell (days)
+for the fuzzy gamma_3 function. Required for criterion 5.}
+
+\item{dry_spell_upper}{Integer. Upper bound of longest dry spell (days)
+for the fuzzy gamma_3 function. Required for criterion 5.
+Must be > \code{dry_spell_lower}.}
+
+\item{fuzzy_threshold}{Numeric between 0 and 1. Defuzzification threshold.}
 
 \item{path}{Output directory path for CAL files. Default: "CAL/".}
 
@@ -90,13 +119,13 @@ stations <- c("grid_001", "grid_002", "grid_003")
 # Fixed onset on day 212 for all stations
 write_cal_batch(
   site_name = stations,
-  onset        = "fixed",
-  fixed_day    = 212
+  onset     = "fixed",
+  fixed_day = 212
 )
 
-# Rainfall criterion 2 for all stations: 30 mm in 3 successive days
+# Rainfall criterion 2: 30 mm in 3 successive days
 write_cal_batch(
-  site_name    = stations,
+  site_name       = stations,
   onset           = "rainfall",
   window_start    = 121,
   window_length   = 92,
@@ -106,9 +135,26 @@ write_cal_batch(
   occurrences     = 1
 )
 
-# Thermal criterion 1 for all stations: daily Tmin >= 5 degC for 4 days
+# Rainfall criterion 5: fuzzy logic (Waongo et al. 2014)
 write_cal_batch(
-  site_name    = stations,
+  site_name       = stations,
+  onset           = "rainfall",
+  window_start    = 121,
+  window_length   = 92,
+  criterion       = 5,
+  preset_value    = 20,
+  successive_days = 3,
+  cum_rain_upper  = 40,
+  wet_days_lower  = 1,
+  wet_days_upper  = 3,
+  dry_spell_lower = 7,
+  dry_spell_upper = 15,
+  fuzzy_threshold = 0.5
+)
+
+# Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
+write_cal_batch(
+  site_name       = stations,
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,

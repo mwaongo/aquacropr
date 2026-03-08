@@ -14,15 +14,32 @@
 #'   onset is "rainfall" or "thermal".
 #' @param window_length Integer. Length of the time window in days. Required
 #'   when onset is "rainfall" or "thermal".
-#' @param criterion Integer. Criterion number within the onset group (1-4).
-#'   Required when onset is "rainfall" or "thermal".
-#'   See write_cal() for full description of each criterion per onset group.
+#' @param criterion Integer. Criterion number within the onset group (1-4
+#'   for thermal; 1-5 for rainfall). Required when onset is "rainfall" or
+#'   "thermal". See \code{\link{write_cal}} for full description of each
+#'   criterion per onset group.
 #' @param preset_value Numeric. Threshold value for the criterion. Required
-#'   when onset is "rainfall" or "thermal".
+#'   when onset is "rainfall" or "thermal". For criterion 5 (fuzzy):
+#'   lower bound of cumulative rainfall (mm), i.e. \code{cum_rain_lower}.
 #' @param successive_days Integer. Number of consecutive days. Required for
-#'   rainfall criterion 2 and thermal criteria 1, 2, and 3. Default: NULL.
+#'   rainfall criteria 2 and 5 (where it represents \code{accum_days}) and
+#'   thermal criteria 1, 2, and 3. Default: NULL.
 #' @param occurrences Integer. Number of occurrences before onset is triggered
-#'   (1-3). Default: 1.
+#'   (1-3). Ignored for criterion 5. Default: 1.
+#' @param cum_rain_upper Numeric. Upper bound of cumulative rainfall (mm)
+#'   for the fuzzy gamma_1 function. Required for criterion 5.
+#'   Must be > \code{preset_value}.
+#' @param wet_days_lower Integer. Lower bound of wet-day count for the fuzzy
+#'   gamma_2 function. Required for criterion 5.
+#' @param wet_days_upper Integer. Upper bound of wet-day count for the fuzzy
+#'   gamma_2 function. Required for criterion 5.
+#'   Must be > \code{wet_days_lower}.
+#' @param dry_spell_lower Integer. Lower bound of longest dry spell (days)
+#'   for the fuzzy gamma_3 function. Required for criterion 5.
+#' @param dry_spell_upper Integer. Upper bound of longest dry spell (days)
+#'   for the fuzzy gamma_3 function. Required for criterion 5.
+#'   Must be > \code{dry_spell_lower}.
+#' @param fuzzy_threshold Numeric between 0 and 1. Defuzzification threshold.
 #' @param path Output directory path for CAL files. Default: "CAL/".
 #' @param climate_path Path to climate files directory, used for station
 #'   discovery. Default: "CLIMATE/".
@@ -47,13 +64,13 @@
 #' # Fixed onset on day 212 for all stations
 #' write_cal_batch(
 #'   site_name = stations,
-#'   onset        = "fixed",
-#'   fixed_day    = 212
+#'   onset     = "fixed",
+#'   fixed_day = 212
 #' )
 #'
-#' # Rainfall criterion 2 for all stations: 30 mm in 3 successive days
+#' # Rainfall criterion 2: 30 mm in 3 successive days
 #' write_cal_batch(
-#'   site_name    = stations,
+#'   site_name       = stations,
 #'   onset           = "rainfall",
 #'   window_start    = 121,
 #'   window_length   = 92,
@@ -63,9 +80,26 @@
 #'   occurrences     = 1
 #' )
 #'
-#' # Thermal criterion 1 for all stations: daily Tmin >= 5 degC for 4 days
+#' # Rainfall criterion 5: fuzzy logic (Waongo et al. 2014)
 #' write_cal_batch(
-#'   site_name    = stations,
+#'   site_name       = stations,
+#'   onset           = "rainfall",
+#'   window_start    = 121,
+#'   window_length   = 92,
+#'   criterion       = 5,
+#'   preset_value    = 20,
+#'   successive_days = 3,
+#'   cum_rain_upper  = 40,
+#'   wet_days_lower  = 1,
+#'   wet_days_upper  = 3,
+#'   dry_spell_lower = 7,
+#'   dry_spell_upper = 15,
+#'   fuzzy_threshold = 0.5
+#' )
+#'
+#' # Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
+#' write_cal_batch(
+#'   site_name       = stations,
 #'   onset           = "thermal",
 #'   window_start    = 1,
 #'   window_length   = 60,
@@ -82,7 +116,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_cal_batch <- function(
-    site_name    = NULL,
+    site_name       = NULL,
     onset,
     fixed_day       = NULL,
     window_start    = NULL,
@@ -91,6 +125,14 @@ write_cal_batch <- function(
     preset_value    = NULL,
     successive_days = NULL,
     occurrences     = 1L,
+    # --- fuzzy extras (criterion 5 only) ---
+    cum_rain_upper  = NULL,
+    wet_days_lower  = NULL,
+    wet_days_upper  = NULL,
+    dry_spell_lower = NULL,
+    dry_spell_upper = NULL,
+    fuzzy_threshold = NULL,
+    # ----------------------------------------
     path            = "CAL/",
     climate_path    = "CLIMATE/",
     description     = NULL,
@@ -127,10 +169,12 @@ write_cal_batch <- function(
     item_type = "site",
     fn = function(item, params, onset, fixed_day, window_start,
                   window_length, criterion, preset_value,
-                  successive_days, occurrences, path, description,
-                  version, eol) {
+                  successive_days, occurrences,
+                  cum_rain_upper, wet_days_lower, wet_days_upper,
+                  dry_spell_lower, dry_spell_upper, fuzzy_threshold,
+                  path, description, version, eol) {
       write_cal(
-        site_name        = item,
+        site_name       = item,
         onset           = onset,
         fixed_day       = fixed_day,
         window_start    = window_start,
@@ -139,6 +183,12 @@ write_cal_batch <- function(
         preset_value    = preset_value,
         successive_days = successive_days,
         occurrences     = occurrences,
+        cum_rain_upper  = cum_rain_upper,
+        wet_days_lower  = wet_days_lower,
+        wet_days_upper  = wet_days_upper,
+        dry_spell_lower = dry_spell_lower,
+        dry_spell_upper = dry_spell_upper,
+        fuzzy_threshold = fuzzy_threshold,
         path            = path,
         description     = description,
         version         = version,
@@ -153,6 +203,12 @@ write_cal_batch <- function(
     preset_value    = preset_value,
     successive_days = successive_days,
     occurrences     = occurrences,
+    cum_rain_upper  = cum_rain_upper,
+    wet_days_lower  = wet_days_lower,
+    wet_days_upper  = wet_days_upper,
+    dry_spell_lower = dry_spell_lower,
+    dry_spell_upper = dry_spell_upper,
+    fuzzy_threshold = fuzzy_threshold,
     path            = path,
     description     = description,
     version         = version,

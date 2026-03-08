@@ -14,6 +14,12 @@ write_cal(
   preset_value = NULL,
   successive_days = NULL,
   occurrences = 1L,
+  cum_rain_upper = NULL,
+  wet_days_lower = NULL,
+  wet_days_upper = NULL,
+  dry_spell_lower = NULL,
+  dry_spell_upper = NULL,
+  fuzzy_threshold = NULL,
   path = "CAL/",
   description = NULL,
   version = 7.1,
@@ -35,39 +41,69 @@ window. Required when onset is "rainfall" or "thermal".}
 \item{window_length}{Integer. Length of the time window in days. Required
 when onset is "rainfall" or "thermal".}
 
-\item{criterion}{Integer. Criterion number within the onset group (1-4).
-Required when onset is "rainfall" or "thermal".
+\item{criterion}{Integer. Criterion number within the onset group (1-4
+for thermal; 1-5 for rainfall).
 Rainfall criteria (onset = "rainfall"):
 \describe{
 \item{1}{Cumulative rainfall since start of window >= preset (mm).}
 \item{2}{Observed rainfall in N successive days >= preset (mm).
-Requires successive_days.}
+Requires \code{successive_days}.}
 \item{3}{10-day rainfall >= preset (mm).}
 \item{4}{10-day rainfall >= preset fraction of 10-day ETo (percent).}
+\item{5}{Fuzzy logic index: cumulative rainfall x wet days x dry spell
+>= \code{fuzzy_threshold}. Requires \code{preset_value}
+(cum_rain_lower), \code{successive_days} (accum_days), and all
+\code{cum_rain_upper}, \code{wet_days_lower}, \code{wet_days_upper},
+\code{dry_spell_lower}, \code{dry_spell_upper},
+\code{fuzzy_threshold}.}
 }
 Thermal criteria (onset = "thermal"):
 \describe{
 \item{1}{Daily Tmin in each of N successive days >= preset (degC).
-Requires successive_days.}
+Requires \code{successive_days}.}
 \item{2}{Daily Tmean in each of N successive days >= preset (degC).
-Requires successive_days.}
+Requires \code{successive_days}.}
 \item{3}{Cumulative GDD in N successive days >= preset (degC).
-Requires successive_days.}
+Requires \code{successive_days}.}
 \item{4}{Cumulative GDD since start of window >= preset (degC).}
 }}
 
 \item{preset_value}{Numeric. Threshold value for the criterion.
 Unit: mm for rainfall criteria 1-3, percent for criterion 4,
-degC for all thermal criteria.}
+degC for all thermal criteria. For criterion 5 (fuzzy): lower bound
+of cumulative rainfall (mm), i.e. \code{cum_rain_lower}.}
 
 \item{successive_days}{Integer. Number of consecutive days. Required for
-rainfall criterion 2 and thermal criteria 1, 2, and 3.
-Ignored for all other criteria. Default: NULL.}
+rainfall criteria 2 and 5 (where it represents \code{accum_days}) and
+thermal criteria 1, 2, and 3. Ignored for all other criteria.
+Default: NULL.}
 
 \item{occurrences}{Integer. Number of times the criterion must be met
-before onset is triggered (1-3). Default: 1.}
+before onset is triggered (1-3). Ignored for criterion 5.
+Default: 1.}
 
-\item{path}{Output directory path for CAL files. Default: "CLIMATE/".}
+\item{cum_rain_upper}{Numeric. Upper bound of cumulative rainfall (mm)
+for the fuzzy gamma_1 function. Required for criterion 5.
+Must be > \code{preset_value}.}
+
+\item{wet_days_lower}{Integer. Lower bound of wet-day count for the fuzzy
+gamma_2 function. Required for criterion 5.}
+
+\item{wet_days_upper}{Integer. Upper bound of wet-day count for the fuzzy
+gamma_2 function. Required for criterion 5.
+Must be > \code{wet_days_lower}.}
+
+\item{dry_spell_lower}{Integer. Lower bound of longest dry spell (days)
+for the fuzzy gamma_3 function. Required for criterion 5.}
+
+\item{dry_spell_upper}{Integer. Upper bound of longest dry spell (days)
+for the fuzzy gamma_3 function. Required for criterion 5.
+Must be > \code{dry_spell_lower}.}
+
+\item{fuzzy_threshold}{Numeric between 0 and 1. Defuzzification threshold.
+Required for criterion 5.}
+
+\item{path}{Output directory path for CAL files. Default: "CAL/".}
 
 \item{description}{Character. Description on the first line. Default:
 auto-generated based on onset type and criterion.}
@@ -86,22 +122,23 @@ period. Three onset types are supported: a fixed calendar day, a
 rainfall-based criterion, or a thermal criterion.
 }
 \details{
-User-facing criterion numbers run from 1 to 4 within each onset group.
-They are converted internally to AquaCrop's numbering scheme (rainfall
-passes through as-is; thermal criterion c becomes c + 10).
+User-facing criterion numbers run from 1 to 4 within each onset group
+(1 to 5 for rainfall). They are converted internally to AquaCrop's
+numbering scheme (rainfall passes through as-is; thermal criterion c
+becomes c + 10).
 }
 \examples{
 \dontrun{
 # Fixed onset on day 212
 write_cal(
-  site_name  = "station_01",
+  site_name = "station_01",
   onset     = "fixed",
   fixed_day = 212
 )
 
 # Rainfall criterion 1: cumulative rainfall >= 50 mm
 write_cal(
-  site_name      = "station_01",
+  site_name     = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -112,7 +149,7 @@ write_cal(
 
 # Rainfall criterion 2: observed rainfall >= 30 mm in 3 successive days
 write_cal(
-  site_name        = "station_01",
+  site_name       = "station_01",
   onset           = "rainfall",
   window_start    = 121,
   window_length   = 92,
@@ -124,7 +161,7 @@ write_cal(
 
 # Rainfall criterion 3: 10-day rainfall >= 40 mm
 write_cal(
-  site_name      = "station_01",
+  site_name     = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -135,7 +172,7 @@ write_cal(
 
 # Rainfall criterion 4: 10-day rainfall >= 50 percent of ETo
 write_cal(
-  site_name      = "station_01",
+  site_name     = "station_01",
   onset         = "rainfall",
   window_start  = 121,
   window_length = 92,
@@ -144,9 +181,26 @@ write_cal(
   occurrences   = 1
 )
 
+# Rainfall criterion 5: fuzzy logic onset (Waongo et al. 2014)
+write_cal(
+  site_name       = "station_01",
+  onset           = "rainfall",
+  window_start    = 121,
+  window_length   = 92,
+  criterion       = 5,
+  preset_value    = 20,   # cum_rain_lower
+  successive_days = 3,    # accum_days
+  cum_rain_upper  = 40,
+  wet_days_lower  = 1,
+  wet_days_upper  = 3,
+  dry_spell_lower = 7,
+  dry_spell_upper = 15,
+  fuzzy_threshold = 0.5
+)
+
 # Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
 write_cal(
-  site_name        = "station_01",
+  site_name       = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -158,7 +212,7 @@ write_cal(
 
 # Thermal criterion 2: daily Tmean >= 10 degC for 3 successive days
 write_cal(
-  site_name        = "station_01",
+  site_name       = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -170,7 +224,7 @@ write_cal(
 
 # Thermal criterion 3: cumulative GDD >= 20 degC in 8 successive days
 write_cal(
-  site_name        = "station_01",
+  site_name       = "station_01",
   onset           = "thermal",
   window_start    = 1,
   window_length   = 60,
@@ -182,7 +236,7 @@ write_cal(
 
 # Thermal criterion 4: cumulative GDD since start >= 600 degC
 write_cal(
-  site_name      = "station_01",
+  site_name     = "station_01",
   onset         = "thermal",
   window_start  = 1,
   window_length = 60,
@@ -192,6 +246,13 @@ write_cal(
 )
 }
 
+}
+\references{
+Waongo, M., Laux, P., Traoré, S.B., Sanon, M., & Kunstmann, H. (2014).
+A crop model and fuzzy rule based approach for optimizing maize planting
+dates in Burkina Faso, West Africa.
+\emph{Journal of Applied Meteorology and Climatology}, \strong{53}(3),
+598--613. \doi{10.1175/JAMC-D-13-0116.1}
 }
 \seealso{
 Other AquaCrop file writers: 

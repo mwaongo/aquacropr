@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -32,11 +32,17 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -51,7 +57,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Read an AquaCrop PLU File</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/readers.R" class="external-link"><code>R/readers.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/readers.R" class="external-link"><code>R/readers.R</code></a></small>
     <div class="hidden name"><code>read_plu.Rd</code></div>
     </div>
 
@@ -79,24 +85,13 @@
 <li><p>day: Integer, day of month</p></li>
 <li><p>rain: Numeric, rainfall value (mm). -9 values are converted to NA.</p></li>
 </ul></div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>The function:</p><ul><li><p>Validates the file using <code><a href="is_plu.html">is_plu()</a></code></p></li>
-<li><p>Parses header information (station, record type, start date)</p></li>
-<li><p>Reads rainfall values</p></li>
-<li><p>Generates dates based on record type (daily, 10-day, or monthly)</p></li>
-<li><p>Converts -9 (missing data indicator) to NA</p></li>
-</ul><p>Record types:</p><ul><li><p>1: Daily data</p></li>
-<li><p>2: 10-day (dekadal) data</p></li>
-<li><p>3: Monthly data</p></li>
-</ul></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other AquaCrop readers:
-<code><a href="read_cli.html">read_cli</a>()</code>,
-<code><a href="read_eto.html">read_eto</a>()</code>,
-<code><a href="read_season_out.html">read_season_out</a>()</code>,
-<code><a href="read_tnx.html">read_tnx</a>()</code></p></div>
+<code><a href="read_cal.html">read_cal()</a></code>,
+<code><a href="read_cli.html">read_cli()</a></code>,
+<code><a href="read_eto.html">read_eto()</a></code>,
+<code><a href="read_tnx.html">read_tnx()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -119,7 +114,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

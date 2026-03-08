@@ -19,7 +19,7 @@ you can run simulations directly in the project directory."><!-- mathjax --><scr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -34,11 +34,17 @@ you can run simulations directly in the project directory."><!-- mathjax --><scr
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -53,7 +59,7 @@ you can run simulations directly in the project directory."><!-- mathjax --><scr
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Initialize AquaCrop Project Structure</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/init_aquacrop.R" class="external-link"><code>R/init_aquacrop.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/init_aquacrop.R" class="external-link"><code>R/init_aquacrop.R</code></a></small>
     <div class="hidden name"><code>init_aquacrop.Rd</code></div>
     </div>
 
@@ -117,11 +123,20 @@ in the project directory. Default is TRUE.</p></dd>
 <dt>CROP/</dt>
 <dd><p>Crop parameter files</p></dd>
 
+<dt>GWT/</dt>
+<dd><p>Groundwater table files</p></dd>
+
+<dt>IRR/</dt>
+<dd><p>Irrigation schedule files</p></dd>
+
 <dt>LIST/</dt>
 <dd><p>Project simulation files <code>*.PRM</code></p></dd>
 
 <dt>MANAGEMENT/</dt>
 <dd><p>Field management practice files <code>*.MAN</code></p></dd>
+
+<dt>OBS/</dt>
+<dd><p>Field observation files</p></dd>
 
 <dt>OUTP/</dt>
 <dd><p>Simulation output files</p></dd>
@@ -180,7 +195,7 @@ macOS, or Linux) is placed directly in the root of the project.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

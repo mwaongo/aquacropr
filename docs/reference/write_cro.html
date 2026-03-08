@@ -19,7 +19,7 @@ and other crop-specific properties that will be used during the AquaCrop simulat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -34,11 +34,17 @@ and other crop-specific properties that will be used during the AquaCrop simulat
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -53,7 +59,7 @@ and other crop-specific properties that will be used during the AquaCrop simulat
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write AquaCrop Crop File</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/write_cro.R" class="external-link"><code>R/write_cro.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/write_cro.R" class="external-link"><code>R/write_cro.R</code></a></small>
     <div class="hidden name"><code>write_cro.Rd</code></div>
     </div>
 
@@ -65,7 +71,7 @@ and other crop-specific properties that will be used during the AquaCrop simulat
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_cro</span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"crop/"</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"CROP/"</span>,</span>
 <span>  crop_name <span class="op">=</span> <span class="st">"generic-crop-name"</span>,</span>
 <span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
 <span>  params <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -77,7 +83,7 @@ and other crop-specific properties that will be used during the AquaCrop simulat
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Directory path where the output .CRO file will be written. Default = "crop/"</p></dd>
+<dd><p>Directory path where the output .CRO file will be written. Default = "CROP/"</p></dd>
 
 
 <dt id="arg-crop-name">crop_name<a class="anchor" aria-label="anchor" href="#arg-crop-name"></a></dt>
@@ -85,7 +91,7 @@ and other crop-specific properties that will be used during the AquaCrop simulat
 
 
 <dt id="arg-eol">eol<a class="anchor" aria-label="anchor" href="#arg-eol"></a></dt>
-<dd><p>End-of-line character style for the output file. Options: "windows", "linux", "unix", or "macOS". Default = "windows"</p></dd>
+<dd><p>End-of-line character style for the output file. Options: "windows", "linux", "macos". If <code>NULL</code> (default), eol is auto-detected.</p></dd>
 
 
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
@@ -104,14 +110,18 @@ and descriptions as required by AquaCrop v7.2.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="CropData.html">CropData</a></code> for complete list of all 83 crop parameters with descriptions and valid ranges</p>
 <p>Other AquaCrop file writers:
-<code><a href="write_cli.html">write_cli</a>()</code>,
-<code><a href="write_eto.html">write_eto</a>()</code>,
-<code><a href="write_man.html">write_man</a>()</code>,
-<code><a href="write_plu.html">write_plu</a>()</code>,
-<code><a href="write_prm.html">write_prm</a>()</code>,
-<code><a href="write_sol.html">write_sol</a>()</code>,
-<code><a href="write_swo.html">write_swo</a>()</code>,
-<code><a href="write_tnx.html">write_tnx</a>()</code></p></div>
+<code><a href="write_cal.html">write_cal()</a></code>,
+<code><a href="write_cli.html">write_cli()</a></code>,
+<code><a href="write_eto.html">write_eto()</a></code>,
+<code><a href="write_gwt.html">write_gwt()</a></code>,
+<code><a href="write_irr.html">write_irr()</a></code>,
+<code><a href="write_man.html">write_man()</a></code>,
+<code><a href="write_obs.html">write_obs()</a></code>,
+<code><a href="write_off.html">write_off()</a></code>,
+<code><a href="write_plu.html">write_plu()</a></code>,
+<code><a href="write_prm.html">write_prm()</a></code>,
+<code><a href="write_swo.html">write_swo()</a></code>,
+<code><a href="write_tnx.html">write_tnx()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -158,7 +168,7 @@ and descriptions as required by AquaCrop v7.2.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ created consistently with the same station name and settings."><!-- mathjax --><
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -34,11 +34,17 @@ created consistently with the same station name and settings."><!-- mathjax --><
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -53,7 +59,7 @@ created consistently with the same station name and settings."><!-- mathjax --><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write Complete AquaCrop Climate Dataset</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/write_climate.R" class="external-link"><code>R/write_climate.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/write_climate.R" class="external-link"><code>R/write_climate.R</code></a></small>
     <div class="hidden name"><code>write_climate.Rd</code></div>
     </div>
 
@@ -66,14 +72,14 @@ created consistently with the same station name and settings.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_climate</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  path <span class="op">=</span> <span class="st">"weather/"</span>,</span>
-<span>  stn <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"CLIMATE/"</span>,</span>
+<span>  site_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  var_name_rain <span class="op">=</span> <span class="st">"rain"</span>,</span>
 <span>  var_name_et0 <span class="op">=</span> <span class="st">"et0"</span>,</span>
 <span>  var_name_tmin <span class="op">=</span> <span class="st">"tmin"</span>,</span>
 <span>  var_name_tmax <span class="op">=</span> <span class="st">"tmax"</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="st">"hist"</span>,</span>
-<span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
+<span>  eol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  syear <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  eyear <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -100,7 +106,7 @@ See <code><a href="write_plu.html">write_plu</a></code>, <code><a href="write_et
 and <code><a href="write_cli.html">write_cli</a></code> for details.</p></dd>
 
 
-<dt id="arg-stn">stn<a class="anchor" aria-label="anchor" href="#arg-stn"></a></dt>
+<dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
 <dd><p>Station name or identifier. Default = NULL (extracted from data if available,
 otherwise uses "station").
 See <code><a href="write_plu.html">write_plu</a></code>, <code><a href="write_eto.html">write_eto</a></code>, <code><a href="write_tnx.html">write_tnx</a></code>,
@@ -134,10 +140,7 @@ Default = "hist". See <code><a href="write_cli.html">write_cli</a></code> for de
 
 
 <dt id="arg-eol">eol<a class="anchor" aria-label="anchor" href="#arg-eol"></a></dt>
-<dd><p>End-of-line character style for all output files.
-Options: "windows", "unix", "linux", or "macOS". Default = "windows".
-See <code><a href="write_plu.html">write_plu</a></code>, <code><a href="write_eto.html">write_eto</a></code>, <code><a href="write_tnx.html">write_tnx</a></code>,
-and <code><a href="write_cli.html">write_cli</a></code> for details.</p></dd>
+<dd><p>End-of-line character style for the output file. Options: "windows", "linux", "macos". If <code>NULL</code> (default), eol is auto-detected.</p></dd>
 
 
 <dt id="arg-syear">syear<a class="anchor" aria-label="anchor" href="#arg-syear"></a></dt>
@@ -183,7 +186,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 
 <p>Arguments are passed to the underlying functions as follows:</p><ul><li><p><code>data</code> passed to <code><a href="write_plu.html">write_plu</a></code>, <code><a href="write_eto.html">write_eto</a></code>, <code><a href="write_tnx.html">write_tnx</a></code></p></li>
 <li><p><code>path</code> passed to all write functions</p></li>
-<li><p><code>stn</code> passed to all write functions</p></li>
+<li><p><code>site_name</code> passed to all write functions</p></li>
 <li><p><code>var_name_rain</code> passed to <code><a href="write_plu.html">write_plu</a></code> as <code>var_name</code></p></li>
 <li><p><code>var_name_et0</code> passed to <code><a href="write_eto.html">write_eto</a></code> as <code>var_name</code></p></li>
 <li><p><code>var_name_tmin</code> passed to <code><a href="write_tnx.html">write_tnx</a></code> as <code>var_name_min</code></p></li>
@@ -205,7 +208,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 <span class="r-in"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu">write_climate</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">weather</span>,</span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"weather/"</span>,</span></span>
-<span class="r-in"><span>  stn <span class="op">=</span> <span class="st">"Wakanda"</span></span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"Wakanda"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access individual file paths</span></span></span>
@@ -216,7 +219,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 <span class="r-in"><span><span class="fu">write_climate</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">weather</span>,</span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"weather/"</span>,</span></span>
-<span class="r-in"><span>  stn <span class="op">=</span> <span class="st">"Wakanda_Station"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"Wakanda_Station"</span>,</span></span>
 <span class="r-in"><span>  scenario <span class="op">=</span> <span class="st">"rcp45"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -224,7 +227,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 <span class="r-in"><span><span class="fu">write_climate</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">my_weather_data</span>,</span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"climate/"</span>,</span></span>
-<span class="r-in"><span>  stn <span class="op">=</span> <span class="st">"MyStation"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"MyStation"</span>,</span></span>
 <span class="r-in"><span>  var_name_rain <span class="op">=</span> <span class="st">"precipitation"</span>,</span></span>
 <span class="r-in"><span>  var_name_et0 <span class="op">=</span> <span class="st">"pet"</span>,</span></span>
 <span class="r-in"><span>  var_name_tmin <span class="op">=</span> <span class="st">"temp_min"</span>,</span></span>
@@ -238,7 +241,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 <span class="r-in"><span><span class="fu">write_climate</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">weather</span>,</span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"weather/"</span>,</span></span>
-<span class="r-in"><span>  stn <span class="op">=</span> <span class="st">"Wakanda"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"Wakanda"</span>,</span></span>
 <span class="r-in"><span>  syear <span class="op">=</span> <span class="fl">2000</span>,</span></span>
 <span class="r-in"><span>  eyear <span class="op">=</span> <span class="fl">2010</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -258,7 +261,7 @@ appropriate parameters to each underlying write function.</p><div class="section
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

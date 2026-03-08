@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -32,11 +32,17 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -51,7 +57,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write AquaCrop MAN files in batch</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/write_man_batch.R" class="external-link"><code>R/write_man_batch.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/write_man_batch.R" class="external-link"><code>R/write_man_batch.R</code></a></small>
     <div class="hidden name"><code>write_man_batch.Rd</code></div>
     </div>
 
@@ -60,14 +66,23 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_man_batch</span><span class="op">(</span>station_name <span class="op">=</span> <span class="cn">NULL</span>, params <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_man_batch</span><span class="op">(</span></span>
+<span>  site_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  params <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
+<span>  eol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  climate_path <span class="op">=</span> <span class="st">"CLIMATE/"</span>,</span>
+<span>  base_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  clean <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-station-name">station_name<a class="anchor" aria-label="anchor" href="#arg-station-name"></a></dt>
+<dl><dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
 <dd><p>Character vector or <code>NULL</code>. Names of stations to process:</p><ul><li><p>If <code>NULL</code>, all stations are automatically discovered from <code>.CLI</code> files in the <code>CLIMATE/</code> directory.</p></li>
 <li><p>If a vector, only the specified stations will be processed; all must have corresponding climate files.</p></li>
 </ul></dd>
@@ -82,16 +97,29 @@ See <code><a href="ManData.html">ManData</a></code> documentation for further de
 </ul></dd>
 
 
+<dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>Output directory path. Default: <code>"MANAGEMENT/"</code>.</p></dd>
+
+
+<dt id="arg-eol">eol<a class="anchor" aria-label="anchor" href="#arg-eol"></a></dt>
+<dd><p>End-of-line character style. Options: "windows","linux", or "macos". If <code>NULL</code> (default), eol is auto-detected.</p></dd>
+
+
+<dt id="arg-climate-path">climate_path<a class="anchor" aria-label="anchor" href="#arg-climate-path"></a></dt>
+<dd><p>Path to climate file directory for auto-discovery. Default: <code>"CLIMATE/"</code>.</p></dd>
+
+
+<dt id="arg-base-path">base_path<a class="anchor" aria-label="anchor" href="#arg-base-path"></a></dt>
+<dd><p>Base absolute path. Default: current working directory.</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), prints progress messages. If <code>FALSE</code>, runs silently.</p></dd>
 
 
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to <code><a href="write_man.html">write_man</a></code>, such as:</p><ul><li><p><code>path</code>: Output directory path (default: "man/")</p></li>
-<li><p><code>eol</code>: End-of-line type (default: "windows")</p></li>
-<li><p><code>climate_path</code>: Path to climate file directory (default: "CLIMATE/")</p></li>
-<li><p><code>base_path</code>: Base absolute path (default: current working directory)</p></li>
-</ul></dd>
+<dt id="arg-clean">clean<a class="anchor" aria-label="anchor" href="#arg-clean"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, removes existing <code>.MAN</code> files
+from <code>path</code> before writing new files. Default: <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -112,7 +140,13 @@ documentation for further details on parameter descriptions and valid ranges.</p
 <code><a href="write_prm_batch.html">write_prm_batch</a></code> for batch PRM file generation,
 <code><a href="ManData.html">ManData</a></code> for complete parameter reference</p>
 <p>Other batch operations:
-<code><a href="write_prm_batch.html">write_prm_batch</a>()</code></p></div>
+<code><a href="write_cal_batch.html">write_cal_batch()</a></code>,
+<code><a href="write_gwt_batch.html">write_gwt_batch()</a></code>,
+<code><a href="write_irrig_batch.html">write_irrig_batch()</a></code>,
+<code><a href="write_obs_batch.html">write_obs_batch()</a></code>,
+<code><a href="write_off_batch.html">write_off_batch()</a></code>,
+<code><a href="write_prm_batch.html">write_prm_batch()</a></code>,
+<code><a href="write_sol_batch.html">write_sol_batch()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -122,7 +156,7 @@ documentation for further details on parameter descriptions and valid ranges.</p
 <span class="r-in"><span><span class="va">base_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_03 <span class="op">=</span> <span class="fl">20</span>, var_04 <span class="op">=</span> <span class="fl">60</span>, var_05 <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">stations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grid_001"</span>, <span class="st">"grid_002"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">write_man_batch</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  station_name <span class="op">=</span> <span class="va">stations</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="va">stations</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="va">base_params</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -132,28 +166,27 @@ documentation for further details on parameter descriptions and valid ranges.</p
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_03 <span class="op">=</span> <span class="fl">60</span>, var_04 <span class="op">=</span> <span class="fl">80</span>, var_05 <span class="op">=</span> <span class="fl">70</span><span class="op">)</span> <span class="co"># High fertility, heavy mulch</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">write_man_batch</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  station_name <span class="op">=</span> <span class="va">stations</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="va">stations</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="va">params_list</span>,</span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 3: Auto-discover all stations, default parameters</span></span></span>
 <span class="r-in"><span><span class="fu">write_man_batch</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  station_name <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  base_path <span class="op">=</span> <span class="st">"/my/project/path"</span>,</span></span>
 <span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 4: Station-specific fertility gradient</span></span></span>
-<span class="r-in"><span><span class="co"># See ManData documentation for all available parameters</span></span></span>
 <span class="r-in"><span><span class="va">params_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_05 <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>, <span class="co"># Station 1: low fertility</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_05 <span class="op">=</span> <span class="fl">60</span><span class="op">)</span>, <span class="co"># Station 2: medium fertility</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_05 <span class="op">=</span> <span class="fl">90</span><span class="op">)</span> <span class="co"># Station 3: high fertility</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">write_man_batch</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  station_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"site_A"</span>, <span class="st">"site_B"</span>, <span class="st">"site_C"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"site_A"</span>, <span class="st">"site_B"</span>, <span class="st">"site_C"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="va">params_list</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
@@ -172,7 +205,7 @@ documentation for further details on parameter descriptions and valid ranges.</p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

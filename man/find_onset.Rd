@@ -16,44 +16,47 @@ find_onset(
 \item{site_name}{Character. Station name used to locate both the CAL file
 and the climate files (.PLU, .Tnx, .ETo).}
 
-\item{cal_path}{Path to the CAL directory. Default: "CAL/".}
+\item{cal_path}{Character. Path to the CAL directory. Default: "CAL/".}
 
-\item{climate_path}{Path to the climate directory. Default: "CLIMATE/".}
+\item{climate_path}{Character. Path to the climate directory.
+Default: "CLIMATE/".}
 
 \item{years}{Integer vector or NULL. Years to compute onset for. If NULL
-(default), all years present in the PLU file are used. Required when
-onset is "fixed".}
+(default), all years present in the climate file are used.}
 
-\item{base_path}{Base absolute path. Default: current working directory.}
+\item{base_path}{Character. Base absolute path. Default: current working
+directory.}
 }
 \value{
 A data.frame with columns:
 \describe{
-\item{year}{Integer. Year.}
-\item{onset_doy}{Integer. Onset day-of-year, or NA if the criterion
-was not met within the time window.}
-\item{onset_date}{Date. Calendar date of onset (NA when onset_doy
-is NA).}
+\item{year}{Integer.}
+\item{onset_doy}{Integer. Onset DOY, or last day of the search window
+if criterion not met.}
+\item{onset_date}{Date.}
 }
 }
 \description{
 Reads a CAL file, determines the onset method, and computes the onset
-day-of-year (DOY) for each year in the record. Supports fixed onset and
-all four rainfall criteria. Criterion 4 (rainfall as percent of ETo)
-automatically reads the ETo file via read_eto(). Thermal onset is not
-yet supported.
+day-of-year (DOY) for each year in the record. Supports:
+\itemize{
+\item Fixed onset.
+\item AquaCrop rainfall criteria 1-4.
+\item Criterion 5: generalised Sivakumar (1988).
+\item Criterion 6: Marteau (2009).
+\item Thermal criteria 1-4.
+}
 }
 \examples{
 \dontrun{
-# Criterion 2: 30 mm in 3 successive days
-onset <- find_onset("site_01")
-head(onset)
+# AquaCrop rainfall criterion 2
+find_onset("site_01")
 
-# Fixed onset: same DOY every year
-onset_fixed <- find_onset("site_01_fixed", years = 1981:2020)
+# Generalised Sivakumar (parameters in CAL file)
+find_onset("site_siv")
 
-# Criterion 4: 10-day rain >= 50 \% of ETo (ETo read automatically)
-onset_c4 <- find_onset("site_01_c4")
+# Marteau 2009 (parameters in CAL file)
+find_onset("site_mrt")
 }
 
 }

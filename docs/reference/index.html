@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -32,11 +32,17 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -58,13 +64,29 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="aquacrop_version.html">aquacrop_version()</a></code> </p>
+          <p><code><a href="CropData.html">CropData</a></code> </p>
         </td>
-        <td><p>Get Aquacrop version string</p></td>
+        <td><p>AquaCrop Crop Parameters</p></td>
+      </tr><tr><td>
+          <p><code><a href="ManData.html">ManData</a></code> </p>
+        </td>
+        <td><p>AquaCrop Management Parameters</p></td>
+      </tr><tr><td>
+          <p><code><a href="SWOData.html">SWOData</a></code> </p>
+        </td>
+        <td><p>Soil Initial Water Content Default Values</p></td>
+      </tr><tr><td>
+          <p><code><a href="SoilWater.html">SoilWater</a></code> </p>
+        </td>
+        <td><p>Soil Water Characteristics Based on Soil Texture</p></td>
       </tr><tr><td>
           <p><code><a href="build_crop_parameters.html">build_crop_parameters()</a></code> <code><a href="build_crop_parameters.html">crop_params()</a></code> </p>
         </td>
         <td><p>Build a Crop Parameter Set</p></td>
+      </tr><tr><td>
+          <p><code><a href="build_source.html">build_source()</a></code> </p>
+        </td>
+        <td><p>Build AquaCrop from Source</p></td>
       </tr><tr><td>
           <p><code><a href="calculate_crop_stages.html">calculate_crop_stages()</a></code> </p>
         </td>
@@ -78,29 +100,29 @@
         </td>
         <td><p>Calculate Plant Population Density</p></td>
       </tr><tr><td>
-          <p><code><a href="CropData.html">CropData</a></code> </p>
+          <p><code><a href="create_irr_events.html">create_irr_events()</a></code> </p>
         </td>
-        <td><p>AquaCrop Crop Parameters</p></td>
+        <td><p>Create Irrigation Events Data</p></td>
+      </tr><tr><td>
+          <p><code><a href="create_irr_schedule.html">create_irr_schedule()</a></code> </p>
+        </td>
+        <td><p>Create Irrigation Schedule Rules Data</p></td>
       </tr><tr><td>
           <p><code><a href="day_number.html">day_number()</a></code> <code><a href="day_number.html">DayNumber()</a></code> </p>
         </td>
         <td><p>Compute AquaCrop day-number from a given date</p></td>
       </tr><tr><td>
+          <p><code><a href="download_source.html">download_source()</a></code> </p>
+        </td>
+        <td><p>Download AquaCrop Source Code</p></td>
+      </tr><tr><td>
           <p><code><a href="ece_to_salinity.html">ece_to_salinity()</a></code> </p>
         </td>
         <td><p>Get Salinity Description from ECe Value</p></td>
       </tr><tr><td>
-          <p><code><a href="get_aquacrop_path.html">get_aquacrop_path()</a></code> </p>
+          <p><code><a href="find_onset.html">find_onset()</a></code> </p>
         </td>
-        <td><p>Get AquaCrop Executable Path</p></td>
-      </tr><tr><td>
-          <p><code><a href="get_aquacrop_version.html">get_aquacrop_version()</a></code> </p>
-        </td>
-        <td><p>Get AquaCrop Version</p></td>
-      </tr><tr><td>
-          <p><code><a href="has_aquacrop.html">has_aquacrop()</a></code> </p>
-        </td>
-        <td><p>Check if AquaCrop Executable is Available</p></td>
+        <td><p>Compute AquaCrop Growing Season Onset Day per Year</p></td>
       </tr><tr><td>
           <p><code><a href="init_aquacrop.html">init_aquacrop()</a></code> </p>
         </td>
@@ -110,21 +132,41 @@
         </td>
         <td><p>Install AquaCrop Binary</p></td>
       </tr><tr><td>
+          <p><code><a href="install_source.html">install_source()</a></code> </p>
+        </td>
+        <td><p>Install AquaCrop from Source</p></td>
+      </tr><tr><td>
+          <p><code><a href="is_cli.html">is_cli()</a></code> </p>
+        </td>
+        <td><p>Check if file is a valid AquaCrop climate file</p></td>
+      </tr><tr><td>
+          <p><code><a href="is_eto.html">is_eto()</a></code> </p>
+        </td>
+        <td><p>Check if file is a valid AquaCrop reference evapotranspiration file</p></td>
+      </tr><tr><td>
           <p><code><a href="is_leap_year.html">is_leap_year()</a></code> </p>
         </td>
         <td><p>Check if a Year is a Leap Year</p></td>
       </tr><tr><td>
           <p><code><a href="is_plu.html">is_plu()</a></code> </p>
         </td>
-        <td><p>Check if a File is an AquaCrop PLU File</p></td>
+        <td><p>Check if file is a valid AquaCrop rainfall file</p></td>
       </tr><tr><td>
-          <p><code><a href="ManData.html">ManData</a></code> </p>
+          <p><code><a href="is_tnx.html">is_tnx()</a></code> </p>
         </td>
-        <td><p>AquaCrop Management Parameters</p></td>
+        <td><p>Check if file is a valid AquaCrop temperature file</p></td>
+      </tr><tr><td>
+          <p><code><a href="params_df2list.html">params_df2list()</a></code> </p>
+        </td>
+        <td><p>Convert data.frame to parameter list for batch functions</p></td>
       </tr><tr><td>
           <p><code><a href="path_to_file.html">path_to_file()</a></code> </p>
         </td>
         <td><p>Get access to CO2 Files Bundled in aquacroptools</p></td>
+      </tr><tr><td>
+          <p><code><a href="read_cal.html">read_cal()</a></code> </p>
+        </td>
+        <td><p>Parse an AquaCrop Calendar (.CAL) File</p></td>
       </tr><tr><td>
           <p><code><a href="read_cli.html">read_cli()</a></code> <code><a href="read_cli.html">read_climate()</a></code> </p>
         </td>
@@ -137,10 +179,6 @@
           <p><code><a href="read_plu.html">read_plu()</a></code> </p>
         </td>
         <td><p>Read an AquaCrop PLU File</p></td>
-      </tr><tr><td>
-          <p><code><a href="read_season_out.html">read_season_out()</a></code> </p>
-        </td>
-        <td><p>Read AquaCrop Season Output Files</p></td>
       </tr><tr><td>
           <p><code><a href="read_tnx.html">read_tnx()</a></code> </p>
         </td>
@@ -158,17 +196,9 @@
         </td>
         <td><p>Convert Salinity Level to ECe Value</p></td>
       </tr><tr><td>
-          <p><code><a href="SoilWater.html">SoilWater</a></code> </p>
-        </td>
-        <td><p>Soil Water Characteristics Based on Soil Texture</p></td>
-      </tr><tr><td>
           <p><code><a href="st_grid.html">st_grid()</a></code> </p>
         </td>
         <td><p>Create Grid from Points</p></td>
-      </tr><tr><td>
-          <p><code><a href="SWOData.html">SWOData</a></code> </p>
-        </td>
-        <td><p>Soil Initial Water Content Default Values</p></td>
       </tr><tr><td>
           <p><code><a href="to_aquacrop_day.html">to_aquacrop_day()</a></code> </p>
         </td>
@@ -177,6 +207,14 @@
           <p><code><a href="weather.html">weather</a></code> </p>
         </td>
         <td><p>Example Weather Data for AquaCrop</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_cal.html">write_cal()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Calendar (.CAL) File</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_cal_batch.html">write_cal_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Calendar (.CAL) Files for Multiple Stations</p></td>
       </tr><tr><td>
           <p><code><a href="write_cli.html">write_cli()</a></code> </p>
         </td>
@@ -198,6 +236,22 @@
         </td>
         <td><p>Write Fixed-Width Format File</p></td>
       </tr><tr><td>
+          <p><code><a href="write_gwt.html">write_gwt()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Groundwater Table (.GWT) File</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_gwt_batch.html">write_gwt_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Groundwater Table (.GWT) Files for Multiple Stations</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_irr.html">write_irr()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Irrigation File</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_irrig_batch.html">write_irrig_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Irrigation (.IRR) Files for Multiple Stations</p></td>
+      </tr><tr><td>
           <p><code><a href="write_man.html">write_man()</a></code> </p>
         </td>
         <td><p>Write AquaCrop Management File</p></td>
@@ -206,21 +260,41 @@
         </td>
         <td><p>Write AquaCrop MAN files in batch</p></td>
       </tr><tr><td>
+          <p><code><a href="write_obs.html">write_obs()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Observed Data (.OBS) File</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_obs_batch.html">write_obs_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Observed Data (.OBS) Files for Multiple Stations</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_off.html">write_off()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Off-Season Conditions (.OFF) File</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_off_batch.html">write_off_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop Off-Season Conditions (.OFF) Files for Multiple Stations</p></td>
+      </tr><tr><td>
           <p><code><a href="write_plu.html">write_plu()</a></code> </p>
         </td>
         <td><p>Write AquaCrop Rainfall File</p></td>
       </tr><tr><td>
           <p><code><a href="write_prm.html">write_prm()</a></code> </p>
         </td>
-        <td><p>Write AquaCrop Parameter Files for Multiple Years (Batch)</p></td>
+        <td><p>Write AquaCrop Parameter Files for Multiple Years</p></td>
       </tr><tr><td>
           <p><code><a href="write_prm_batch.html">write_prm_batch()</a></code> </p>
         </td>
-        <td><p>Write AquaCrop PRM files in batch</p></td>
+        <td><p>Write AquaCrop PRM files for Multiple Stations</p></td>
       </tr><tr><td>
           <p><code><a href="write_sol.html">write_sol()</a></code> <code><a href="write_sol.html">write_soil()</a></code> </p>
         </td>
         <td><p>Write AquaCrop Soil Profile File (.SOL)</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_sol_batch.html">write_sol_batch()</a></code> </p>
+        </td>
+        <td><p>Write AquaCrop SOL files in batch</p></td>
       </tr><tr><td>
           <p><code><a href="write_swo.html">write_swo()</a></code> <code><a href="write_swo.html">write_sw0()</a></code> </p>
         </td>
@@ -242,7 +316,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

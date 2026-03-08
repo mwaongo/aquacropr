@@ -27,8 +27,8 @@
 # Criterion metadata keyed by AquaCrop internal criterion number.
 #
 # User-facing criterion numbers:
-#   onset = "rainfall": 1, 2, 3, 4  → AquaCrop internal: 1, 2, 3, 4
-#   onset = "thermal" : 1, 2, 3, 4  → AquaCrop internal: 11, 12, 13, 14
+#   onset = "rainfall": 1, 2, 3, 4, 5  → AquaCrop internal: 1, 2, 3, 4, 5
+#   onset = "thermal" : 1, 2, 3, 4     → AquaCrop internal: 11, 12, 13, 14
 #
 # Conversion:
 #   rainfall → pass-through (user == internal)
@@ -59,6 +59,13 @@
     preset_label = "Preset 10-day Rain percentage of 10-day ETo",
     preset_fmt   = "int",
     needs_succ   = FALSE
+  ),
+  # Rainfall fuzzy criterion (AquaCrop internal: 5)
+  "5" = list(
+    label        = "Criterion Nr (Fuzzy logic: cumulative rainfall x wet days x dry spell index)",
+    preset_label = "Preset value of cumulative rainfall lower bound (mm) [cum_rain_lower]",
+    preset_fmt   = "int",
+    needs_succ   = TRUE   # successive_days = accum_days
   ),
   # Thermal criteria (AquaCrop internal: 11-14)
   "11" = list(
@@ -125,7 +132,13 @@
 #' @noRd
 .build_cal_criterion <- function(window_start, window_length, criterion_internal,
                                  preset_value, successive_days,
-                                 occurrences, sep) {
+                                 occurrences, sep,
+                                 cum_rain_upper  = NULL,
+                                 wet_days_lower  = NULL,
+                                 wet_days_upper  = NULL,
+                                 dry_spell_lower = NULL,
+                                 dry_spell_upper = NULL,
+                                 fuzzy_threshold = NULL) {
   meta <- .cal_criterion_meta[[as.character(criterion_internal)]]
 
   line_7 <- if (meta$preset_fmt == "int") {
@@ -140,13 +153,26 @@
     paste0(.fmt_cal_int(-9), "Number of successive days for the onset criterion: Not applicable")
   }
 
-  paste0(
-    .fmt_cal_int(window_start),         "Day-number (1 ... 366) of the Start of the time window for the onset criterion", sep,
-    .fmt_cal_int(window_length),        "Length (days) of the time window for the onset criterion", sep,
-    .fmt_cal_int(criterion_internal),   meta$label, sep,
+  standard <- paste0(
+    .fmt_cal_int(window_start),       "Day-number (1 ... 366) of the Start of the time window for the onset criterion", sep,
+    .fmt_cal_int(window_length),      "Length (days) of the time window for the onset criterion", sep,
+    .fmt_cal_int(criterion_internal), meta$label, sep,
     line_7, sep,
     line_8, sep,
-    .fmt_cal_int(occurrences),          "Number of occurrences before the onset criterion applies (max = 3)", sep
+    .fmt_cal_int(occurrences),        "Number of occurrences before the onset criterion applies (max = 3)", sep
   )
-}
 
+  if (criterion_internal != 5L) return(standard)
+
+  # --- fuzzy extras (6 additional lines, ignored by AquaCrop) ---
+  fuzzy <- paste0(
+    .fmt_cal_int(as.integer(cum_rain_upper)),  "Fuzzy: cumulative rainfall upper bound (mm) [cum_rain_upper]", sep,
+    .fmt_cal_int(as.integer(wet_days_lower)),  "Fuzzy: wet days lower bound [wet_days_lower]", sep,
+    .fmt_cal_int(as.integer(wet_days_upper)),  "Fuzzy: wet days upper bound [wet_days_upper]", sep,
+    .fmt_cal_int(as.integer(dry_spell_lower)), "Fuzzy: dry spell lower bound (days) [dry_spell_lower]", sep,
+    .fmt_cal_int(as.integer(dry_spell_upper)), "Fuzzy: dry spell upper bound (days) [dry_spell_upper]", sep,
+    .fmt_cal_float(fuzzy_threshold),           "Fuzzy: defuzzification threshold [fuzzy_threshold]", sep
+  )
+
+  paste0(standard, fuzzy)
+}

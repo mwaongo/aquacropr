@@ -20,7 +20,7 @@ soil-water content file (.SW0) by calling write_swo()."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -35,11 +35,17 @@ soil-water content file (.SW0) by calling write_swo()."><!-- mathjax --><script 
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -54,7 +60,7 @@ soil-water content file (.SW0) by calling write_swo()."><!-- mathjax --><script 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write AquaCrop Soil Profile File (.SOL)</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/write_sol.R" class="external-link"><code>R/write_sol.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/write_sol.R" class="external-link"><code>R/write_sol.R</code></a></small>
     <div class="hidden name"><code>write_sol.Rd</code></div>
     </div>
 
@@ -67,14 +73,13 @@ soil-water content file (<code>.SW0</code>) by calling <code><a href="write_swo.
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_sol</span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"soil/"</span>,</span>
 <span>  site_name <span class="op">=</span> <span class="st">"default-site"</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"SOIL/"</span>,</span>
 <span>  cn <span class="op">=</span> <span class="fl">46</span>,</span>
 <span>  rew <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  texture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loam"</span>, <span class="st">"silt loam"</span><span class="op">)</span>,</span>
 <span>  thickness <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  consolidate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
+<span>  eol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write_sw0 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  initial_water <span class="op">=</span> <span class="st">"WP"</span>,</span>
 <span>  salinity <span class="op">=</span> <span class="st">"none"</span>,</span>
@@ -87,14 +92,13 @@ soil-water content file (<code>.SW0</code>) by calling <code><a href="write_swo.
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">write_soil</span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"soil/"</span>,</span>
 <span>  site_name <span class="op">=</span> <span class="st">"default-site"</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"SOIL/"</span>,</span>
 <span>  cn <span class="op">=</span> <span class="fl">46</span>,</span>
 <span>  rew <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  texture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loam"</span>, <span class="st">"silt loam"</span><span class="op">)</span>,</span>
 <span>  thickness <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  consolidate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
+<span>  eol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write_sw0 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  initial_water <span class="op">=</span> <span class="st">"WP"</span>,</span>
 <span>  salinity <span class="op">=</span> <span class="st">"none"</span>,</span>
@@ -111,14 +115,14 @@ soil-water content file (<code>.SW0</code>) by calling <code><a href="write_swo.
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Directory where the <code>.SOL</code> file will be written.
-Default: <code>"soil/"</code>.</p></dd>
-
-
-<dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
+<dl><dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
 <dd><p>Name of the soil profile (used in the filename).
 Default: <code>"default-site"</code>.</p></dd>
+
+
+<dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>Directory where the <code>.SOL</code> file will be written.
+Default: <code>"SOIL/"</code>.</p></dd>
 
 
 <dt id="arg-cn">cn<a class="anchor" aria-label="anchor" href="#arg-cn"></a></dt>
@@ -139,14 +143,8 @@ Must match entries in the <code>SoilWater</code> dataset.</p></dd>
 Must have the same length as <code>texture</code>.</p></dd>
 
 
-<dt id="arg-consolidate">consolidate<a class="anchor" aria-label="anchor" href="#arg-consolidate"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> (default), consecutive horizons with
-identical texture are merged into a single horizon.</p></dd>
-
-
 <dt id="arg-eol">eol<a class="anchor" aria-label="anchor" href="#arg-eol"></a></dt>
-<dd><p>End-of-line style. One of <code>"windows"</code>, <code>"unix"</code>, <code>"linux"</code>, <code>"macOS"</code>.
-Default: <code>"windows"</code>.</p></dd>
+<dd><p>End-of-line character style. Options: "windows","linux", or "macos". If <code>NULL</code> (default), eol is auto-detected.</p></dd>
 
 
 <dt id="arg-write-sw-">write_sw0<a class="anchor" aria-label="anchor" href="#arg-write-sw-"></a></dt>
@@ -206,15 +204,6 @@ and <code>thickness</code>.</p></dd>
     <h2>Details</h2>
 
 <div class="section">
-<h3 id="soil-consolidation">Soil Consolidation<a class="anchor" aria-label="anchor" href="#soil-consolidation"></a></h3>
-
-
-<p>When <code>consolidate = TRUE</code>, consecutive horizons with identical texture are
-automatically merged. For example:</p><ul><li><p>Input: <code>texture = c("loam", "loam", "sand")</code>, <code>thickness = c(0.2, 0.2, 0.3)</code></p></li>
-<li><p>Output: <code>texture = c("loam", "sand")</code>, <code>thickness = c(0.4, 0.3)</code></p></li>
-</ul></div>
-
-<div class="section">
 <h3 id="file-content">File content<a class="anchor" aria-label="anchor" href="#file-content"></a></h3>
 
 
@@ -224,8 +213,7 @@ horizon, including:</p><ul><li><p><strong>SAT</strong>: Saturation (vol %)</p></
 <li><p><strong>WP</strong>: Wilting point (vol %)</p></li>
 <li><p><strong>Ksat</strong>: Saturated hydraulic conductivity (mm day⁻¹)</p></li>
 <li><p><strong>Penetrability, Gravel, CRa, CRb</strong>: Additional physical characteristics</p></li>
-</ul><p>The number of horizons is inferred from the lengths of <code>texture</code> and <code>thickness</code>
-after consolidation (if enabled).</p>
+</ul><p>The number of horizons is inferred from the lengths of <code>texture</code> and <code>thickness</code>.</p>
 </div>
 
 <div class="section">
@@ -242,24 +230,10 @@ and <code>eol</code>. The following arguments are passed through:
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other AquaCrop file writers:
-<code><a href="write_cli.html">write_cli</a>()</code>,
-<code><a href="write_cro.html">write_cro</a>()</code>,
-<code><a href="write_eto.html">write_eto</a>()</code>,
-<code><a href="write_man.html">write_man</a>()</code>,
-<code><a href="write_plu.html">write_plu</a>()</code>,
-<code><a href="write_prm.html">write_prm</a>()</code>,
-<code><a href="write_swo.html">write_swo</a>()</code>,
-<code><a href="write_tnx.html">write_tnx</a>()</code></p>
-<p>Other AquaCrop file writers:
-<code><a href="write_cli.html">write_cli</a>()</code>,
-<code><a href="write_cro.html">write_cro</a>()</code>,
-<code><a href="write_eto.html">write_eto</a>()</code>,
-<code><a href="write_man.html">write_man</a>()</code>,
-<code><a href="write_plu.html">write_plu</a>()</code>,
-<code><a href="write_prm.html">write_prm</a>()</code>,
-<code><a href="write_swo.html">write_swo</a>()</code>,
-<code><a href="write_tnx.html">write_tnx</a>()</code></p></div>
+    <div class="dont-index"><p><a href="SoilWater.html">SoilWater</a> for hydraulic property data,
+<code><a href="write_swo.html">write_swo()</a></code> for initial water content files (.SW0),
+<code><a href="write_cro.html">write_cro()</a></code> for crop files,
+<code><a href="write_man.html">write_man()</a></code> for management files.</p></div>
     </div>
 
     <div id="ref-examples">
@@ -273,23 +247,16 @@ and <code>eol</code>. The following arguments are passed through:
 <span class="r-in"><span>  thickness <span class="op">=</span> <span class="fl">1.0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Two horizons with consolidation</span></span></span>
+<span class="r-in"><span><span class="co"># Two horizons with automatic SW0 generation (field capacity)</span></span></span>
 <span class="r-in"><span><span class="fu">write_sol</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"soil/"</span>,</span></span>
 <span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"layered"</span>,</span></span>
 <span class="r-in"><span>  cn <span class="op">=</span> <span class="fl">65</span>,</span></span>
 <span class="r-in"><span>  rew <span class="op">=</span> <span class="fl">7</span>,</span></span>
-<span class="r-in"><span>  texture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loam"</span>, <span class="st">"loam"</span>, <span class="st">"sandy loam"</span>, <span class="st">"clay loam"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  thickness <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  consolidate <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># First two "loam" will be merged</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Without consolidation</span></span></span>
-<span class="r-in"><span><span class="fu">write_sol</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"no_consolidation"</span>,</span></span>
-<span class="r-in"><span>  texture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loam"</span>, <span class="st">"loam"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  thickness <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.7</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  consolidate <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  texture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sandy loam"</span>, <span class="st">"clay loam"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  thickness <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  initial_water <span class="op">=</span> <span class="st">"FC"</span>,</span></span>
+<span class="r-in"><span>  salinity <span class="op">=</span> <span class="st">"none"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Write only the .SOL file (no SW0)</span></span></span>
@@ -300,6 +267,7 @@ and <code>eol</code>. The following arguments are passed through:
 <span class="r-in"><span>  write_sw0 <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -314,7 +282,7 @@ and <code>eol</code>. The following arguments are passed through:
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

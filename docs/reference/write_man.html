@@ -19,7 +19,7 @@ mulch coverage, soil fertility stress, weed competition, and harvesting strategi
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -34,11 +34,17 @@ mulch coverage, soil fertility stress, weed competition, and harvesting strategi
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
+      <a href="../articles/01settingup.html">Getting Started: Initializing an AquaCrop Project</a>
+    </li>
+    <li>
+      <a href="../articles/02sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a>
+    </li>
+    <li>
+      <a href="../articles/03regionalsim.html">Regional Crop Simulations Using aquacroptools</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
+  <a href="https://github.com/mwaongo/aquacroptools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
 
   </a>
@@ -53,7 +59,7 @@ mulch coverage, soil fertility stress, weed competition, and harvesting strategi
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write AquaCrop Management File</h1>
-    <small class="dont-index">Source: <a href="https://github.com/oousmane/aquacroptools/blob/HEAD/R/write_man.R" class="external-link"><code>R/write_man.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacroptools/blob/HEAD/R/write_man.R" class="external-link"><code>R/write_man.R</code></a></small>
     <div class="hidden name"><code>write_man.Rd</code></div>
     </div>
 
@@ -64,12 +70,7 @@ mulch coverage, soil fertility stress, weed competition, and harvesting strategi
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_man</span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
-<span>  <span class="va">management_name</span>,</span>
-<span>  eol <span class="op">=</span> <span class="st">"windows"</span>,</span>
-<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_man</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>, <span class="va">site_name</span>, eol <span class="op">=</span> <span class="cn">NULL</span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -78,18 +79,17 @@ mulch coverage, soil fertility stress, weed competition, and harvesting strategi
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
 <dd><p>Character. Directory path where the .MAN file will be created.
-The directory is created automatically if it doesn't exist. Default: <code>"man/"</code>.</p></dd>
+The directory is created automatically if it doesn't exist. Default: <code>"MANAGEMENT/"</code>.</p></dd>
 
 
-<dt id="arg-management-name">management_name<a class="anchor" aria-label="anchor" href="#arg-management-name"></a></dt>
+<dt id="arg-site-name">site_name<a class="anchor" aria-label="anchor" href="#arg-site-name"></a></dt>
 <dd><p>Character. Name identifier for the management scenario.
 This name is used as the filename (e.g., <code>"high-fertility"</code> creates
 <code>"high-fertility.MAN"</code>). Default: <code>"generic-management"</code>.</p></dd>
 
 
 <dt id="arg-eol">eol<a class="anchor" aria-label="anchor" href="#arg-eol"></a></dt>
-<dd><p>Character. End-of-line character style for the output file.
-Options: <code>"windows"</code>, <code>"linux"</code>, <code>"unix"</code>, or <code>"macOS"</code>. Default: <code>"windows"</code>.</p></dd>
+<dd><p>End-of-line character style. Options: "windows","linux", or "macos". If <code>NULL</code> (default), eol is auto-detected.</p></dd>
 
 
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
@@ -126,7 +126,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <h3 id="file-format">File Format<a class="anchor" aria-label="anchor" href="#file-format"></a></h3>
 
 
-<p>The function creates a colon-delimited text file compatible with AquaCrop v7.0+:</p><ul><li><p>Filename: <code>&lt;management_name&gt;.MAN</code></p></li>
+<p>The function creates a colon-delimited text file compatible with AquaCrop v7.0+:</p><ul><li><p>Filename: <code>&lt;site_name&gt;.MAN</code></p></li>
 <li><p>Format: <code>value : description</code></p></li>
 <li><p>Each parameter on a separate line</p></li>
 <li><p>Header contains management scenario name and key parameters</p></li>
@@ -136,14 +136,18 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other AquaCrop file writers:
-<code><a href="write_cli.html">write_cli</a>()</code>,
-<code><a href="write_cro.html">write_cro</a>()</code>,
-<code><a href="write_eto.html">write_eto</a>()</code>,
-<code><a href="write_plu.html">write_plu</a>()</code>,
-<code><a href="write_prm.html">write_prm</a>()</code>,
-<code><a href="write_sol.html">write_sol</a>()</code>,
-<code><a href="write_swo.html">write_swo</a>()</code>,
-<code><a href="write_tnx.html">write_tnx</a>()</code></p></div>
+<code><a href="write_cal.html">write_cal()</a></code>,
+<code><a href="write_cli.html">write_cli()</a></code>,
+<code><a href="write_cro.html">write_cro()</a></code>,
+<code><a href="write_eto.html">write_eto()</a></code>,
+<code><a href="write_gwt.html">write_gwt()</a></code>,
+<code><a href="write_irr.html">write_irr()</a></code>,
+<code><a href="write_obs.html">write_obs()</a></code>,
+<code><a href="write_off.html">write_off()</a></code>,
+<code><a href="write_plu.html">write_plu()</a></code>,
+<code><a href="write_prm.html">write_prm()</a></code>,
+<code><a href="write_swo.html">write_swo()</a></code>,
+<code><a href="write_tnx.html">write_tnx()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -152,14 +156,14 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span><span class="co"># Example 1: Use all default values</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"default"</span></span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"default"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 2: High fertility with moderate mulching</span></span></span>
 <span class="r-in"><span><span class="co"># See ?ManData for parameter details</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"high-fertility"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"high-fertility"</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    var_05 <span class="op">=</span> <span class="fl">10</span>, <span class="co"># Low fertility stress (high fertility)</span></span></span>
 <span class="r-in"><span>    var_03 <span class="op">=</span> <span class="fl">30</span>, <span class="co"># 30% mulch cover</span></span></span>
@@ -170,7 +174,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span><span class="co"># Example 3: Low fertility, no mulch</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"low-fertility"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"low-fertility"</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    var_05 <span class="op">=</span> <span class="fl">70</span>, <span class="co"># High fertility stress (poor soil)</span></span></span>
 <span class="r-in"><span>    var_03 <span class="op">=</span> <span class="fl">0</span>, <span class="co"># No mulch</span></span></span>
@@ -182,7 +186,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span><span class="co"># Check ?ManData for weed-related parameters</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"with-weeds"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"with-weeds"</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    var_05 <span class="op">=</span> <span class="fl">50</span>, <span class="co"># Moderate fertility stress</span></span></span>
 <span class="r-in"><span>    var_09 <span class="op">=</span> <span class="fl">20</span>, <span class="co"># Weed cover at closure</span></span></span>
@@ -194,7 +198,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span><span class="co"># Example 5: Multiple cutting management (e.g., forage)</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"multiple-cuts"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"multiple-cuts"</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    var_13 <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Enable multiple cuttings</span></span></span>
 <span class="r-in"><span>    var_14 <span class="op">=</span> <span class="fl">10</span>, <span class="co"># Canopy after cut</span></span></span>
@@ -217,7 +221,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="st">"irrigated-field"</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="st">"irrigated-field"</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="va">irrigation_params</span>,</span></span>
 <span class="r-in"><span>  eol <span class="op">=</span> <span class="st">"linux"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -226,7 +230,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 <span class="r-in"><span><span class="va">station</span> <span class="op">&lt;-</span> <span class="st">"grid_001"</span></span></span>
 <span class="r-in"><span><span class="fu">write_man</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span></span>
-<span class="r-in"><span>  management_name <span class="op">=</span> <span class="va">station</span>,</span></span>
+<span class="r-in"><span>  site_name <span class="op">=</span> <span class="va">station</span>,</span></span>
 <span class="r-in"><span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>var_05 <span class="op">=</span> <span class="fl">35</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
@@ -246,7 +250,7 @@ parameters automatically use default values from <code><a href="ManData.html">Ma
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
