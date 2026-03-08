@@ -39,7 +39,6 @@
   x <- rain_doy[start:end]
   n <- length(x)
   if (n < spell_days) return(Inf)   # window too short — criterion trivially met
-  # cumsum trick: rolling sum of length spell_days
   cs  <- c(0, cumsum(ifelse(is.na(x), 0, x)))
   min(cs[(spell_days + 1L):(n + 1L)] - cs[1L:(n - spell_days + 1L)])
 }
@@ -215,11 +214,6 @@
 #' \code{spell_days}-day window in the following \code{lookahead_days} days
 #' has a total rainfall below \code{min_weekly_rain} mm.
 #'
-#' Rolling totals for the trigger and the look-ahead are both computed via
-#' \code{cumsum}, making conditions 1-2 O(1) per candidate. Condition 3
-#' (look-ahead) uses a second \code{cumsum} over the look-ahead slice and is
-#' only evaluated for candidates passing conditions 1-2.
-#'
 #' @param rain_doy       Numeric vector. Daily rainfall indexed by DOY.
 #' @param window_start   Integer. First DOY of the search window.
 #' @param window_length  Integer. Length of the search window in days.
@@ -249,7 +243,6 @@
 
   r <- ifelse(idx >= 1L & idx <= upper_r, rain_doy[idx], 0)
 
-  # Rolling trigger sums computed once
   cs_rain <- c(0, cumsum(r))
 
   found <- 0L
@@ -257,21 +250,16 @@
 
   while (i <= n - sdays + 1L) {
 
-    # Condition 1: total rainfall in sdays-day window >= preset_value
     if (cs_rain[i + sdays] - cs_rain[i] >= preset_value) {
 
-      # Condition 2: first day of window must be > 1 mm (wet day trigger)
       if (r[i] > 1) {
 
-        # Condition 3: no spell_days-day rolling window in look-ahead below
-        # min_weekly_rain
-        la_start <- idx[i] + sdays          # look-ahead starts after trigger
+        la_start <- idx[i] + sdays
         la_end   <- idx[i] + lookahead_days
 
         if (.min_rolling_rain_window(rain_doy, la_start, la_end, spell_days) >=
             min_weekly_rain) {
           found <- found + 1L
-          # Onset = first day of the trigger window (Marteau convention)
           if (found >= occurrences) return(idx[i])
           i <- i + sdays
         } else {
@@ -285,6 +273,111 @@
     } else {
       i <- i + 1L
     }
+  }
+
+  NA_integer_
+}
+
+
+#' Apply Fuzzy Logic Onset Criterion to One Year (criterion 7, Waongo et al. 2014)
+#'
+#' Determines onset using a three-component fuzzy index: cumulative rainfall
+#' (\eqn{\gamma_1}), wet-day count (\eqn{\gamma_2}), and longest dry spell
+#' in the 30 days following the window (\eqn{\gamma_3}). Onset is the first
+#' day \eqn{j} for which
+#' \eqn{\gamma_1(j) \times \gamma_2(j) \times \gamma_3(j) \geq} threshold.
+#'
+#' @param rain_doy        Numeric vector. Daily rainfall indexed by DOY.
+#' @param window_start    Integer. First DOY of the search window.
+#' @param window_end      Integer. Last DOY of the search window.
+#' @param cum_rain_lower  Numeric. Lower bound of cumulative rainfall (mm)
+#'   for gamma_1 (gamma_1 = 0 below this value).
+#' @param cum_rain_upper  Numeric. Upper bound of cumulative rainfall (mm)
+#'   for gamma_1 (gamma_1 = 1 at or above this value).
+#' @param accum_days      Integer. Length of the rainfall accumulation window.
+#' @param wet_days_lower  Integer. Lower bound of wet-day count for gamma_2.
+#' @param wet_days_upper  Integer. Upper bound of wet-day count for gamma_2.
+#' @param dry_spell_lower Integer. Lower bound of longest dry spell (days) for
+#'   gamma_3 (gamma_3 = 1 below this value).
+#' @param dry_spell_upper Integer. Upper bound of longest dry spell (days) for
+#'   gamma_3 (gamma_3 = 0 at or above this value).
+#' @param threshold       Numeric between 0 and 1. Defuzzification threshold.
+#' @param rainy_threshold Numeric. Daily rainfall (mm) above which a day is
+#'   considered wet. Default: 0.1.
+#'
+#' @return Integer. Onset DOY (day after conditions first satisfied), or
+#'   NA_integer_ if no onset found within the window.
+#'
+#' @references
+#' Waongo, M., Laux, P., Traoré, S.B., Sanon, M., & Kunstmann, H. (2014).
+#' A crop model and fuzzy rule based approach for optimizing maize planting
+#' dates in Burkina Faso, West Africa.
+#' \emph{Journal of Applied Meteorology and Climatology}, \strong{53}(3),
+#' 598--613. \doi{10.1175/JAMC-D-13-0116.1}
+#'
+#' @keywords internal
+#' @noRd
+.onset_fuzzy_one_year <- function(
+    rain_doy,
+    window_start,
+    window_end,
+    cum_rain_lower,
+    cum_rain_upper,
+    accum_days,
+    wet_days_lower,
+    wet_days_upper,
+    dry_spell_lower,
+    dry_spell_upper,
+    threshold,
+    rainy_threshold = 0.1
+) {
+  n_days <- length(rain_doy)
+
+  .g1 <- function(x) {
+    if      (x <  cum_rain_lower)  0
+    else if (x >= cum_rain_upper)  1
+    else    (x - cum_rain_lower) / (cum_rain_upper - cum_rain_lower)
+  }
+  .g2 <- function(x) {
+    if      (x <  wet_days_lower)  0
+    else if (x >= wet_days_upper)  1
+    else    (x - wet_days_lower) / (wet_days_upper - wet_days_lower)
+  }
+  .g3 <- function(x) {
+    if      (x <  dry_spell_lower)  1
+    else if (x >= dry_spell_upper)  0
+    else    (dry_spell_upper - x) / (dry_spell_upper - dry_spell_lower)
+  }
+
+  .dry_spell <- function(j) {
+    end_m  <- min(j + 30L, n_days)
+    if (j + 1L > end_m) return(0L)
+    streak <- 0L; best <- 0L
+    for (m in (j + 1L):end_m) {
+      v <- rain_doy[m]
+      if (!is.na(v) && v <= rainy_threshold) {
+        streak <- streak + 1L
+        if (streak > best) best <- streak
+      } else {
+        streak <- 0L
+      }
+    }
+    best
+  }
+
+  j_max <- window_end - accum_days + 1L
+  j     <- window_start
+
+  while (j <= j_max) {
+    idx <- j:(j + accum_days - 1L)
+    if (any(idx > n_days)) break
+
+    f_val <- .g1(sum(rain_doy[idx], na.rm = TRUE)) *
+      .g2(sum(rain_doy[idx] >  rainy_threshold, na.rm = TRUE)) *
+      .g3(.dry_spell(j))
+
+    if (!is.na(f_val) && f_val >= threshold) return(j + 1L)
+    j <- j + 1L
   }
 
   NA_integer_
@@ -400,6 +493,7 @@
 #'   \item AquaCrop rainfall criteria 1-4.
 #'   \item Criterion 5: generalised Sivakumar (1988).
 #'   \item Criterion 6: Marteau (2009).
+#'   \item Criterion 7: fuzzy logic (Waongo et al., 2014).
 #'   \item Thermal criteria 1-4.
 #' }
 #'
@@ -431,6 +525,9 @@
 #'
 #' # Marteau 2009 (parameters in CAL file)
 #' find_onset("site_mrt")
+#'
+#' # Fuzzy logic Waongo et al. 2014 (parameters in CAL file)
+#' find_onset("site_fuz")
 #' }
 #'
 #' @seealso \code{\link{read_cal}}, \code{\link{read_plu}},
@@ -446,7 +543,7 @@ find_onset <- function(
 
   cal <- read_cal(fs::path(base_path, cal_path, paste0(site_name, ".CAL")))
 
-  # Fixed onset
+  # ---- Fixed onset ----------------------------------------------------------
   if (cal$onset == "fixed") {
     if (is.null(years)) {
       plu_years <- read_plu(
@@ -467,8 +564,7 @@ find_onset <- function(
     ))
   }
 
-  # Read climate data
-  
+  # ---- Read climate data ----------------------------------------------------
   if (cal$onset == "rainfall") {
     clim_data <- read_plu(
       fs::path(base_path, climate_path, paste0(site_name, ".PLU"))
@@ -511,7 +607,7 @@ find_onset <- function(
       )
   }
 
-  # Per-year computation 
+  # ---- Per-year computation -------------------------------------------------
   results <- lapply(years, function(yr) {
 
     yr_data <- clim_data[clim_data$year == yr, ]
@@ -524,7 +620,7 @@ find_onset <- function(
       onset_doy <- switch(
         as.character(cal$criterion_internal),
 
-        # Generalised Sivakumar, Widely used versions in Sahel can be used.(PRESASS)
+        # ---- Generalised Sivakumar (criterion 5) ---------------------------
         "5" = .onset_sivakumar_one_year(
           rain_doy        = rain_doy,
           window_start    = cal$window_start,
@@ -537,7 +633,7 @@ find_onset <- function(
           lookahead_days  = cal$lookahead_days
         ),
 
-        # Marteau (2009)
+        # ---- Marteau (2009) (criterion 6) -----------------------------------
         "6" = .onset_marteau_one_year(
           rain_doy        = rain_doy,
           window_start    = cal$window_start,
@@ -550,7 +646,27 @@ find_onset <- function(
           lookahead_days  = cal$lookahead_days
         ),
 
-        # Standard AquaCrop rainfall criteria
+        # ---- Fuzzy logic (Waongo et al. 2014) (criterion 7) ----------------
+        "7" = {
+          if (is.na(cal$successive_days))
+            stop("accum_days (successive_days) is missing for fuzzy criterion.",
+                 call. = FALSE)
+          .onset_fuzzy_one_year(
+            rain_doy        = rain_doy,
+            window_start    = cal$window_start,
+            window_end      = cal$window_start + cal$window_length - 1L,
+            cum_rain_lower  = cal$preset_value,
+            cum_rain_upper  = cal$cum_rain_upper,
+            accum_days      = cal$successive_days,
+            wet_days_lower  = cal$wet_days_lower,
+            wet_days_upper  = cal$wet_days_upper,
+            dry_spell_lower = cal$dry_spell_lower,
+            dry_spell_upper = cal$dry_spell_upper,
+            threshold       = cal$fuzzy_threshold
+          )
+        },
+
+        # ---- Standard AquaCrop criteria (1-4) -------------------------------
         {
           eto_doy <- NULL
           if (!is.null(eto_data)) {
@@ -572,9 +688,7 @@ find_onset <- function(
       )
 
     } else {
-      
-      # Standard AquaCrop thermal criteria
-      
+      # ---- Thermal criteria -------------------------------------------------
       tmin_doy <- rep(NA_real_, max(yr_data$doy))
       tmax_doy <- rep(NA_real_, max(yr_data$doy))
       tmin_doy[yr_data$doy] <- yr_data$tmin

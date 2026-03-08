@@ -742,25 +742,25 @@
 #' @param window_length Integer. Length of time window in days
 #'   (onset_code 1 only).
 #' @param criterion_internal Integer. AquaCrop internal criterion number.
-#' @param preset_value Numeric. Threshold value. For criterion 5: lower bound
-#'   of cumulative rainfall (mm).
-#' @param successive_days Integer. Successive days (criteria 2, 5, 11, 12,
-#'   13). For criterion 5: accumulation window length (accum_days).
+#' @param preset_value Numeric. Threshold value. For criterion 7: lower bound
+#'   of cumulative rainfall (mm) i.e. cum_rain_lower.
+#' @param successive_days Integer. Successive days (criteria 2, 5, 6, 11, 12,
+#'   13). For criterion 7: accumulation window length (accum_days).
 #' @param occurrences Integer. Number of occurrences (onset_code 1 only).
-#'   Ignored for criterion 5.
+#'   Ignored for criterion 7.
 #' @param eol Character. End-of-line style. If NULL, auto-detected.
 #' @param cum_rain_upper Numeric. Upper bound of cumulative rainfall (mm)
-#'   for the fuzzy gamma_1 function. Criterion 5 only.
+#'   for the fuzzy gamma_1 function. Criterion 7 only.
 #' @param wet_days_lower Integer. Lower bound of wet-day count for the fuzzy
-#'   gamma_2 function. Criterion 5 only.
+#'   gamma_2 function. Criterion 7 only.
 #' @param wet_days_upper Integer. Upper bound of wet-day count for the fuzzy
-#'   gamma_2 function. Criterion 5 only.
+#'   gamma_2 function. Criterion 7 only.
 #' @param dry_spell_lower Integer. Lower bound of longest dry spell (days)
-#'   for the fuzzy gamma_3 function. Criterion 5 only.
+#'   for the fuzzy gamma_3 function. Criterion 7 only.
 #' @param dry_spell_upper Integer. Upper bound of longest dry spell (days)
-#'   for the fuzzy gamma_3 function. Criterion 5 only.
+#'   for the fuzzy gamma_3 function. Criterion 7 only.
 #' @param fuzzy_threshold Numeric between 0 and 1. Defuzzification threshold.
-#'   Criterion 5 only.
+#'   Criterion 7 only.
 #'
 #' @return Character string containing the full formatted CAL file content.
 #'
@@ -779,7 +779,7 @@
     successive_days    = NULL,
     occurrences        = NULL,
     eol                = NULL,
-    # --- fuzzy extras ---
+    # --- fuzzy extras (criterion 7 only) ---
     cum_rain_upper  = NULL,
     wet_days_lower  = NULL,
     wet_days_upper  = NULL,

@@ -27,12 +27,17 @@
 # Criterion metadata keyed by AquaCrop internal criterion number.
 #
 # User-facing criterion numbers:
-#   onset = "rainfall": 1, 2, 3, 4, 5  → AquaCrop internal: 1, 2, 3, 4, 5
-#   onset = "thermal" : 1, 2, 3, 4     → AquaCrop internal: 11, 12, 13, 14
+#   onset = "rainfall": 1, 2, 3, 4, 5, 6, 7  → AquaCrop internal: 1, 2, 3, 4, 5, 6, 7
+#   onset = "thermal" : 1, 2, 3, 4            → AquaCrop internal: 11, 12, 13, 14
 #
 # Conversion:
 #   rainfall → pass-through (user == internal)
 #   thermal  → internal = user + 10
+#
+# Criteria 5-7 are aquacroptools extensions (not AquaCrop standalone):
+#   5 = Generalised Sivakumar (1988)
+#   6 = Marteau et al. (2009)
+#   7 = Fuzzy logic — Waongo et al. (2014)
 # ---------------------------------------------------------------------------
 .cal_criterion_meta <- list(
   # Rainfall criteria (AquaCrop internal: 1-4)
@@ -60,8 +65,22 @@
     preset_fmt   = "int",
     needs_succ   = FALSE
   ),
-  # Rainfall fuzzy criterion (AquaCrop internal: 5)
+  # Generalised Sivakumar (aquacroptools extension, internal: 5)
   "5" = list(
+    label        = "Criterion Nr (Generalised Sivakumar: cumulative rainfall x rainy days x dry spell check)",
+    preset_label = "Preset value of cumulative rainfall (mm) [preset_value]",
+    preset_fmt   = "int",
+    needs_succ   = TRUE   # successive_days = accumulation window length
+  ),
+  # Marteau et al. (2009) (aquacroptools extension, internal: 6)
+  "6" = list(
+    label        = "Criterion Nr (Marteau 2009: wet-day trigger x rolling dry spell check in look-ahead)",
+    preset_label = "Preset value of total rainfall over trigger window (mm) [preset_value]",
+    preset_fmt   = "int",
+    needs_succ   = TRUE   # successive_days = 1 or 2 (trigger window)
+  ),
+  # Fuzzy logic — Waongo et al. (2014) (aquacroptools extension, internal: 7)
+  "7" = list(
     label        = "Criterion Nr (Fuzzy logic: cumulative rainfall x wet days x dry spell index)",
     preset_label = "Preset value of cumulative rainfall lower bound (mm) [cum_rain_lower]",
     preset_fmt   = "int",
@@ -124,9 +143,14 @@
 }
 
 
-#' Build Criterion-Based Onset CAL Data Lines
+#' Build Criterion-Based Onset CAL Data Lines (lines 4-9, plus fuzzy extras)
 #'
-#' Uses the AquaCrop internal criterion number (already converted from
+#' Generates the six standard data lines (lines 4-9) for any criterion-based
+#' onset type. For criterion 7 (fuzzy logic, Waongo et al. 2014), six
+#' additional lines (10-15) are appended; these are ignored by AquaCrop
+#' standalone but parsed by \code{\link{read_cal}}.
+#'
+#' Uses the AquaCrop internal criterion number (already converted from the
 #' user-facing number before this function is called).
 #'
 #' @noRd
@@ -162,16 +186,18 @@
     .fmt_cal_int(occurrences),        "Number of occurrences before the onset criterion applies (max = 3)", sep
   )
 
-  if (criterion_internal != 5L) return(standard)
+  # Criteria 5 (Sivakumar) and 6 (Marteau): extra lines appended by
+  # write_cal() after the header — nothing extra to add here.
+  if (criterion_internal != 7L) return(standard)
 
-  # --- fuzzy extras (6 additional lines, ignored by AquaCrop) ---
+  # --- Criterion 7: fuzzy extras (lines 10-15, ignored by AquaCrop) --------
   fuzzy <- paste0(
-    .fmt_cal_int(as.integer(cum_rain_upper)),  "Fuzzy: cumulative rainfall upper bound (mm) [cum_rain_upper]", sep,
-    .fmt_cal_int(as.integer(wet_days_lower)),  "Fuzzy: wet days lower bound [wet_days_lower]", sep,
-    .fmt_cal_int(as.integer(wet_days_upper)),  "Fuzzy: wet days upper bound [wet_days_upper]", sep,
-    .fmt_cal_int(as.integer(dry_spell_lower)), "Fuzzy: dry spell lower bound (days) [dry_spell_lower]", sep,
-    .fmt_cal_int(as.integer(dry_spell_upper)), "Fuzzy: dry spell upper bound (days) [dry_spell_upper]", sep,
-    .fmt_cal_float(fuzzy_threshold),           "Fuzzy: defuzzification threshold [fuzzy_threshold]", sep
+    .fmt_cal_int(as.integer(cum_rain_upper)),  "Fuzzy: cumulative rainfall upper bound (mm) [cum_rain_upper]",  sep,
+    .fmt_cal_int(as.integer(wet_days_lower)),  "Fuzzy: wet days lower bound [wet_days_lower]",                  sep,
+    .fmt_cal_int(as.integer(wet_days_upper)),  "Fuzzy: wet days upper bound [wet_days_upper]",                  sep,
+    .fmt_cal_int(as.integer(dry_spell_lower)), "Fuzzy: dry spell lower bound (days) [dry_spell_lower]",         sep,
+    .fmt_cal_int(as.integer(dry_spell_upper)), "Fuzzy: dry spell upper bound (days) [dry_spell_upper]",         sep,
+    .fmt_cal_float(fuzzy_threshold),           "Fuzzy: defuzzification threshold [fuzzy_threshold]",            sep
   )
 
   paste0(standard, fuzzy)
