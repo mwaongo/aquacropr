@@ -69,7 +69,7 @@ write_cal_batch <- function(
 ) {
 
   # ---- Clean directory if requested ---------------------------------------
-  if (clean) .clean_directory(path, "\.CAL$", verbose)
+  if (clean) .clean_directory(path, "\\.CAL$", verbose)
 
   # ---- Auto-discover site names if site_name absent from params -----------
   # When params has no site_name column (or params is a single named list),
