@@ -377,47 +377,46 @@ write_cal <- function(
     preset_value       = preset_value,
     successive_days    = successive_days,
     occurrences        = occurrences,
-    eol                = eol
+    eol                = eol,
+    # fuzzy extras (criterion 7 only — passed through to .build_cal_criterion)
+    cum_rain_upper     = cum_rain_upper,
+    wet_days_lower     = wet_days_lower,
+    wet_days_upper     = wet_days_upper,
+    dry_spell_lower    = dry_spell_lower,
+    dry_spell_upper    = dry_spell_upper,
+    fuzzy_threshold    = fuzzy_threshold
   )
 
   # ---- Append criterion-specific extra lines --------------------------------
-  if (!is.null(criterion) && criterion %in% c(5L, 6L, 7L)) {
+  # Criterion 7 (fuzzy) extras are already written by .build_cal_criterion()
+  # via .get_cal_header(). Only criteria 5 and 6 need extra lines here.
+  if (!is.null(criterion) && criterion %in% c(5L, 6L)) {
     eol_char <- .get_eol(eol)
 
     if (criterion == 5L) {
       extra <- paste0(
-        .fmt_cal_line(rday,
-                      "Minimum number of rainy days (> 0.1 mm) in the successive-days window"),
+        paste0(.fmt_cal_int(rday),
+               "Minimum number of rainy days (> 0.1 mm) in the successive-days window"),
         eol_char,
-        .fmt_cal_line(dspell,
-                      "Maximum consecutive dry days allowed in the look-ahead window"),
+        paste0(.fmt_cal_int(dspell),
+               "Maximum consecutive dry days allowed in the look-ahead window"),
         eol_char,
-        .fmt_cal_line(lookahead_days,
-                      "Length (days) of the look-ahead window for the dry spell condition"),
+        paste0(.fmt_cal_int(lookahead_days),
+               "Length (days) of the look-ahead window for the dry spell condition"),
         eol_char
       )
 
-    } else if (criterion == 6L) {
+    } else {   # criterion == 6L
       extra <- paste0(
-        .fmt_cal_line(min_weekly_rain,
-                      "Minimum total rainfall (mm) in the rolling spell window (dry spell threshold)"),
+        paste0(.fmt_cal_float(min_weekly_rain),
+               "Minimum total rainfall (mm) in the rolling spell window (dry spell threshold)"),
         eol_char,
-        .fmt_cal_line(spell_days,
-                      "Length (days) of the rolling window for the dry spell check"),
+        paste0(.fmt_cal_int(spell_days),
+               "Length (days) of the rolling window for the dry spell check"),
         eol_char,
-        .fmt_cal_line(lookahead_days,
-                      "Length (days) of the look-ahead window for the dry spell condition"),
+        paste0(.fmt_cal_int(lookahead_days),
+               "Length (days) of the look-ahead window for the dry spell condition"),
         eol_char
-      )
-
-    } else {   # criterion == 7L
-      extra <- paste0(
-        .fmt_cal_int(as.integer(cum_rain_upper)),  "Fuzzy: cumulative rainfall upper bound (mm) [cum_rain_upper]",  eol_char,
-        .fmt_cal_int(as.integer(wet_days_lower)),  "Fuzzy: wet days lower bound [wet_days_lower]",                  eol_char,
-        .fmt_cal_int(as.integer(wet_days_upper)),  "Fuzzy: wet days upper bound [wet_days_upper]",                  eol_char,
-        .fmt_cal_int(as.integer(dry_spell_lower)), "Fuzzy: dry spell lower bound (days) [dry_spell_lower]",         eol_char,
-        .fmt_cal_int(as.integer(dry_spell_upper)), "Fuzzy: dry spell upper bound (days) [dry_spell_upper]",         eol_char,
-        .fmt_cal_float(fuzzy_threshold),           "Fuzzy: defuzzification threshold [fuzzy_threshold]",            eol_char
       )
     }
 
