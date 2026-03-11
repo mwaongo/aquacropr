@@ -113,7 +113,7 @@
   soil_path_prm       <- path_for_prm(soil_path,       use_standalone = use_standalone, base_path = base_path)
 
   # ---- Optional section helpers --------------------------------------------
-  # Returns both name, dir "(None)" when path is NULL
+  # Returns list(name, dir) — "(None)" when path is NULL
   .opt_file <- function(opt_path, ext) {
     if (is.null(opt_path)) return(list(name = "(None)", dir = "(None)"))
     f <- fs::path(base_path, opt_path, paste0(site_name, ext))
@@ -291,7 +291,7 @@ write_prm <- function(
     irr_file <- fs::path(base_path, irrigation_path, paste0(site_name, ".IRR"))
     if (!fs::file_exists(irr_file)) {
       warning("Irrigation file not found: ", irr_file,
-              " , irrigation_path set to NULL.", call. = FALSE)
+              " — irrigation_path set to NULL.", call. = FALSE)
       irrigation_path <- NULL
     }
   }
@@ -300,7 +300,7 @@ write_prm <- function(
     obs_file <- fs::path(base_path, obs_path, paste0(site_name, ".OBS"))
     if (!fs::file_exists(obs_file)) {
       warning("Observations file not found: ", obs_file,
-              " , obs_path set to NULL.", call. = FALSE)
+              " — obs_path set to NULL.", call. = FALSE)
       obs_path <- NULL
     }
   }
@@ -309,12 +309,12 @@ write_prm <- function(
     off_file <- fs::path(base_path, offseason_path, paste0(site_name, ".OFF"))
     if (!fs::file_exists(off_file)) {
       warning("Off-season file not found: ", off_file,
-              " , offseason_path set to NULL.", call. = FALSE)
+              " — offseason_path set to NULL.", call. = FALSE)
       offseason_path <- NULL
     }
   }
 
-  # ---- Calendar path to derive planting schedule ----------------------------
+  # ---- Calendar path → derive planting schedule ----------------------------
   if (!is.null(calendar_path)) {
     if (!is.null(planting_schedule)) {
       warning(
@@ -330,6 +330,16 @@ write_prm <- function(
       base_path    = base_path
     )
     planting_schedule <- data.frame(year = onset$year, planting_doy = onset$onset_doy)
+    na_years <- planting_schedule$year[is.na(planting_schedule$planting_doy)]
+    if (length(na_years) > 0L) {
+      warning(
+        "Onset criterion not met for ", length(na_years), " year(s): ",
+        paste(na_years, collapse = ", "),
+        " — these years are excluded from the PRM.",
+        call. = FALSE
+      )
+      planting_schedule <- planting_schedule[!is.na(planting_schedule$planting_doy), ]
+    }
   }
 
   if (is.null(planting_schedule)) {
