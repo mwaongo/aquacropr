@@ -29,16 +29,20 @@
 #' @param management_path Path to field management files directory.
 #'   Default: "MANAGEMENT/". If NULL, section 5 is written as (None).
 #' @param irrigation_path Path to irrigation management files directory.
-#'   Default: "MANAGEMENT/". If NULL, section 4 is written as (None).
+#'   Default: "MANAGEMENT/". If the .IRR file is not found for a station,
+#'   a warning is issued and section 4 is written as (None) for that station.
+#'   If NULL, section 4 is written as (None) for all stations.
 #' @param soil_path Path to soil files directory. Required, cannot be NULL.
 #'   Default: "SOIL/".
 #' @param groundwater_path Path to groundwater table files directory.
 #'   Default: NULL. If NULL, section 7 is written as (None).
 #' @param offseason_path Path to off-season conditions files directory.
-#'   Default: NULL. If NULL, section 9 is written as (None).
+#'   Default: NULL. If the .OFF file is not found for a station, a warning
+#'   is issued and section 9 is written as (None) for that station.
 #' @param obs_path Path to field data files directory.
-#'   Default: NULL. If NULL, section 10 is written as (None).
-#' @param crop_duration Integer. Crop duration in days. Default: 90.
+#'   Default: NULL. If the .OBS file is not found for a station, a warning
+#'   is issued and section 10 is written as (None) for that station.
+#' @param crop_duration Integer or NULL. Crop duration in days. If NULL (default), read automatically from the .CRO file.
 #' @param simulation_start_doy Integer. Day of year to start simulation.
 #'   Default: NULL.
 #' @param scenario Character. Scenario name. Default: "hist".
@@ -57,6 +61,10 @@
 #' A single data.frame for planting_schedule will be automatically applied
 #' to all stations.
 #'
+#' Validation of optional file paths (irrigation, off-season, observations)
+#' is delegated to \code{\link{write_prm}}, which issues a warning and sets
+#' the corresponding path to NULL when the file is not found.
+#'
 #' @family batch operations
 #' @return Invisibly returns NULL. The main effect is writing PRM files to
 #'   the specified directory.
@@ -68,7 +76,7 @@
 #' stations <- c("grid_001", "grid_002")
 #'
 #' write_prm_batch(
-#'   site_name      = stations,
+#'   site_name         = stations,
 #'   crop_name         = "maize",
 #'   planting_schedule = plsch,
 #'   crop_duration     = 90
@@ -81,7 +89,7 @@
 #' )
 #'
 #' write_prm_batch(
-#'   site_name      = stations,
+#'   site_name         = stations,
 #'   crop_name         = "maize",
 #'   planting_schedule = plsch_list,
 #'   crop_duration     = 120,
@@ -90,7 +98,7 @@
 #'
 #' # Example 3: calendar-based onset, no planting_schedule needed
 #' write_prm_batch(
-#'   site_name     = NULL,
+#'   site_name        = NULL,
 #'   crop_name        = "wheat",
 #'   calendar_path    = "CAL/",
 #'   groundwater_path = "GWT/",
@@ -104,7 +112,7 @@
 #' @importFrom fs path file_exists dir_exists dir_ls file_delete
 #' @export
 write_prm_batch <- function(
-    site_name         = NULL,
+    site_name            = NULL,
     crop_name            = NULL,
     planting_schedule    = NULL,
     path                 = "LIST/",
@@ -117,7 +125,7 @@ write_prm_batch <- function(
     groundwater_path     = NULL,
     offseason_path       = NULL,
     obs_path             = NULL,
-    crop_duration        = 90,
+    crop_duration        = NULL,
     simulation_start_doy = NULL,
     scenario             = "hist",
     eol                  = NULL,
@@ -156,7 +164,7 @@ write_prm_batch <- function(
   n <- length(site_name)
   .warn_single_item(n, "write_prm_batch", "write_prm", verbose)
 
-  # ---- Resolve planting schedule ----
+  # ---- Resolve planting schedule -------------------------------------------
   if (!is.null(calendar_path)) {
     if (!is.null(planting_schedule)) {
       warning(
@@ -200,9 +208,7 @@ write_prm_batch <- function(
     }
   }
 
-  if (verbose) {
-    message("Writing PRM files for ", n, " site(s)...")
-  }
+  if (verbose) message("Writing PRM files for ", n, " site(s)...")
 
   .batch_with_progress(
     items     = site_name,
@@ -254,9 +260,7 @@ write_prm_batch <- function(
     use_standalone       = use_standalone
   )
 
-  if (verbose) {
-    message("Successfully created PRM files for ", n, " site(s)")
-  }
+  if (verbose) message("Successfully created PRM files for ", n, " site(s)")
 
   invisible(NULL)
 }

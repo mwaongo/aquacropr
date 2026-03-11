@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_prm.R
 \name{write_prm}
 \alias{write_prm}
-\title{Write AquaCrop Parameter Files for Multiple Years}
+\title{Write AquaCrop Parameter (.PRM) Files}
 \usage{
 write_prm(
   site_name,
@@ -10,7 +10,7 @@ write_prm(
   planting_schedule = NULL,
   crop_name = NULL,
   crop_path = "CROP/",
-  crop_duration = 90,
+  crop_duration = NULL,
   climate_path = "CLIMATE/",
   calendar_path = NULL,
   management_path = "MANAGEMENT/",
@@ -27,85 +27,76 @@ write_prm(
 )
 }
 \arguments{
-\item{site_name}{Station identifier.}
+\item{site_name}{Character. Station name used to locate climate, soil,
+management, and optional auxiliary files.}
 
-\item{path}{Output directory path for PRM files. Default: "LIST/".}
+\item{path}{Output directory path for PRM files. Default: \code{"LIST/"}.}
 
-\item{planting_schedule}{data.frame with at least two columns:
-\describe{
-\item{year}{Numeric. Year of cultivation.}
-\item{planting_doy}{Numeric. Day of year for planting (1-365/366).}
-}
-Optional when calendar_path is provided: the planting schedule is then
-derived automatically from find_onset(). If both are supplied,
-calendar_path takes precedence and planting_schedule is ignored with a
-warning.}
+\item{planting_schedule}{A \code{data.frame} with columns \code{year} and
+\code{planting_doy}. Required when \code{calendar_path} is \code{NULL}.}
 
-\item{crop_name}{Crop name (e.g., "maize_90days").
-If NULL, section 3 is written as (None). Default: NULL.}
+\item{crop_name}{Character. Crop name (without extension).}
 
-\item{crop_path}{Path to crop file directory. Default: "CROP/".
-If crop_name is NULL, crop_path is ignored and section 3 is written
-as (None).}
+\item{crop_path}{Character. Path to the crop file directory.
+Default: \code{"CROP/"}.}
 
-\item{crop_duration}{Growing season length in days. Default: 90.}
+\item{crop_duration}{Integer. Growing season length in days. Default: 90.}
 
-\item{climate_path}{Path to climate file directory. Default: "CLIMATE/".}
+\item{climate_path}{Character. Path to climate file directory.
+Default: \code{"CLIMATE/"}.}
 
-\item{calendar_path}{Path to calendar file directory. Default: NULL.
-When provided, the planting schedule is derived automatically via
-find_onset() and planting_schedule can be NULL. Section 2 is always
-written as (None): the CAL file is used only to compute onset dates,
-not referenced in the PRM.}
+\item{calendar_path}{Character or NULL. Path to the CAL directory. When
+provided, \code{find_onset()} is called to derive
+\code{planting_schedule}; any supplied \code{planting_schedule} is
+ignored with a warning.}
 
-\item{management_path}{Path to field management file directory.
-Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
+\item{management_path}{Character. Path to management file directory.
+Default: \code{"MANAGEMENT/"}.}
 
-\item{irrigation_path}{Path to irrigation management file directory.
-Default: "MANAGEMENT/". If NULL, section 4 is written as (None).}
+\item{irrigation_path}{Character or NULL. Path to the IRR file directory.
+If the \code{.IRR} file is not found, a warning is issued and the
+section is written as \code{(None)}. Default: \code{"MANAGEMENT/"}.}
 
-\item{soil_path}{Path to soil file directory. Required, cannot be NULL.
-Default: "SOIL/".}
+\item{soil_path}{Character. Path to soil file directory.
+Default: \code{"SOIL/"}.}
 
-\item{groundwater_path}{Path to groundwater table file directory.
-Default: NULL. If NULL, section 7 is written as (None).}
+\item{groundwater_path}{Character or NULL. Path to the GWT file directory.
+Default: \code{NULL}.}
 
-\item{offseason_path}{Path to off-season conditions file directory.
-Default: NULL. If NULL, section 9 is written as (None).}
+\item{offseason_path}{Character or NULL. Path to the OFF file directory.
+If the \code{.OFF} file is not found, a warning is issued and the
+section is written as \code{(None)}. Default: \code{NULL}.}
 
-\item{obs_path}{Path to field data file directory.
-Default: NULL. If NULL, section 10 is written as (None).}
+\item{obs_path}{Character or NULL. Path to the OBS file directory. If the
+\code{.OBS} file is not found, a warning is issued and the section is
+written as \code{(None)}. Default: \code{NULL}.}
 
-\item{simulation_start_doy}{Day of year for simulation start.
-If NULL (default), uses April 1st (DOY 91, or 92 for leap years).}
+\item{simulation_start_doy}{Integer or NULL. First DOY of simulation.
+Default: \code{NULL} (April 1st).}
 
-\item{scenario}{Climate scenario. One of: "hist", "rcp26", "rcp45",
-"rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585".
-Default: "hist".}
+\item{scenario}{Character. Climate scenario identifier.
+Default: \code{"hist"}.}
 
-\item{eol}{End-of-line character style. One of "windows", "linux",
-"macos". Default: "windows".}
+\item{eol}{Character. End-of-line style: \code{"windows"}, \code{"linux"},
+or \code{"macos"}. Default: \code{"windows"}.}
 
-\item{use_standalone}{Logical. Whether running AquaCrop in standalone mode.
-Default: TRUE.}
+\item{use_standalone}{Logical. Whether paths are formatted for AquaCrop
+standalone mode. Default: \code{TRUE}.}
 
-\item{base_path}{Character. Base absolute path used for file existence
-checking. Default: getwd().}
+\item{base_path}{Character. Base absolute path. Default: \code{getwd()}.}
 }
 \value{
 Invisibly returns the output file path.
 }
 \description{
-Creates a single .PRM file with the header written once, followed by
-one year block per row in planting_schedule.
-
-Climate files (CLI, Tnx, ETo, PLU) and soil files (SOL, SW0) are always
-required. All other sections are optional: if their path is NULL,
-"(None)" is written in the PRM file.
+Creates a \code{.PRM} file for one site across multiple years. The planting
+schedule can be supplied directly or derived from a \code{.CAL} file via
+\code{\link{find_onset}}.
 }
 \seealso{
 Other AquaCrop file writers: 
 \code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},

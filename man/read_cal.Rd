@@ -19,7 +19,7 @@ A named list with elements:
 \item{window_start}{Integer or NA.}
 \item{window_length}{Integer or NA.}
 \item{criterion_internal}{Integer or NA.}
-\item{criterion}{Integer or NA. User-facing number (1-6 rainfall,
+\item{criterion}{Integer or NA. User-facing number (1-7 rainfall,
 1-4 thermal).}
 \item{preset_value}{Numeric or NA.}
 \item{successive_days}{Integer or NA.}
@@ -28,7 +28,13 @@ A named list with elements:
 \item{dspell}{Integer or NA. Criterion 5 only.}
 \item{min_weekly_rain}{Numeric or NA. Criterion 6 only.}
 \item{spell_days}{Integer or NA. Criterion 6 only.}
-\item{lookahead_days}{Integer or NA. Criteria 5 and 6.}
+\item{lookahead_days}{Integer or NA. Criteria 5 and 6 only.}
+\item{cum_rain_upper}{Numeric or NA. Criterion 7 only.}
+\item{wet_days_lower}{Integer or NA. Criterion 7 only.}
+\item{wet_days_upper}{Integer or NA. Criterion 7 only.}
+\item{dry_spell_lower}{Integer or NA. Criterion 7 only.}
+\item{dry_spell_upper}{Integer or NA. Criterion 7 only.}
+\item{fuzzy_threshold}{Numeric or NA. Criterion 7 only.}
 }
 
 A named list with elements:
@@ -46,7 +52,7 @@ A named list with elements:
 }
 \description{
 Reads a .CAL file and returns a structured list of onset parameters.
-Supports fixed onset, rainfall criteria 1-6, and thermal criteria 1-4.
+Supports fixed onset, rainfall criteria 1-7, and thermal criteria 1-4.
 
 Reads a .CAL file and returns a structured list of onset parameters.
 }
@@ -56,6 +62,10 @@ Criterion 5 (generalised Sivakumar) carries three extra fields:
 
 Criterion 6 (Marteau 2009) carries three extra fields:
 \code{min_weekly_rain}, \code{spell_days}, and \code{lookahead_days}.
+
+Criterion 7 (fuzzy logic, Waongo et al. 2014) carries six extra fields:
+\code{cum_rain_upper}, \code{wet_days_lower}, \code{wet_days_upper},
+\code{dry_spell_lower}, \code{dry_spell_upper}, and \code{fuzzy_threshold}.
 
 All other criteria return \code{NA} for these fields.
 }
@@ -80,6 +90,12 @@ cal6$criterion       # 6
 cal6$min_weekly_rain # 5
 cal6$spell_days      # 7
 cal6$lookahead_days  # 20
+
+# Fuzzy logic criterion
+cal7 <- read_cal("CAL/station_fuz.CAL")
+cal7$criterion      # 7
+cal7$cum_rain_upper # 40
+cal7$fuzzy_threshold # 0.5
 }
 \dontrun{
 cal <- read_cal("CAL/station_01.CAL")

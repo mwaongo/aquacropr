@@ -14,6 +14,11 @@ write_cal(
   preset_value = NULL,
   successive_days = NULL,
   occurrences = 1L,
+  rday = NULL,
+  dspell = NULL,
+  lookahead_days = NULL,
+  min_weekly_rain = NULL,
+  spell_days = NULL,
   cum_rain_upper = NULL,
   wet_days_lower = NULL,
   wet_days_upper = NULL,
@@ -41,67 +46,91 @@ window. Required when onset is "rainfall" or "thermal".}
 \item{window_length}{Integer. Length of the time window in days. Required
 when onset is "rainfall" or "thermal".}
 
-\item{criterion}{Integer. Criterion number within the onset group (1-4
-for thermal; 1-5 for rainfall).
+\item{criterion}{Integer. Criterion number within the onset group.
 Rainfall criteria (onset = "rainfall"):
 \describe{
 \item{1}{Cumulative rainfall since start of window >= preset (mm).}
 \item{2}{Observed rainfall in N successive days >= preset (mm).
-Requires \code{successive_days}.}
+Requires successive_days.}
 \item{3}{10-day rainfall >= preset (mm).}
 \item{4}{10-day rainfall >= preset fraction of 10-day ETo (percent).}
-\item{5}{Fuzzy logic index: cumulative rainfall x wet days x dry spell
->= \code{fuzzy_threshold}. Requires \code{preset_value}
-(cum_rain_lower), \code{successive_days} (accum_days), and all
-\code{cum_rain_upper}, \code{wet_days_lower}, \code{wet_days_upper},
-\code{dry_spell_lower}, \code{dry_spell_upper},
-\code{fuzzy_threshold}.}
+\item{5}{Generalised Sivakumar: cumulative rainfall >= preset (mm) in
+successive_days days, with at least rday rainy days, and no dry spell
+(consecutive dry days) >= dspell within the following lookahead_days
+days. Requires successive_days, rday, dspell, lookahead_days.}
+\item{6}{Marteau (2009): first wet day (> 1 mm) in 1 or 2 consecutive
+days receiving >= preset mm total, followed by no rolling spell_days-day
+period with total rainfall < min_weekly_rain mm within the next
+lookahead_days days. Requires successive_days (1 or 2),
+min_weekly_rain, spell_days, lookahead_days.}
+\item{7}{Fuzzy logic (Waongo et al., 2014): three-component index
+(cumulative rainfall x wet-day count x dry spell) >=
+fuzzy_threshold. Requires preset_value (cum_rain_lower),
+successive_days (accum_days), cum_rain_upper, wet_days_lower,
+wet_days_upper, dry_spell_lower, dry_spell_upper, fuzzy_threshold.}
 }
 Thermal criteria (onset = "thermal"):
 \describe{
 \item{1}{Daily Tmin in each of N successive days >= preset (degC).
-Requires \code{successive_days}.}
+Requires successive_days.}
 \item{2}{Daily Tmean in each of N successive days >= preset (degC).
-Requires \code{successive_days}.}
+Requires successive_days.}
 \item{3}{Cumulative GDD in N successive days >= preset (degC).
-Requires \code{successive_days}.}
+Requires successive_days.}
 \item{4}{Cumulative GDD since start of window >= preset (degC).}
 }}
 
 \item{preset_value}{Numeric. Threshold value for the criterion.
-Unit: mm for rainfall criteria 1-3, percent for criterion 4,
-degC for all thermal criteria. For criterion 5 (fuzzy): lower bound
-of cumulative rainfall (mm), i.e. \code{cum_rain_lower}.}
+Unit: mm for rainfall criteria 1-3, 5, 6, 7; percent for criterion 4;
+degC for all thermal criteria. For criterion 7: lower bound of
+cumulative rainfall (mm), i.e. cum_rain_lower.}
 
 \item{successive_days}{Integer. Number of consecutive days. Required for
-rainfall criteria 2 and 5 (where it represents \code{accum_days}) and
-thermal criteria 1, 2, and 3. Ignored for all other criteria.
-Default: NULL.}
+rainfall criteria 2, 5, 6 (1 or 2 for criterion 6), and 7 (accum_days),
+and thermal criteria 1, 2, and 3. Default: NULL.}
 
 \item{occurrences}{Integer. Number of times the criterion must be met
-before onset is triggered (1-3). Ignored for criterion 5.
-Default: 1.}
+before onset is triggered (1-3). Ignored for criterion 7. Default: 1.}
+
+\item{rday}{Integer. Minimum number of rainy days (> 0.1 mm) within the
+successive_days window. Required for criterion 5. Default: NULL.}
+
+\item{dspell}{Integer. Maximum dry spell length (consecutive dry days)
+allowed in the look-ahead window. Required for criterion 5. Default: NULL.}
+
+\item{lookahead_days}{Integer. Length (days) of the look-ahead window.
+Required for criteria 5 and 6. Classical values: 30 (Sivakumar),
+20 (Marteau). Default: NULL.}
+
+\item{min_weekly_rain}{Numeric. Minimum total rainfall (mm) required in a
+rolling spell_days-day window within the look-ahead; windows with totals
+below this value are considered dry spells. Required for criterion 6.
+Classical Marteau value: 5 mm. Default: NULL.}
+
+\item{spell_days}{Integer. Length (days) of the rolling window used to
+evaluate the dry spell condition in the look-ahead. Required for
+criterion 6. Classical Marteau value: 7 days. Default: NULL.}
 
 \item{cum_rain_upper}{Numeric. Upper bound of cumulative rainfall (mm)
-for the fuzzy gamma_1 function. Required for criterion 5.
-Must be > \code{preset_value}.}
+for the fuzzy gamma_1 function. Required for criterion 7.
+Must be > preset_value.}
 
 \item{wet_days_lower}{Integer. Lower bound of wet-day count for the fuzzy
-gamma_2 function. Required for criterion 5.}
+gamma_2 function. Required for criterion 7.}
 
 \item{wet_days_upper}{Integer. Upper bound of wet-day count for the fuzzy
-gamma_2 function. Required for criterion 5.
-Must be > \code{wet_days_lower}.}
+gamma_2 function. Required for criterion 7.
+Must be > wet_days_lower.}
 
 \item{dry_spell_lower}{Integer. Lower bound of longest dry spell (days)
-for the fuzzy gamma_3 function. Required for criterion 5.}
+for the fuzzy gamma_3 function. Required for criterion 7.}
 
 \item{dry_spell_upper}{Integer. Upper bound of longest dry spell (days)
-for the fuzzy gamma_3 function. Required for criterion 5.
-Must be > \code{dry_spell_lower}.}
+for the fuzzy gamma_3 function. Required for criterion 7.
+Must be > dry_spell_lower.}
 
 \item{fuzzy_threshold}{Numeric between 0 and 1. Defuzzification threshold.
-Required for criterion 5.}
+Required for criterion 7.}
 
 \item{path}{Output directory path for CAL files. Default: "CAL/".}
 
@@ -122,10 +151,10 @@ period. Three onset types are supported: a fixed calendar day, a
 rainfall-based criterion, or a thermal criterion.
 }
 \details{
-User-facing criterion numbers run from 1 to 4 within each onset group
-(1 to 5 for rainfall). They are converted internally to AquaCrop's
-numbering scheme (rainfall passes through as-is; thermal criterion c
-becomes c + 10).
+User-facing criterion numbers run from 1 to 4 for standard AquaCrop
+rainfall criteria, 5 for the generalised Sivakumar method, 6 for the
+Marteau (2009) method, and 7 for the fuzzy logic method (Waongo et al.,
+2014). Thermal criteria run from 1 to 4 (converted internally to 11-14).
 }
 \examples{
 \dontrun{
@@ -134,17 +163,6 @@ write_cal(
   site_name = "station_01",
   onset     = "fixed",
   fixed_day = 212
-)
-
-# Rainfall criterion 1: cumulative rainfall >= 50 mm
-write_cal(
-  site_name     = "station_01",
-  onset         = "rainfall",
-  window_start  = 121,
-  window_length = 92,
-  criterion     = 1,
-  preset_value  = 50,
-  occurrences   = 1
 )
 
 # Rainfall criterion 2: observed rainfall >= 30 mm in 3 successive days
@@ -159,35 +177,45 @@ write_cal(
   occurrences     = 1
 )
 
-# Rainfall criterion 3: 10-day rainfall >= 40 mm
-write_cal(
-  site_name     = "station_01",
-  onset         = "rainfall",
-  window_start  = 121,
-  window_length = 92,
-  criterion     = 3,
-  preset_value  = 40,
-  occurrences   = 1
-)
-
-# Rainfall criterion 4: 10-day rainfall >= 50 percent of ETo
-write_cal(
-  site_name     = "station_01",
-  onset         = "rainfall",
-  window_start  = 121,
-  window_length = 92,
-  criterion     = 4,
-  preset_value  = 50,
-  occurrences   = 1
-)
-
-# Rainfall criterion 5: fuzzy logic onset (Waongo et al. 2014)
+# Rainfall criterion 5: generalised Sivakumar
+# >= 20 mm in 3 days, >= 1 rainy day, max 7 consecutive dry days in 30
 write_cal(
   site_name       = "station_01",
   onset           = "rainfall",
   window_start    = 121,
   window_length   = 92,
   criterion       = 5,
+  preset_value    = 20,
+  successive_days = 3,
+  rday            = 1,
+  dspell          = 7,
+  lookahead_days  = 30,
+  occurrences     = 1
+)
+
+# Rainfall criterion 6: Marteau (2009)
+# >= 20 mm in 1 or 2 days, no 7-day period with < 5 mm in next 20 days
+write_cal(
+  site_name        = "station_01",
+  onset            = "rainfall",
+  window_start     = 121,
+  window_length    = 92,
+  criterion        = 6,
+  preset_value     = 20,
+  successive_days  = 2,
+  min_weekly_rain  = 5,
+  spell_days       = 7,
+  lookahead_days   = 20,
+  occurrences      = 1
+)
+
+# Rainfall criterion 7: fuzzy logic (Waongo et al., 2014)
+write_cal(
+  site_name       = "station_01",
+  onset           = "rainfall",
+  window_start    = 121,
+  window_length   = 92,
+  criterion       = 7,
   preset_value    = 20,   # cum_rain_lower
   successive_days = 3,    # accum_days
   cum_rain_upper  = 40,
@@ -196,53 +224,6 @@ write_cal(
   dry_spell_lower = 7,
   dry_spell_upper = 15,
   fuzzy_threshold = 0.5
-)
-
-# Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
-write_cal(
-  site_name       = "station_01",
-  onset           = "thermal",
-  window_start    = 1,
-  window_length   = 60,
-  criterion       = 1,
-  preset_value    = 5.0,
-  successive_days = 4,
-  occurrences     = 1
-)
-
-# Thermal criterion 2: daily Tmean >= 10 degC for 3 successive days
-write_cal(
-  site_name       = "station_01",
-  onset           = "thermal",
-  window_start    = 1,
-  window_length   = 60,
-  criterion       = 2,
-  preset_value    = 10.0,
-  successive_days = 3,
-  occurrences     = 1
-)
-
-# Thermal criterion 3: cumulative GDD >= 20 degC in 8 successive days
-write_cal(
-  site_name       = "station_01",
-  onset           = "thermal",
-  window_start    = 1,
-  window_length   = 60,
-  criterion       = 3,
-  preset_value    = 20.0,
-  successive_days = 8,
-  occurrences     = 1
-)
-
-# Thermal criterion 4: cumulative GDD since start >= 600 degC
-write_cal(
-  site_name     = "station_01",
-  onset         = "thermal",
-  window_start  = 1,
-  window_length = 60,
-  criterion     = 4,
-  preset_value  = 600.0,
-  occurrences   = 1
 )
 }
 
@@ -256,6 +237,7 @@ dates in Burkina Faso, West Africa.
 }
 \seealso{
 Other AquaCrop file writers: 
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},

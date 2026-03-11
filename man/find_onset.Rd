@@ -44,6 +44,7 @@ day-of-year (DOY) for each year in the record. Supports:
 \item AquaCrop rainfall criteria 1-4.
 \item Criterion 5: generalised Sivakumar (1988).
 \item Criterion 6: Marteau (2009).
+\item Criterion 7: fuzzy logic (Waongo et al., 2014).
 \item Thermal criteria 1-4.
 }
 }
@@ -57,6 +58,9 @@ find_onset("site_siv")
 
 # Marteau 2009 (parameters in CAL file)
 find_onset("site_mrt")
+
+# Fuzzy logic Waongo et al. 2014 (parameters in CAL file)
+find_onset("site_fuz")
 }
 
 }

@@ -67,6 +67,7 @@ write_cro(
 
 Other AquaCrop file writers: 
 \code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_eto}()},
 \code{\link{write_gwt}()},

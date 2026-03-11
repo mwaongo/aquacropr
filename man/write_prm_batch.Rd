@@ -18,7 +18,7 @@ write_prm_batch(
   groundwater_path = NULL,
   offseason_path = NULL,
   obs_path = NULL,
-  crop_duration = 90,
+  crop_duration = NULL,
   simulation_start_doy = NULL,
   scenario = "hist",
   eol = NULL,
@@ -64,7 +64,9 @@ compute onset dates, not referenced in the PRM.}
 Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
 
 \item{irrigation_path}{Path to irrigation management files directory.
-Default: "MANAGEMENT/". If NULL, section 4 is written as (None).}
+Default: "MANAGEMENT/". If the .IRR file is not found for a station,
+a warning is issued and section 4 is written as (None) for that station.
+If NULL, section 4 is written as (None) for all stations.}
 
 \item{soil_path}{Path to soil files directory. Required, cannot be NULL.
 Default: "SOIL/".}
@@ -73,12 +75,14 @@ Default: "SOIL/".}
 Default: NULL. If NULL, section 7 is written as (None).}
 
 \item{offseason_path}{Path to off-season conditions files directory.
-Default: NULL. If NULL, section 9 is written as (None).}
+Default: NULL. If the .OFF file is not found for a station, a warning
+is issued and section 9 is written as (None) for that station.}
 
 \item{obs_path}{Path to field data files directory.
-Default: NULL. If NULL, section 10 is written as (None).}
+Default: NULL. If the .OBS file is not found for a station, a warning
+is issued and section 10 is written as (None) for that station.}
 
-\item{crop_duration}{Integer. Crop duration in days. Default: 90.}
+\item{crop_duration}{Integer or NULL. Crop duration in days. If NULL (default), read automatically from the .CRO file.}
 
 \item{simulation_start_doy}{Integer. Day of year to start simulation.
 Default: NULL.}
@@ -110,6 +114,10 @@ The function validates that all specified stations have corresponding
 climate files. If crop_name is not NULL, the crop file is also validated.
 A single data.frame for planting_schedule will be automatically applied
 to all stations.
+
+Validation of optional file paths (irrigation, off-season, observations)
+is delegated to \code{\link{write_prm}}, which issues a warning and sets
+the corresponding path to NULL when the file is not found.
 }
 \examples{
 \dontrun{
@@ -118,7 +126,7 @@ plsch    <- data.frame(year = 1981:2020, planting_doy = 201)
 stations <- c("grid_001", "grid_002")
 
 write_prm_batch(
-  site_name      = stations,
+  site_name         = stations,
   crop_name         = "maize",
   planting_schedule = plsch,
   crop_duration     = 90
@@ -131,7 +139,7 @@ plsch_list <- list(
 )
 
 write_prm_batch(
-  site_name      = stations,
+  site_name         = stations,
   crop_name         = "maize",
   planting_schedule = plsch_list,
   crop_duration     = 120,
@@ -140,7 +148,7 @@ write_prm_batch(
 
 # Example 3: calendar-based onset, no planting_schedule needed
 write_prm_batch(
-  site_name     = NULL,
+  site_name        = NULL,
   crop_name        = "wheat",
   calendar_path    = "CAL/",
   groundwater_path = "GWT/",
@@ -154,7 +162,6 @@ write_prm_batch(
 \code{\link{write_prm}} for single station PRM file generation.
 
 Other batch operations: 
-\code{\link{write_cal_batch}()},
 \code{\link{write_gwt_batch}()},
 \code{\link{write_irrig_batch}()},
 \code{\link{write_man_batch}()},

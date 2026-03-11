@@ -120,7 +120,6 @@ write_irrig_batch(
 \code{\link{write_irr}} for single station IRR file generation.
 
 Other batch operations: 
-\code{\link{write_cal_batch}()},
 \code{\link{write_gwt_batch}()},
 \code{\link{write_man_batch}()},
 \code{\link{write_obs_batch}()},

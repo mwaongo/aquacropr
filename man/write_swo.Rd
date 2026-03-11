@@ -212,6 +212,7 @@ write_swo(
 
 Other AquaCrop file writers: 
 \code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},

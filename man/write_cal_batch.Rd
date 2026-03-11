@@ -2,180 +2,86 @@
 % Please edit documentation in R/write_cal_batch.R
 \name{write_cal_batch}
 \alias{write_cal_batch}
-\title{Write AquaCrop Calendar (.CAL) Files for Multiple Stations}
+\title{Write AquaCrop Calendar (.CAL) Files for Multiple Sites}
 \usage{
-write_cal_batch(
-  site_name = NULL,
-  onset,
-  fixed_day = NULL,
-  window_start = NULL,
-  window_length = NULL,
-  criterion = NULL,
-  preset_value = NULL,
-  successive_days = NULL,
-  occurrences = 1L,
-  cum_rain_upper = NULL,
-  wet_days_lower = NULL,
-  wet_days_upper = NULL,
-  dry_spell_lower = NULL,
-  dry_spell_upper = NULL,
-  fuzzy_threshold = NULL,
-  path = "CAL/",
-  climate_path = "CLIMATE/",
-  description = NULL,
-  version = 7.1,
-  eol = NULL,
-  base_path = getwd(),
-  verbose = TRUE,
-  clean = FALSE
-)
+write_cal_batch(params, path = "CAL/", version = 7.1, eol = NULL)
 }
 \arguments{
-\item{site_name}{Character vector or NULL. Names of stations to process.
-If NULL, all stations are automatically discovered from .CLI files in
-the climate directory. If a vector, only the specified stations will be
-processed; all must have corresponding climate files.}
+\item{params}{A data frame or list of named lists, each containing the
+arguments to pass to \code{\link{write_cal}} for one site. Required
+columns/names: \code{site_name}, \code{onset}. All other
+\code{write_cal()} arguments may be supplied; defaults from
+\code{write_cal()} apply for any column that is absent or \code{NA}.}
 
-\item{onset}{Character. Onset type: "fixed", "rainfall", or "thermal".}
+\item{path}{Output directory path for CAL files. Default: \code{"CAL/"}.
+Overridden per row if a \code{path} column is present in \code{params}.}
 
-\item{fixed_day}{Integer. Calendar day (1-366) for fixed onset. Required
-when onset is "fixed".}
+\item{version}{Numeric. AquaCrop version number. Default: 7.1.
+Overridden per row if a \code{version} column is present in \code{params}.}
 
-\item{window_start}{Integer. Start day of the time window. Required when
-onset is "rainfall" or "thermal".}
-
-\item{window_length}{Integer. Length of the time window in days. Required
-when onset is "rainfall" or "thermal".}
-
-\item{criterion}{Integer. Criterion number within the onset group (1-4
-for thermal; 1-5 for rainfall). Required when onset is "rainfall" or
-"thermal". See \code{\link{write_cal}} for full description of each
-criterion per onset group.}
-
-\item{preset_value}{Numeric. Threshold value for the criterion. Required
-when onset is "rainfall" or "thermal". For criterion 5 (fuzzy):
-lower bound of cumulative rainfall (mm), i.e. \code{cum_rain_lower}.}
-
-\item{successive_days}{Integer. Number of consecutive days. Required for
-rainfall criteria 2 and 5 (where it represents \code{accum_days}) and
-thermal criteria 1, 2, and 3. Default: NULL.}
-
-\item{occurrences}{Integer. Number of occurrences before onset is triggered
-(1-3). Ignored for criterion 5. Default: 1.}
-
-\item{cum_rain_upper}{Numeric. Upper bound of cumulative rainfall (mm)
-for the fuzzy gamma_1 function. Required for criterion 5.
-Must be > \code{preset_value}.}
-
-\item{wet_days_lower}{Integer. Lower bound of wet-day count for the fuzzy
-gamma_2 function. Required for criterion 5.}
-
-\item{wet_days_upper}{Integer. Upper bound of wet-day count for the fuzzy
-gamma_2 function. Required for criterion 5.
-Must be > \code{wet_days_lower}.}
-
-\item{dry_spell_lower}{Integer. Lower bound of longest dry spell (days)
-for the fuzzy gamma_3 function. Required for criterion 5.}
-
-\item{dry_spell_upper}{Integer. Upper bound of longest dry spell (days)
-for the fuzzy gamma_3 function. Required for criterion 5.
-Must be > \code{dry_spell_lower}.}
-
-\item{fuzzy_threshold}{Numeric between 0 and 1. Defuzzification threshold.}
-
-\item{path}{Output directory path for CAL files. Default: "CAL/".}
-
-\item{climate_path}{Path to climate files directory, used for station
-discovery. Default: "CLIMATE/".}
-
-\item{description}{Character. Description on the first line. Default:
-auto-generated based on onset type and criterion.}
-
-\item{version}{Numeric. AquaCrop version number. Default: 7.1.}
-
-\item{eol}{End-of-line character style. One of "windows", "linux",
-"macos". If NULL (default), auto-detected from the system.}
-
-\item{base_path}{Base absolute path. Default: current working directory.}
-
-\item{verbose}{Logical. If TRUE (default), prints progress messages.
-If FALSE, runs silently.}
-
-\item{clean}{Logical. If TRUE, removes existing .CAL files from path
-before writing new files. Default: FALSE.}
+\item{eol}{End-of-line character style. One of \code{"windows"},
+\code{"linux"}, \code{"macos"}. If \code{NULL} (default), auto-detected.
+Overridden per row if an \code{eol} column is present in \code{params}.}
 }
 \value{
-Invisibly returns NULL. The main effect is writing CAL files to
-the specified directory.
+Invisibly returns a character vector of output file paths, one per
+site.
 }
 \description{
-Generate AquaCrop calendar files for multiple stations. All stations share
-the same onset type, criterion, and parameters.
+Batch version of \code{\link{write_cal}}. Writes one .CAL file per row of
+a parameter data frame or per element of a list. A progress bar is shown
+when more than one file is written.
 }
 \examples{
 \dontrun{
-stations <- c("grid_001", "grid_002", "grid_003")
-
-# Fixed onset on day 212 for all stations
-write_cal_batch(
-  site_name = stations,
-  onset     = "fixed",
-  fixed_day = 212
-)
-
-# Rainfall criterion 2: 30 mm in 3 successive days
-write_cal_batch(
-  site_name       = stations,
+params <- data.frame(
+  site_name       = c("site_A", "site_B"),
   onset           = "rainfall",
-  window_start    = 121,
-  window_length   = 92,
-  criterion       = 2,
+  window_start    = 121L,
+  window_length   = 92L,
+  criterion       = 2L,
   preset_value    = 30,
-  successive_days = 3,
-  occurrences     = 1
+  successive_days = 3L,
+  occurrences     = 1L,
+  stringsAsFactors = FALSE
 )
+write_cal_batch(params)
 
-# Rainfall criterion 5: fuzzy logic (Waongo et al. 2014)
-write_cal_batch(
-  site_name       = stations,
+# Fuzzy logic (criterion 7) for multiple sites
+params_fuz <- data.frame(
+  site_name       = c("site_C", "site_D"),
   onset           = "rainfall",
-  window_start    = 121,
-  window_length   = 92,
-  criterion       = 5,
-  preset_value    = 20,
-  successive_days = 3,
+  window_start    = 121L,
+  window_length   = 92L,
+  criterion       = 7L,
+  preset_value    = 20,   # cum_rain_lower
+  successive_days = 3L,   # accum_days
   cum_rain_upper  = 40,
-  wet_days_lower  = 1,
-  wet_days_upper  = 3,
-  dry_spell_lower = 7,
-  dry_spell_upper = 15,
-  fuzzy_threshold = 0.5
+  wet_days_lower  = 1L,
+  wet_days_upper  = 3L,
+  dry_spell_lower = 7L,
+  dry_spell_upper = 15L,
+  fuzzy_threshold = 0.5,
+  stringsAsFactors = FALSE
 )
-
-# Thermal criterion 1: daily Tmin >= 5 degC for 4 successive days
-write_cal_batch(
-  site_name       = stations,
-  onset           = "thermal",
-  window_start    = 1,
-  window_length   = 60,
-  criterion       = 1,
-  preset_value    = 5.0,
-  successive_days = 4,
-  occurrences     = 1
-)
+write_cal_batch(params_fuz)
 }
 
 }
 \seealso{
-\code{\link{write_cal}} for single station CAL file generation.
-
-Other batch operations: 
-\code{\link{write_gwt_batch}()},
-\code{\link{write_irrig_batch}()},
-\code{\link{write_man_batch}()},
-\code{\link{write_obs_batch}()},
-\code{\link{write_off_batch}()},
-\code{\link{write_prm_batch}()},
-\code{\link{write_sol_batch}()}
+Other AquaCrop file writers: 
+\code{\link{write_cal}()},
+\code{\link{write_cli}()},
+\code{\link{write_cro}()},
+\code{\link{write_eto}()},
+\code{\link{write_gwt}()},
+\code{\link{write_irr}()},
+\code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
+\code{\link{write_plu}()},
+\code{\link{write_prm}()},
+\code{\link{write_swo}()},
+\code{\link{write_tnx}()}
 }
-\concept{batch operations}
+\concept{AquaCrop file writers}

@@ -137,7 +137,6 @@ write_sol_batch(
 \code{\link{SoilWater}} for hydraulic property reference
 
 Other batch operations: 
-\code{\link{write_cal_batch}()},
 \code{\link{write_gwt_batch}()},
 \code{\link{write_irrig_batch}()},
 \code{\link{write_man_batch}()},
