@@ -177,18 +177,18 @@
     paste0("-- 4. Irrigation management (IRR) file", sep),
     .fmt_section(irr_info, sep),
     # 5. Field management
-    paste0("   -- 5. Field management (MAN) file", sep),
+    paste0("-- 5. Field management (MAN) file", sep),
     paste0(.format_string4(basename(man_file),  "%s", nchar(basename(man_file))  + 3), sep),
     paste0(.format_string4(management_path_prm, "%s", nchar(management_path_prm) + 3), sep),
     # 6. Soil
-    paste0("   -- 6. Soil profile (SOL) file", sep),
+    paste0("-- 6. Soil profile (SOL) file", sep),
     paste0(.format_string4(basename(sol_file), "%s", nchar(basename(sol_file)) + 3), sep),
     paste0(.format_string4(soil_path_prm,      "%s", nchar(soil_path_prm)      + 3), sep),
     # 7. Groundwater
     paste0("-- 7. Groundwater table (GWT) file", sep),
     .fmt_section(gwt_info, sep),
     # 8. Initial conditions
-    paste0("   -- 8. Initial conditions (SW0) file", sep),
+    paste0("-- 8. Initial conditions (SW0) file", sep),
     paste0(.format_string4(basename(sw0_file), "%s", nchar(basename(sw0_file)) + 3), sep),
     paste0(.format_string4(soil_path_prm,      "%s", nchar(soil_path_prm)      + 3), sep),
     # 9. Off-season
