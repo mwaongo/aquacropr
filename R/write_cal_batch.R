@@ -59,10 +59,49 @@
 #' @export
 write_cal_batch <- function(
     params,
-    path    = "CAL/",
-    version = 7.1,
-    eol     = NULL
+    path         = "CAL/",
+    version      = 7.1,
+    eol          = NULL,
+    climate_path = "CLIMATE/",
+    base_path    = getwd(),
+    verbose      = TRUE,
+    clean        = FALSE
 ) {
+
+  # ---- Clean directory if requested ---------------------------------------
+  if (clean) .clean_directory(path, "\.CAL$", verbose)
+
+  # ---- Auto-discover site names if site_name absent from params -----------
+  # When params has no site_name column (or params is a single named list),
+  # stations are discovered from CLIMATE/ and the same params applied to all.
+  if (is.data.frame(params) && !"site_name" %in% names(params)) {
+    sites <- .discover_or_validate_items(
+      item_names   = NULL,
+      climate_path = climate_path,
+      base_path    = base_path,
+      item_type    = "site",
+      verbose      = verbose
+    )
+    params <- do.call(
+      rbind,
+      lapply(sites, function(s) {
+        row <- params
+        row$site_name <- s
+        row
+      })
+    )
+  } else if (
+    is.list(params) && !is.data.frame(params) && is.null(params[["site_name"]])
+  ) {
+    sites <- .discover_or_validate_items(
+      item_names   = NULL,
+      climate_path = climate_path,
+      base_path    = base_path,
+      item_type    = "site",
+      verbose      = verbose
+    )
+    params <- lapply(sites, function(s) c(params, list(site_name = s)))
+  }
 
   # ---- Normalise input to a list of named lists ----------------------------
   if (is.data.frame(params)) {
@@ -82,36 +121,41 @@ write_cal_batch <- function(
     if (is.null(v) || (length(v) == 1L && is.na(v))) default else v
   }
 
-  out_paths <- .batch_with_progress(rows, function(row) {
-    write_cal(
-      site_name       = row[["site_name"]],
-      onset           = row[["onset"]],
-      fixed_day       = .get_arg(row, "fixed_day",       NULL),
-      window_start    = .get_arg(row, "window_start",    NULL),
-      window_length   = .get_arg(row, "window_length",   NULL),
-      criterion       = .get_arg(row, "criterion",       NULL),
-      preset_value    = .get_arg(row, "preset_value",    NULL),
-      successive_days = .get_arg(row, "successive_days", NULL),
-      occurrences     = .get_arg(row, "occurrences",     1L),
-      rday            = .get_arg(row, "rday",            NULL),
-      dspell          = .get_arg(row, "dspell",          NULL),
-      lookahead_days  = .get_arg(row, "lookahead_days",  NULL),
-      min_weekly_rain = .get_arg(row, "min_weekly_rain", NULL),
-      spell_days      = .get_arg(row, "spell_days",      NULL),
-      # --- fuzzy extras (criterion 7) ---
-      cum_rain_upper  = .get_arg(row, "cum_rain_upper",  NULL),
-      wet_days_lower  = .get_arg(row, "wet_days_lower",  NULL),
-      wet_days_upper  = .get_arg(row, "wet_days_upper",  NULL),
-      dry_spell_lower = .get_arg(row, "dry_spell_lower", NULL),
-      dry_spell_upper = .get_arg(row, "dry_spell_upper", NULL),
-      fuzzy_threshold = .get_arg(row, "fuzzy_threshold", NULL),
-      # ----------------------------------
-      path            = .get_arg(row, "path",            path),
-      description     = .get_arg(row, "description",     NULL),
-      version         = .get_arg(row, "version",         version),
-      eol             = .get_arg(row, "eol",             eol)
-    )
-  })
+  .batch_with_progress(
+    items     = lapply(rows, function(r) r[["site_name"]]),
+    params    = rows,
+    verbose   = verbose,
+    item_type = "site",
+    fn = function(item, params, ...) {
+      row <- params
+      write_cal(
+        site_name       = row[["site_name"]],
+        onset           = row[["onset"]],
+        fixed_day       = .get_arg(row, "fixed_day",       NULL),
+        window_start    = .get_arg(row, "window_start",    NULL),
+        window_length   = .get_arg(row, "window_length",   NULL),
+        criterion       = .get_arg(row, "criterion",       NULL),
+        preset_value    = .get_arg(row, "preset_value",    NULL),
+        successive_days = .get_arg(row, "successive_days", NULL),
+        occurrences     = .get_arg(row, "occurrences",     1L),
+        rday            = .get_arg(row, "rday",            NULL),
+        dspell          = .get_arg(row, "dspell",          NULL),
+        lookahead_days  = .get_arg(row, "lookahead_days",  NULL),
+        min_weekly_rain = .get_arg(row, "min_weekly_rain", NULL),
+        spell_days      = .get_arg(row, "spell_days",      NULL),
+        cum_rain_upper  = .get_arg(row, "cum_rain_upper",  NULL),
+        wet_days_lower  = .get_arg(row, "wet_days_lower",  NULL),
+        wet_days_upper  = .get_arg(row, "wet_days_upper",  NULL),
+        dry_spell_lower = .get_arg(row, "dry_spell_lower", NULL),
+        dry_spell_upper = .get_arg(row, "dry_spell_upper", NULL),
+        fuzzy_threshold = .get_arg(row, "fuzzy_threshold", NULL),
+        path            = .get_arg(row, "path",            path),
+        description     = .get_arg(row, "description",     NULL),
+        version         = .get_arg(row, "version",         version),
+        eol             = .get_arg(row, "eol",             eol)
+      )
+    }
+  )
 
-  invisible(unlist(out_paths))
+  invisible(NULL)
 }
