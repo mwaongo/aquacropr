@@ -92,6 +92,14 @@
     simulation_start_doy <- ifelse(is_leap_year(year), 92, 91)  # April 1st
   }
 
+  # ---- Resolve crop duration ----------------------------------------------
+  cro_file <- fs::path(base_path, crop_path, paste0(crop_name, ".CRO"))
+  if (is.null(crop_duration)) {
+    if (!fs::file_exists(cro_file)) stop("CRO file not found: ", cro_file, call. = FALSE)
+    lines_cro <- readLines(cro_file, warn = FALSE)
+    crop_duration <- as.integer(trimws(strsplit(lines_cro[55], ":")[[1]][1]))
+  }
+
   planting_end_doy      <- planting_doy + crop_duration - 1
   sim_start_day_number  <- day_number(year, doy = simulation_start_doy)
   sim_end_day_number    <- day_number(year, doy = planting_end_doy)
@@ -113,7 +121,7 @@
   soil_path_prm       <- path_for_prm(soil_path,       use_standalone = use_standalone, base_path = base_path)
 
   # ---- Optional section helpers --------------------------------------------
-  # Returns list(name, dir) — "(None)" when path is NULL
+  # Returns list(name, dir) -- "(None)" when path is NULL
   .opt_file <- function(opt_path, ext) {
     if (is.null(opt_path)) return(list(name = "(None)", dir = "(None)"))
     f <- fs::path(base_path, opt_path, paste0(site_name, ext))
@@ -291,7 +299,7 @@ write_prm <- function(
     irr_file <- fs::path(base_path, irrigation_path, paste0(site_name, ".IRR"))
     if (!fs::file_exists(irr_file)) {
       warning("Irrigation file not found: ", irr_file,
-              " — irrigation_path set to NULL.", call. = FALSE)
+              " -- irrigation_path set to NULL.", call. = FALSE)
       irrigation_path <- NULL
     }
   }
@@ -300,7 +308,7 @@ write_prm <- function(
     obs_file <- fs::path(base_path, obs_path, paste0(site_name, ".OBS"))
     if (!fs::file_exists(obs_file)) {
       warning("Observations file not found: ", obs_file,
-              " — obs_path set to NULL.", call. = FALSE)
+              " -- obs_path set to NULL.", call. = FALSE)
       obs_path <- NULL
     }
   }
@@ -309,12 +317,12 @@ write_prm <- function(
     off_file <- fs::path(base_path, offseason_path, paste0(site_name, ".OFF"))
     if (!fs::file_exists(off_file)) {
       warning("Off-season file not found: ", off_file,
-              " — offseason_path set to NULL.", call. = FALSE)
+              " -- offseason_path set to NULL.", call. = FALSE)
       offseason_path <- NULL
     }
   }
 
-  # ---- Calendar path → derive planting schedule ----------------------------
+  # ---- Calendar path  derive planting schedule ----------------------------
   if (!is.null(calendar_path)) {
     if (!is.null(planting_schedule)) {
       warning(
@@ -335,7 +343,7 @@ write_prm <- function(
       warning(
         "Onset criterion not met for ", length(na_years), " year(s): ",
         paste(na_years, collapse = ", "),
-        " — these years are excluded from the PRM.",
+        " -- these years are excluded from the PRM.",
         call. = FALSE
       )
       planting_schedule <- planting_schedule[!is.na(planting_schedule$planting_doy), ]
