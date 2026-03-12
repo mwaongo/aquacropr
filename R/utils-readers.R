@@ -132,7 +132,7 @@
   # Read data values
   if (length(col_names) == 1) {
     # Single column (ETo, PLU)
-    values <- readr::read_fwf(file, skip = sep_idx, show_col_types = FALSE)[[1]]
+    values <- as.numeric(readr::read_fwf(file, skip = sep_idx, show_col_types = FALSE)[[1]])
     values <- replace(values, values == -9, NA_real_)
     n_rows <- length(values)
   } else {
