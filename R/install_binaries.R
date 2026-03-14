@@ -127,7 +127,7 @@ install_binaries <- function(
       message("Requested version (", version, ") is above maximum (7.2), ",
               "falling back to 7.3")
       version <- "7.2"
-      tag     <- .get_version_tag("7.3")
+      tag     <- .get_version_tag("7.2")
     } else {
       tag <- .get_version_tag(version)
     }
