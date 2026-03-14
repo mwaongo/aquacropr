@@ -2,18 +2,23 @@
 % Please edit documentation in R/write_prm_batch.R
 \name{write_prm_batch}
 \alias{write_prm_batch}
-\title{Write AquaCrop PRM files in batch}
+\title{Write AquaCrop PRM files for Multiple Stations}
 \usage{
 write_prm_batch(
-  station_name = NULL,
-  crop_name,
-  planting_schedule,
+  site_name = NULL,
+  crop_name = NULL,
+  planting_schedule = NULL,
   path = "LIST/",
   crop_path = "CROP/",
   climate_path = "CLIMATE/",
+  calendar_path = NULL,
   management_path = "MANAGEMENT/",
+  irrigation_path = "MANAGEMENT/",
   soil_path = "SOIL/",
-  crop_duration = 90,
+  groundwater_path = NULL,
+  offseason_path = NULL,
+  obs_path = NULL,
+  crop_duration = NULL,
   simulation_start_doy = NULL,
   scenario = "hist",
   eol = NULL,
@@ -24,75 +29,107 @@ write_prm_batch(
 )
 }
 \arguments{
-\item{station_name}{Character vector or \code{NULL}. Names of stations to process:
-\itemize{
-\item If \code{NULL}, all stations are automatically discovered from \code{.CLI} files in the \verb{CLIMATE/} directory.
-\item If a vector, only the specified stations will be processed; all must have corresponding climate files.
-}}
+\item{site_name}{Character vector or NULL. Names of stations to process.
+If NULL, all stations are automatically discovered from .CLI files in
+the climate directory. If a vector, only the specified stations will be
+processed; all must have corresponding climate files.}
 
-\item{crop_name}{Character. Crop name (e.g., "maize", "wheat"). Required.}
+\item{crop_name}{Character. Crop name (e.g., "maize", "wheat").
+If NULL, section 3 is written as (None). Default: NULL.}
 
-\item{planting_schedule}{Either:
-\itemize{
-\item A single \code{data.frame} with columns \code{year} and \code{planting_doy}, applied to all stations, or
-\item A \code{list} of \code{data.frame}s (one per station), each with columns \code{year} and \code{planting_doy}.
-The length of the list must match the number of stations.
-}}
+\item{planting_schedule}{Either a single data.frame with columns year and
+planting_doy, applied to all stations, or a list of data.frames (one per
+station), each with columns year and planting_doy. The length of the list
+must match the number of stations.
+Optional when calendar_path is provided: the planting schedule is then
+derived automatically from find_onset() for each station. If both are
+supplied, calendar_path takes precedence and planting_schedule is ignored
+with a warning.}
 
-\item{path}{Output directory path for PRM files. Default: \code{"LIST/"}.}
+\item{path}{Output directory path for PRM files. Default: "LIST/".}
 
-\item{crop_path}{Path to crop files directory. Default: \code{"CROP/"}.}
+\item{crop_path}{Path to crop files directory. Default: "CROP/".
+If crop_name is NULL, crop_path is ignored and section 3 is written
+as (None).}
 
-\item{climate_path}{Path to climate files directory. Default: \code{"CLIMATE/"}.}
+\item{climate_path}{Path to climate files directory. Default: "CLIMATE/".}
 
-\item{management_path}{Path to management files directory. Default: \code{"MANAGEMENT/"}.}
+\item{calendar_path}{Path to calendar files directory. Default: NULL.
+When provided, the planting schedule is derived automatically via
+find_onset() for each station, and planting_schedule can be NULL.
+Section 2 is always written as (None): the CAL file is used only to
+compute onset dates, not referenced in the PRM.}
 
-\item{soil_path}{Path to soil files directory. Default: \code{"SOIL/"}.}
+\item{management_path}{Path to field management files directory.
+Default: "MANAGEMENT/". If NULL, section 5 is written as (None).}
 
-\item{crop_duration}{Integer. Crop duration in days. Default: \code{90}.}
+\item{irrigation_path}{Path to irrigation management files directory.
+Default: "MANAGEMENT/". If the .IRR file is not found for a station,
+a warning is issued and section 4 is written as (None) for that station.
+If NULL, section 4 is written as (None) for all stations.}
 
-\item{simulation_start_doy}{Integer. Day of year to start simulation. Default: \code{NULL}.}
+\item{soil_path}{Path to soil files directory. Required, cannot be NULL.
+Default: "SOIL/".}
 
-\item{scenario}{Character. Scenario name. Default: \code{"hist"}.}
+\item{groundwater_path}{Path to groundwater table files directory.
+Default: NULL. If NULL, section 7 is written as (None).}
 
-\item{eol}{End-of-line character style. Options: "windows","linux", or "macos". If \code{NULL} (default), eol is auto-detected.}
+\item{offseason_path}{Path to off-season conditions files directory.
+Default: NULL. If the .OFF file is not found for a station, a warning
+is issued and section 9 is written as (None) for that station.}
 
-\item{use_standalone}{Logical. Use standalone mode? Default: \code{TRUE}.}
+\item{obs_path}{Path to field data files directory.
+Default: NULL. If the .OBS file is not found for a station, a warning
+is issued and section 10 is written as (None) for that station.}
+
+\item{crop_duration}{Integer or NULL. Crop duration in days. If NULL (default), read automatically from the .CRO file.}
+
+\item{simulation_start_doy}{Integer. Day of year to start simulation.
+Default: NULL.}
+
+\item{scenario}{Character. Scenario name. Default: "hist".}
+
+\item{eol}{End-of-line character style. One of "windows", "linux", "macos".
+If NULL (default), eol is auto-detected.}
+
+\item{use_standalone}{Logical. Use standalone mode? Default: TRUE.}
 
 \item{base_path}{Base absolute path. Default: current working directory.}
 
-\item{verbose}{Logical. If \code{TRUE} (default), prints progress messages. If \code{FALSE}, runs silently.}
+\item{verbose}{Logical. If TRUE (default), prints progress messages.
+If FALSE, runs silently.}
 
-\item{clean}{Logical. If \code{TRUE}, removes existing \code{.PRM} files
-from \code{path} before writing new files. Default: \code{FALSE}.}
+\item{clean}{Logical. If TRUE, removes existing .PRM files from path
+before writing new files. Default: FALSE.}
 }
 \value{
-Invisibly returns \code{NULL}. The main effect is writing PRM files to the specified directory.
+Invisibly returns NULL. The main effect is writing PRM files to
+the specified directory.
 }
 \description{
-Generate AquaCrop PRM files for multiple stations in a batch.
+Generate AquaCrop PRM files for multiple stations.
 }
 \details{
-The function validates that:
-\itemize{
-\item All specified stations have corresponding climate files
-\item The crop file exists in the \verb{CROP/} directory
-}
+The function validates that all specified stations have corresponding
+climate files. If crop_name is not NULL, the crop file is also validated.
+A single data.frame for planting_schedule will be automatically applied
+to all stations.
 
-A single \code{data.frame} will be automatically applied to all stations.
-
-Use this function when you need to create PRM files for \strong{multiple stations at once}.
+Validation of optional file paths (irrigation, off-season, observations)
+is delegated to \code{\link{write_prm}}, which issues a warning and sets
+the corresponding path to NULL when the file is not found.
 }
 \examples{
 \dontrun{
 # Example 1: multiple stations, same planting schedule
-plsch <- data.frame(year = 1981:2020, planting_doy = 201)
+plsch    <- data.frame(year = 1981:2020, planting_doy = 201)
 stations <- c("grid_001", "grid_002")
+
 write_prm_batch(
-  station_name = stations,
-  crop_name = "maize",
+  site_name         = stations,
+  crop_name         = "maize",
   planting_schedule = plsch,
-  crop_duration = 90
+  crop_duration     = 90
 )
 
 # Example 2: multiple stations, different planting schedules
@@ -100,30 +137,36 @@ plsch_list <- list(
   data.frame(year = 1981:2020, planting_doy = 201),
   data.frame(year = 1981:2020, planting_doy = 205)
 )
+
 write_prm_batch(
-  station_name = stations,
-  crop_name = "maize",
+  site_name         = stations,
+  crop_name         = "maize",
   planting_schedule = plsch_list,
-  crop_duration = 120,
-  path = "LIST/"
+  crop_duration     = 120,
+  path              = "LIST/"
 )
 
-# Example 3: auto-discover all stations, silent mode
+# Example 3: calendar-based onset, no planting_schedule needed
 write_prm_batch(
-  station_name = NULL,
-  crop_name = "wheat",
-  planting_schedule = plsch,
-  base_path = "/my/project/path",
-  verbose = FALSE
+  site_name        = NULL,
+  crop_name        = "wheat",
+  calendar_path    = "CAL/",
+  groundwater_path = "GWT/",
+  base_path        = "/my/project/path",
+  verbose          = FALSE
 )
 }
 
 }
 \seealso{
-\code{\link{write_prm}} for single station PRM file generation
+\code{\link{write_prm}} for single station PRM file generation.
 
 Other batch operations: 
+\code{\link{write_gwt_batch}()},
+\code{\link{write_irrig_batch}()},
 \code{\link{write_man_batch}()},
+\code{\link{write_obs_batch}()},
+\code{\link{write_off_batch}()},
 \code{\link{write_sol_batch}()}
 }
 \concept{batch operations}

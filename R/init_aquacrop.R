@@ -1,3 +1,43 @@
+# =============================================================================
+# AquaCrop Project Directory Structure
+# =============================================================================
+
+#' Standard AquaCrop directory names
+#' @keywords internal
+#' @noRd
+.AQUACROP_DIRS <- c(
+  "CLIMATE",
+  "CAL",
+  "CROP",
+  "LIST",
+  "MANAGEMENT",
+  "OBS",
+  "OUTP",
+  "PARAM",
+  "SIMUL",
+  "SOIL"
+)
+
+#' Get version tag for AquaCrop releases
+#' @param version Character string. Version number (e.g., "7.1", "7.2")
+#' @return Character string. Git tag (e.g., "v7.1.1", "v7.2")
+#' @keywords internal
+#' @noRd
+.get_version_tag <- function(version) {
+  if (is.null(version) || is.na(version)) {
+    return(NULL)
+  }
+
+  # Special case: version 7.1 uses tag v7.1.1
+  if (version == "7.1") {
+    return("v7.1.1")
+  }
+
+  # Default: tag is v{version}
+  return(paste0("v", version))
+}
+
+
 #' Initialize AquaCrop Project Structure
 #'
 #' Creates a directory structure for AquaCrop crop water productivity model
@@ -21,8 +61,11 @@
 #' \describe{
 #'   \item{CLIMATE/}{Climate input files (temperature, rainfall, ETo)}
 #'   \item{CROP/}{Crop parameter files}
+#'   \item{GWT/}{Groundwater table files}
+#'   \item{IRR/}{Irrigation schedule files}
 #'   \item{LIST/}{Project simulation files \code{*.PRM}}
 #'   \item{MANAGEMENT/}{Field management practice files \code{*.MAN}}
+#'   \item{OBS/}{Field observation files}
 #'   \item{OUTP/}{Simulation output files}
 #'   \item{PARAM/}{Program parameters files \code{*.PPn}}
 #'   \item{SIMUL/}{Simulation configuration files}
@@ -75,13 +118,9 @@ init_aquacrop <- function(path = ".",
 
   # Check if directory exists
   if (dir.exists(path) && !overwrite) {
-    # Check if it already has AquaCrop structure
-    aquacrop_folders <- c(
-      "CLIMATE", "CROP", "SOIL", "SIMUL", "OUTP",
-      "MANAGEMENT", "PARAM", "LIST"
-    )
-
-    has_structure <- all(dir.exists(file.path(path, aquacrop_folders)))
+    # Check if it already has AquaCrop structure (check core folders only)
+    core_folders <- .AQUACROP_DIRS
+    has_structure <- all(dir.exists(file.path(path, core_folders)))
 
     if (has_structure) {
       message("AquaCrop project structure already exists at: ", path)
@@ -113,11 +152,6 @@ init_aquacrop <- function(path = ".",
     }
   }
 
-  # Define directory structure
-  dirs <- c(
-    "CLIMATE", "CROP", "LIST", "MANAGEMENT",
-    "OUTP", "PARAM", "SIMUL", "SOIL"
-  )
 
   message(cli::symbol$arrow_right, " Creating AquaCrop project structure...")
 
@@ -152,7 +186,7 @@ init_aquacrop <- function(path = ".",
     }
   )
   # Create subdirectories
-  for (d in dirs) {
+  for (d in .AQUACROP_DIRS) {
     subdir_path <- file.path(path, d)
     tryCatch(
       {
@@ -168,45 +202,77 @@ init_aquacrop <- function(path = ".",
     )
   }
 
-  message(cli::symbol$tick, " Created directories: ", paste(dirs, collapse = ", "))
+  message(cli::symbol$tick, " Created directories: ", paste(.AQUACROP_DIRS, collapse = ", "))
 
   .install_templates(path, overwrite = TRUE)
 
-
-
   # Create README
-  .create_readme(path, dirs, version)
+  .create_readme(path, .AQUACROP_DIRS, version)
 
   # Create R project if use_rproject = TRUE
-
-  if (use_rproject) {
-
+  if (use_rproject && requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::isAvailable()) {
     rstudioapi::openProject(path = path, newSession = FALSE)
-
   } else {
     message("\n", cli::symbol$info, " To work in this project, run:")
     message("  setwd(\"", path, "\")")
     message("  run_aquacrop()")
   }
+
+  invisible(path)
 }
 
 #' Helper function to create README
 #' @param path Character string. Path where the README.txt will be created
-#' @param dirs Character vector. List of directory names (currently unused but kept for compatibility)
+#' @param dirs Character vector. List of directory names
 #' @param version Character string or NULL. AquaCrop version number. If NULL, displays "latest"
-#' @param pkg_name Character string. Name of the package calling this function. Default is "aquacroptools"
+#' @param pkg_name Character string. Name of the package calling this function. Default is "aquacropr"
 #' @keywords internal
+#' @noRd
 #'
-.create_readme <- function(path, dirs, version = NULL, pkg_name = "aquacroptools") {
+.create_readme <- function(path, dirs = .AQUACROP_DIRS, version = NULL, pkg_name = "aquacropr") {
   readme_path <- file.path(path, "README.txt")
+
   # Determine executable name
   exe_name <- if (.Platform$OS.type == "windows") "aquacrop.exe" else "aquacrop"
+
   # Version info
-  version_info <- if (!is.null(version)) {
-    paste0("AquaCrop version: ", version, " (https://github.com/KUL-RSDA/AquaCrop/releases/tag/v", version, ")")
+  if (is.null(version)) {
+    version_info <- "AquaCrop version: unknown"
   } else {
-    "AquaCrop version: latest"
+    tag <- .get_version_tag(version)
+    version_info <- paste0(
+      "AquaCrop version: ", version,
+      " (https://github.com/KUL-RSDA/AquaCrop/releases/tag/", tag, ")"
+    )
   }
+
+  # Package version
+  pkg_version <- tryCatch(
+    as.character(utils::packageVersion(pkg_name)),
+    error = function(e) "development"
+  )
+
+  # Directory descriptions
+  dir_descriptions <- c(
+    CLIMATE = "Climate input files (*.Tnx, *.PLU, *.ETo, *.CLI)",
+    CROP = "Crop parameter files (*.CRO)",
+    LIST = "Project simulation files (*.PRM)",
+    MANAGEMENT = "Field management practice  and irrigation files (*.MAN, *.IRR)",
+    OBS = "Field observation files (*.OBS)",
+    OUTP = "Simulation output files *.OUT (created after running)",
+    PARAM = "Program parameters files (*.PPn)",
+    SIMUL = "Simulation configuration files (*.SIM)",
+    SOIL = "Soil profile and water content files (*.SOL, *.SW0, *.GWT)"
+  )
+
+  # Generate directory listing with descriptions
+  dir_listing <- unlist(lapply(dirs, function(d) {
+    desc <- dir_descriptions[[d]]
+    c(paste0("  ", d, "/"),
+      if (!is.null(desc)) paste0("    ", desc) else NULL)
+  }))
+
   readme_content <- c(
     "AquaCrop Project",
     "================",
@@ -214,12 +280,19 @@ init_aquacrop <- function(path = ".",
     paste("Created:", Sys.Date()),
     paste("Executable:", exe_name),
     version_info,
-    paste0("Generated by: ", pkg_name, "::init_aquacrop()"),
+    paste0("Generated by: ", pkg_name, " v", pkg_version, "::init_aquacrop()"),
     "",
-    "Quick Start with aquacroptools",
+    "Project Structure",
+    "-----------------",
+    "",
+    "This project contains the following AquaCrop directories:",
+    "",
+    dir_listing,
+    "",
+    "Quick Start with aquacropr",
     "------------------------------",
     "",
-    "aquacroptools is an R package that simplifies AquaCrop workflows:",
+    "aquacropr is an R package that simplifies AquaCrop workflows:",
     "  - Create input files programmatically (no manual text editing)",
     "  - Run batch simulations easily",
     "  - Read and analyze outputs in R",
@@ -227,7 +300,7 @@ init_aquacrop <- function(path = ".",
     "",
     "Complete workflow example:",
     "",
-    "library(aquacroptools)",
+    "library(aquacropr)",
     "",
     "# Option 1: Create climate files individually",
     "write_tnx(",
@@ -289,8 +362,7 @@ init_aquacrop <- function(path = ".",
     "write_prm(",
     "  path = 'LIST/',",
     "  station_name = 'MyLocation',",
-    "  year = 2024,",
-    "  planting_doy = 121,  # May 1st",
+    "  planting_schedule = planting_df,  # Must contain: year, planting_doy",
     "  crop_name = 'Maize',",
     "  crop_path = './CROP/',",
     "  climate_path = './CLIMATE/',",
@@ -306,14 +378,14 @@ init_aquacrop <- function(path = ".",
     "results <- read_seas_out('OUTP/MyLocationPRMseason.OUT')",
     "summary(results)",
     "",
-    "Why aquacroptools vs manual file creation?",
+    "Why aquacropr vs manual file creation?",
     "  - Automatic format validation - fewer errors",
     "  - Reproducible workflows - entire analysis in R scripts",
     "  - Batch processing - easily run 100+ scenarios",
     "  - Data integration - combine with other R packages",
     "",
-    "Documentation: https://mwaongo.github.io/aquacroptools/",
-    "Help in R: ?write_tnx, ?write_climate, vignette('aquacroptools')",
+    "Documentation: https://github.com/mwaongo/aquacropr",
+    "Help in R: ?write_tnx, ?write_climate, vignette('aquacropr')",
     "",
     "About AquaCrop",
     "--------------",
@@ -333,8 +405,8 @@ init_aquacrop <- function(path = ".",
     "  - Input data files (.CRO, .SOL, .CLI) from version 6.x can be used",
     "  - Project files from version 6.x and below must be recreated",
     "",
-    "Directory Structure",
-    "-------------------",
+    "Directory Structure Details",
+    "---------------------------",
     "",
     "This project follows the standard AquaCrop directory organization:",
     "",
@@ -345,6 +417,10 @@ init_aquacrop <- function(path = ".",
     "CROP/",
     "  Crop parameter files (*.CRO): growth, development, yield parameters,",
     "  water stress responses. Examples: Maize.CRO, Wheat.CRO, Potato.CRO",
+    "",
+    "CAL/",
+    "  Calendar files (*.CAL): used to determinate sowing date.",
+    "  Examples: Wakanda.CAL, Ottawa.CAL, Kaya.CAL",
     "",
     "SOIL/",
     "  Soil profile files (*.SOL): hydraulic properties, texture, water retention",
@@ -369,7 +445,7 @@ init_aquacrop <- function(path = ".",
     "  If absent, default FAO parameters are used",
     "",
     "OUTP/",
-    "  Simulation outputs (created after running):",
+    "  Simulation outputs (created after running, depends on *.SIM files):",
     "  - *Season.OUT: seasonal results (biomass, yield, water balance)",
     "  - *Day.OUT: daily outputs (optional)",
     "  - *Harvests.OUT: multiple cuttings data (forage crops)",
@@ -394,21 +470,21 @@ init_aquacrop <- function(path = ".",
     "Getting Help",
     "------------",
     "",
-    "aquacroptools:",
-    "  - Documentation: https://mwaongo.github.io/aquacroptools/",
-    "  - In R: ?write_tnx, help(package='aquacroptools'), example(write_prm)",
-    "  - Vignettes: vignette('aquacroptools')",
+    "aquacropr:",
+    "  - Documentation: https://github.com/mwaongo/aquacropr",
+    "  - In R: ?write_tnx, help(package='aquacropr'), example(write_prm)",
+    "  - Vignettes: vignette('aquacropr')",
     "",
     "Common issues:",
     "  - Simulation fails: Check OUTP/ListProjectsLoaded.OUT for error details",
-    "  - Format errors: Use aquacroptools functions instead of manual editing",
+    "  - Format errors: Use aquacropr functions instead of manual editing",
     "  - Missing files: Verify paths in .PRM files are correct",
     "",
     "Resources",
     "---------",
     "",
-    "aquacroptools R Package:",
-    "  Website: https://mwaongo.github.io/aquacroptools/",
+    "aquacropr R Package:",
+    "  Website: https://github.com/mwaongo/aquacropr",
     "  - Installation guide and troubleshooting",
     "  - Complete function reference with examples",
     "  - Vignettes and tutorials for common workflows",
@@ -433,25 +509,26 @@ init_aquacrop <- function(path = ".",
     "  - Tutorials and user guides",
     "  - Example datasets",
     "",
-    "Citation :",
-    "----------",
+    "Citation:",
+    "---------",
     "",
-    "If you use aquacroptools in your research, please cite:",
+    "If you use aquacropr in your research, please cite:",
     "",
-    "Waongo, M., Ouedraogo, O.A.Y. (2025). aquacroptools: R Tools for the FAO AquaCrop",
-    " Crop Water Productivity Model. R package version [version].",
-    " https://github.com/mwaongo/aquacroptools",
+    paste0("Waongo, M., Ouedraogo, O.A.Y. (2025). aquacropr: R Tools for the FAO AquaCrop"),
+    paste0("Crop Water Productivity Model. R package version ", pkg_version, "."),
+    "https://github.com/mwaongo/aquacropr",
     "",
     "Raes, D., Steduto, P., Hsiao, T. C., & Fereres, E. (2009).",
-    "	AquaCrop - The FAO Crop Model to Simulate Yield Response to Water:",
-    "	II. Main Algorithms and Software Description. Agronomy Journal, 101(3)",
-    "	438-447. https://doi.org/10.2134/agronj2008.0140s",
+    "  AquaCrop - The FAO Crop Model to Simulate Yield Response to Water:",
+    "  II. Main Algorithms and Software Description. Agronomy Journal, 101(3),",
+    "  438-447. https://doi.org/10.2134/agronj2008.0140s",
     ""
   )
+
   tryCatch(
     {
       writeLines(readme_content, readme_path)
-      message("Created README.txt")
+      message(cli::symbol$tick, " Created README.txt")
     },
     error = function(e) {
       warning(
@@ -460,15 +537,13 @@ init_aquacrop <- function(path = ".",
       )
     }
   )
+
+  invisible(readme_path)
 }
-
-
 #' Install simulation template files
 #' @keywords internal
 .install_templates <- function(path, overwrite) {
   template_files <- c(
-    "AggregationResults.SIM",
-    "DailyResultsFullList.SIM",
     "MaunaLoa.CO2",
     "ParticularResultsFullList.SIM"
   )

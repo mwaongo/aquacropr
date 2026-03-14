@@ -42,8 +42,11 @@ The function creates the following directory structure:
 \describe{
 \item{CLIMATE/}{Climate input files (temperature, rainfall, ETo)}
 \item{CROP/}{Crop parameter files}
+\item{GWT/}{Groundwater table files}
+\item{IRR/}{Irrigation schedule files}
 \item{LIST/}{Project simulation files \code{*.PRM}}
 \item{MANAGEMENT/}{Field management practice files \code{*.MAN}}
+\item{OBS/}{Field observation files}
 \item{OUTP/}{Simulation output files}
 \item{PARAM/}{Program parameters files \code{*.PPn}}
 \item{SIMUL/}{Simulation configuration files}

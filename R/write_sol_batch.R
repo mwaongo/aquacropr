@@ -109,117 +109,46 @@ write_sol_batch <- function(
     swo_layers = NULL,
     climate_path = "CLIMATE/",
     base_path = getwd()) {
-  #
-  # clean SOIL/ dir if clean = TRUE (default)
-  if (clean && fs::dir_exists(path)) {
-    files <- fs::dir_ls(path, regexp = "\\.(SOL|SW0)$")
-    if (length(files) > 0) {
-      fs::file_delete(files)
-      if (verbose) message("Cleaned ", length(files), " file(s) from ", path)
-    }
+
+  # Clean directory if requested
+  if (clean) {
+    .clean_directory(path, "\\.(SOL|SW0)$", verbose)
   }
 
-  # Discover or validate site_name from climate files
-  cli_dir <- file.path(base_path, climate_path)
-  cli_files <- list.files(
-    cli_dir,
-    pattern = "\\.CLI$",
-    ignore.case = TRUE
+  # Discover or validate sites from climate files
+  # Note: write_sol_batch uses stop_on_missing = FALSE (warning only)
+  site_name <- .discover_or_validate_items(
+    item_names = site_name,
+    climate_path = climate_path,
+    base_path = base_path,
+    item_type = "site",
+    verbose = verbose,
+    stop_on_missing = FALSE
   )
-  available_sites <- tools::file_path_sans_ext(cli_files)
 
-  if (is.null(site_name)) {
-    if (length(available_sites) == 0) {
-      stop(
-        "No sites to process.\n",
-        "No climate files were found in '", cli_dir, "'.\n",
-        "Please generate climate files first using write_climate().",
-        call. = FALSE
-      )
-    }
-    site_name <- available_sites
-    if (verbose) {
-      message(
-        "Auto-discovered ", length(site_name), " site(s): ",
-        paste(head(site_name, 5), collapse = ", "),
-        if (length(site_name) > 5) "..." else ""
-      )
-    }
-  } else {
-    # Optional: validate that sites exist (if climate files are required)
-    missing <- setdiff(site_name, available_sites)
-    if (length(missing) > 0 && verbose) {
-      warning(
-        "Some sites do not have corresponding climate files: ",
-        paste(missing, collapse = ", "), "\n",
-        "Available sites: ",
-        paste(head(available_sites, 5), collapse = ", "),
-        if (length(available_sites) > 5) "..." else "",
-        call. = FALSE
-      )
-    }
-  }
-
-  # Site count validation
+  # Warn if single item
   n <- length(site_name)
-  if (n == 1 && verbose) {
-    warning(
-      "write_sol_batch() called with a single site.\n",
-      "Consider using write_sol() instead for clarity.",
-      call. = FALSE
-    )
-  }
+  .warn_single_item(n, "write_sol_batch", "write_sol", verbose)
 
-  # Handle params
-  if (is.null(params)) {
-    params <- list()
-  }
+  # Normalize params to list of lists
+  params <- .normalize_batch_params(params, n, "soil", verbose)
 
-  if (is.list(params) && length(params) > 0 && !is.null(names(params))) {
-    # Single named list - apply to all sites
-    if (verbose) {
-      message("Applying the same soil parameters to all ", n, " site(s)")
-    }
-    params <- rep(list(params), n)
-  } else if (is.list(params) && length(params) == 0) {
-    # Empty list - use defaults for all
-    if (verbose) {
-      message("Using default soil parameters for all ", n, " site(s)")
-    }
-    params <- rep(list(list()), n)
-  } else if (!is.list(params) || length(params) != n) {
-    stop(
-      "params must be either:\n",
-      "  - A single named list (applied to all sites), or\n",
-      "  - A list of lists with length matching site_name\n",
-      "Expected length: ", n, ", got: ", length(params),
-      call. = FALSE
-    )
-  }
-
-  # Write SOL files for each site
+  # Write SOL files
   if (verbose) {
     message("Writing SOL files for ", n, " site(s)...")
   }
 
-  # Progress counter
-  counter <- 0
-
-  purrr::pwalk(
-    .l = list(
-      site_name = site_name,
-      params = params
-    ),
-    .f = function(site_name, params) {
-      if (verbose) {
-        counter <<- counter + 1
-        message("  [", counter, "/", n, "] Processing site: ", site_name)
-      }
-
-      # Call write_sol with explicit arguments
+  .batch_with_progress(
+    items = site_name,
+    params = params,
+    verbose = verbose,
+    item_type = "site",
+    fn = function(item, params, path, eol, write_sw0, initial_water, salinity,
+                  initial_cc, initial_biomass, initial_root_depth,
+                  bund_water, bund_ec, swo_layers) {
       write_sol(
         path = path,
-        site_name = site_name,
+        site_name = item,
         cn = params$cn,
         rew = params$rew,
         texture = params$texture,
@@ -235,7 +164,18 @@ write_sol_batch <- function(
         bund_ec = bund_ec,
         swo_layers = swo_layers
       )
-    }
+    },
+    path = path,
+    eol = eol,
+    write_sw0 = write_sw0,
+    initial_water = initial_water,
+    salinity = salinity,
+    initial_cc = initial_cc,
+    initial_biomass = initial_biomass,
+    initial_root_depth = initial_root_depth,
+    bund_water = bund_water,
+    bund_ec = bund_ec,
+    swo_layers = swo_layers
   )
 
   if (verbose) {

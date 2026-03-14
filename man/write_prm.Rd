@@ -2,18 +2,23 @@
 % Please edit documentation in R/write_prm.R
 \name{write_prm}
 \alias{write_prm}
-\title{Write AquaCrop Parameter Files for Multiple Years (Batch)}
+\title{Write AquaCrop Parameter (.PRM) Files}
 \usage{
 write_prm(
-  station_name,
+  site_name,
   path = "LIST/",
-  planting_schedule,
-  crop_name,
+  planting_schedule = NULL,
+  crop_name = NULL,
   crop_path = "CROP/",
-  crop_duration = 90,
+  crop_duration = NULL,
   climate_path = "CLIMATE/",
+  calendar_path = NULL,
   management_path = "MANAGEMENT/",
+  irrigation_path = "MANAGEMENT/",
   soil_path = "SOIL/",
+  groundwater_path = NULL,
+  offseason_path = NULL,
+  obs_path = NULL,
   simulation_start_doy = NULL,
   scenario = "hist",
   eol = "windows",
@@ -22,47 +27,86 @@ write_prm(
 )
 }
 \arguments{
-\item{station_name}{Station identifier}
+\item{site_name}{Character. Station name used to locate climate, soil,
+management, and optional auxiliary files.}
 
-\item{path}{Output directory path}
+\item{path}{Output directory path for PRM files. Default: \code{"LIST/"}.}
 
-\item{planting_schedule}{data.frame with: year, planting_doy}
+\item{planting_schedule}{A \code{data.frame} with columns \code{year} and
+\code{planting_doy}. Required when \code{calendar_path} is \code{NULL}.}
 
-\item{crop_name}{Crop name (e.g., "maize_90days")}
+\item{crop_name}{Character. Crop name (without extension).}
 
-\item{crop_path}{Path to crop file directory}
+\item{crop_path}{Character. Path to the crop file directory.
+Default: \code{"CROP/"}.}
 
-\item{crop_duration}{Growing season length in days}
+\item{crop_duration}{Integer. Growing season length in days. Default: 90.}
 
-\item{climate_path}{Path to climate file directory}
+\item{climate_path}{Character. Path to climate file directory.
+Default: \code{"CLIMATE/"}.}
 
-\item{management_path}{Path to management file directory}
+\item{calendar_path}{Character or NULL. Path to the CAL directory. When
+provided, \code{find_onset()} is called to derive
+\code{planting_schedule}; any supplied \code{planting_schedule} is
+ignored with a warning.}
 
-\item{soil_path}{Path to soil file directory}
+\item{management_path}{Character. Path to management file directory.
+Default: \code{"MANAGEMENT/"}.}
 
-\item{simulation_start_doy}{Day of year for simulation start}
+\item{irrigation_path}{Character or NULL. Path to the IRR file directory.
+If the \code{.IRR} file is not found, a warning is issued and the
+section is written as \code{(None)}. Default: \code{"MANAGEMENT/"}.}
 
-\item{scenario}{Climate scenario}
+\item{soil_path}{Character. Path to soil file directory.
+Default: \code{"SOIL/"}.}
 
-\item{eol}{End-of-line type}
+\item{groundwater_path}{Character or NULL. Path to the GWT file directory.
+Default: \code{NULL}.}
 
-\item{use_standalone}{Logical. Whether running in standalone mode}
+\item{offseason_path}{Character or NULL. Path to the OFF file directory.
+If the \code{.OFF} file is not found, a warning is issued and the
+section is written as \code{(None)}. Default: \code{NULL}.}
 
-\item{base_path}{Character. Base absolute path (required)}
+\item{obs_path}{Character or NULL. Path to the OBS file directory. If the
+\code{.OBS} file is not found, a warning is issued and the section is
+written as \code{(None)}. Default: \code{NULL}.}
+
+\item{simulation_start_doy}{Integer or NULL. First DOY of simulation.
+Default: \code{NULL} (April 1st).}
+
+\item{scenario}{Character. Climate scenario identifier.
+Default: \code{"hist"}.}
+
+\item{eol}{Character. End-of-line style: \code{"windows"}, \code{"linux"},
+or \code{"macos"}. Default: \code{"windows"}.}
+
+\item{use_standalone}{Logical. Whether paths are formatted for AquaCrop
+standalone mode. Default: \code{TRUE}.}
+
+\item{base_path}{Character. Base absolute path. Default: \code{getwd()}.}
 }
 \value{
-Invisibly returns the output file path
+Invisibly returns the output file path.
 }
 \description{
-Creates a single \code{.PRM} file with header once + multiple year blocks.
+Creates a \code{.PRM} file for one site across multiple years. The planting
+schedule can be supplied directly or derived from a \code{.CAL} file via
+\code{\link{find_onset}}.
 }
 \seealso{
 Other AquaCrop file writers: 
+\code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},
+\code{\link{write_gwt}()},
+\code{\link{write_irr}()},
 \code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_swo}()},
 \code{\link{write_tnx}()}
 }

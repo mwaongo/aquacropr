@@ -7,7 +7,7 @@
 \usage{
 write_eto(
   path = "CLIMATE/",
-  stn = NULL,
+  site_name = NULL,
   data = NULL,
   var_name = "et0",
   syear = NULL,
@@ -20,7 +20,7 @@ write_eto(
 
 write_et0(
   path = "CLIMATE/",
-  stn = NULL,
+  site_name = NULL,
   data = NULL,
   var_name = "et0",
   syear = NULL,
@@ -34,7 +34,7 @@ write_et0(
 \arguments{
 \item{path}{Directory path where the output .ETo file will be written. Default = "CLIMATE/"}
 
-\item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
+\item{site_name}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 
 \item{data}{Data frame containing daily ETo data. Can have either:
 \itemize{
@@ -59,7 +59,7 @@ Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 }
 \value{
 Invisibly returns the full path to the created .ETo file. Creates a formatted .ETo file
-in the specified directory with the format: <\if{html}{\out{<stn>}}>.ETo containing daily reference
+in the specified directory with the format: <<site_name>>.ETo containing daily reference
 evapotranspiration data as required by AquaCrop v7.0.
 }
 \description{
@@ -74,14 +74,14 @@ data("weather")
 # Write ETo file with default column name
 write_eto(
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   data = weather
 )
 
 # Write ETo file with custom column name
 write_eto(
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   data = weather,
   var_name = "eto_calculated"
 )
@@ -93,10 +93,17 @@ write_eto(data = weather_with_station, path = "climate/")
 }
 \seealso{
 Other AquaCrop file writers: 
+\code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
+\code{\link{write_gwt}()},
+\code{\link{write_irr}()},
 \code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()},
 \code{\link{write_tnx}()}

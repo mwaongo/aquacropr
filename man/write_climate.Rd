@@ -6,14 +6,14 @@
 \usage{
 write_climate(
   data = NULL,
-  path = "weather/",
-  stn = NULL,
+  path = "CLIMATE/",
+  site_name = NULL,
   var_name_rain = "rain",
   var_name_et0 = "et0",
   var_name_tmin = "tmin",
   var_name_tmax = "tmax",
   scenario = "hist",
-  eol = "windows",
+  eol = NULL,
   syear = NULL,
   eyear = NULL
 )
@@ -34,7 +34,7 @@ Default = "weather/" (relative to current working directory).
 See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
 and \code{\link{write_cli}} for details.}
 
-\item{stn}{Station name or identifier. Default = NULL (extracted from data if available,
+\item{site_name}{Station name or identifier. Default = NULL (extracted from data if available,
 otherwise uses "station").
 See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
 and \code{\link{write_cli}} for details.}
@@ -55,10 +55,7 @@ Passed to \code{\link{write_tnx}} as \code{var_name_max}.}
 "rcp26", "rcp45", "rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585".
 Default = "hist". See \code{\link{write_cli}} for details on scenarios.}
 
-\item{eol}{End-of-line character style for all output files.
-Options: "windows", "unix", "linux", or "macOS". Default = "windows".
-See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
-and \code{\link{write_cli}} for details.}
+\item{eol}{End-of-line character style for the output file. Options: "windows", "linux", "macos". If \code{NULL} (default), eol is auto-detected.}
 
 \item{syear}{Start year of the data period (extracted from \code{data} if not provided).
 Default = NULL.
@@ -101,7 +98,7 @@ Arguments are passed to the underlying functions as follows:
 \itemize{
 \item \code{data} passed to \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}}
 \item \code{path} passed to all write functions
-\item \code{stn} passed to all write functions
+\item \code{site_name} passed to all write functions
 \item \code{var_name_rain} passed to \code{\link{write_plu}} as \code{var_name}
 \item \code{var_name_et0} passed to \code{\link{write_eto}} as \code{var_name}
 \item \code{var_name_tmin} passed to \code{\link{write_tnx}} as \code{var_name_min}
@@ -121,7 +118,7 @@ data("weather")
 files <- write_climate(
   data = weather,
   path = "weather/",
-  stn = "Wakanda"
+  site_name = "Wakanda"
 )
 
 # Access individual file paths
@@ -132,7 +129,7 @@ files$plu
 write_climate(
   data = weather,
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   scenario = "rcp45"
 )
 
@@ -140,7 +137,7 @@ write_climate(
 write_climate(
   data = my_weather_data,
   path = "climate/",
-  stn = "MyStation",
+  site_name = "MyStation",
   var_name_rain = "precipitation",
   var_name_et0 = "pet",
   var_name_tmin = "temp_min",
@@ -154,7 +151,7 @@ write_climate(data = weather_with_station, path = "climate/")
 write_climate(
   data = weather,
   path = "weather/",
-  stn = "Wakanda",
+  site_name = "Wakanda",
   syear = 2000,
   eyear = 2010
 )

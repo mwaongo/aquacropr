@@ -1,30 +1,28 @@
-#' Validate and Normalize Path to Absolute
+#' Add Trailing Slash to Path
 #'
 #' @description
-#' Internal helper function to validate and convert paths to absolute paths.
+#' Internal helper function that ensures a directory path ends with a forward slash (/).
+#' This provides consistent path handling across all file writing functions.
 #'
-#' @param path Character string specifying a file or directory path
-#' @param param_name Character string for error messages identifying the parameter
+#' @param path Character string specifying a directory path
 #'
-#' @return Character string containing the normalized absolute path with trailing slash
+#' @return Character string with a guaranteed trailing slash
+#'
+#' @examples
+#' .add_trailing_slash("CLIMATE")
+#' # Returns: "CLIMATE/"
+#'
+#' .add_trailing_slash("CLIMATE/")
+#' # Returns: "CLIMATE/" (unchanged)
+#'
 #' @keywords internal
 #' @noRd
-.validate_and_normalize_path <- function(path, param_name) {
-  # Check if path is relative
-  if (!fs::is_absolute_path(path)) {
-    warning(
-      "Parameter '", param_name, "' is relative: '", path, "'\n",
-      "Converting to absolute path: '", fs::path_abs(path), "'"
-    )
-    path <- fs::path_abs(path)
+.add_trailing_slash <- function(path) {
+  if (!stringr::str_ends(path, pattern = "/")) {
+    paste0(path, "/")
+  } else {
+    path
   }
-
-  # Ensure trailing slash
-  if (!grepl("/$", path)) {
-    path <- paste0(path, "/")
-  }
-
-  return(path)
 }
 
 

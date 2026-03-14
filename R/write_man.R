@@ -7,7 +7,7 @@
 #'
 #' @param path Character. Directory path where the .MAN file will be created.
 #'   The directory is created automatically if it doesn't exist. Default: `"MANAGEMENT/"`.
-#' @param management_name Character. Name identifier for the management scenario.
+#' @param site_name Character. Name identifier for the management scenario.
 #'   This name is used as the filename (e.g., `"high-fertility"` creates
 #'   `"high-fertility.MAN"`). Default: `"generic-management"`.
 #' @param eol End-of-line character style. Options: "windows","linux", or "macos". If `NULL` (default), eol is auto-detected.
@@ -35,7 +35,7 @@
 #' ## File Format
 #'
 #' The function creates a colon-delimited text file compatible with AquaCrop v7.0+:
-#' - Filename: `<management_name>.MAN`
+#' - Filename: `<site_name>.MAN`
 #' - Format: `value : description`
 #' - Each parameter on a separate line
 #' - Header contains management scenario name and key parameters
@@ -49,14 +49,14 @@
 #' # Example 1: Use all default values
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "default"
+#'   site_name = "default"
 #' )
 #'
 #' # Example 2: High fertility with moderate mulching
 #' # See ?ManData for parameter details
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "high-fertility",
+#'   site_name = "high-fertility",
 #'   params = list(
 #'     var_05 = 10, # Low fertility stress (high fertility)
 #'     var_03 = 30, # 30% mulch cover
@@ -67,7 +67,7 @@
 #' # Example 3: Low fertility, no mulch
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "low-fertility",
+#'   site_name = "low-fertility",
 #'   params = list(
 #'     var_05 = 70, # High fertility stress (poor soil)
 #'     var_03 = 0, # No mulch
@@ -79,7 +79,7 @@
 #' # Check ?ManData for weed-related parameters
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "with-weeds",
+#'   site_name = "with-weeds",
 #'   params = list(
 #'     var_05 = 50, # Moderate fertility stress
 #'     var_09 = 20, # Weed cover at closure
@@ -91,7 +91,7 @@
 #' # Example 5: Multiple cutting management (e.g., forage)
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "multiple-cuts",
+#'   site_name = "multiple-cuts",
 #'   params = list(
 #'     var_13 = 1, # Enable multiple cuttings
 #'     var_14 = 10, # Canopy after cut
@@ -114,7 +114,7 @@
 #'
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = "irrigated-field",
+#'   site_name = "irrigated-field",
 #'   params = irrigation_params,
 #'   eol = "linux"
 #' )
@@ -123,7 +123,7 @@
 #' station <- "grid_001"
 #' write_man(
 #'   path = "MANAGEMENT/",
-#'   management_name = station,
+#'   site_name = station,
 #'   params = list(var_05 = 35)
 #' )
 #' }
@@ -134,7 +134,7 @@
 #' @export
 write_man <- function(
     path = "MANAGEMENT/",
-    management_name,
+    site_name,
     eol = NULL,
     params = list()) {
   # Handle NULL params - only change needed
@@ -283,7 +283,7 @@ write_man <- function(
   sep <- .get_eol(eol = eol)
 
   header <- .get_man_header(
-    man = management_name,
+    man = site_name,
     fertilizer = fertilization_rate,
     mulch = mulching_rate,
     eol = eol
@@ -291,7 +291,7 @@ write_man <- function(
     glue::glue("\n", .sep = sep)
 
   # Write file
-  output_file <- paste0(path, management_name, ".MAN")
+  output_file <- paste0(path, site_name, ".MAN")
 
   readr::write_file(
     x = header,

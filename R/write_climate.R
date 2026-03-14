@@ -16,7 +16,7 @@
 #'   Default = "weather/" (relative to current working directory).
 #'   See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
 #'   and \code{\link{write_cli}} for details.
-#' @param stn Station name or identifier. Default = NULL (extracted from data if available,
+#' @param site_name Station name or identifier. Default = NULL (extracted from data if available,
 #'   otherwise uses "station").
 #'   See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
 #'   and \code{\link{write_cli}} for details.
@@ -31,10 +31,7 @@
 #' @param scenario CO2 scenario for .CLI file. Options: "hist" (historical/Mauna Loa),
 #'   "rcp26", "rcp45", "rcp60", "rcp85", "ssp119", "ssp126", "ssp245", "ssp370", "ssp585".
 #'   Default = "hist". See \code{\link{write_cli}} for details on scenarios.
-#' @param eol End-of-line character style for all output files.
-#'   Options: "windows", "unix", "linux", or "macOS". Default = "windows".
-#'   See \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}},
-#'   and \code{\link{write_cli}} for details.
+#' @param eol End-of-line character style for the output file. Options: "windows", "linux", "macos". If `NULL` (default), eol is auto-detected.
 #' @param syear Start year of the data period (extracted from \code{data} if not provided).
 #'   Default = NULL.
 #'   See \code{\link{write_plu}}, \code{\link{write_eto}}, and \code{\link{write_tnx}} for details.
@@ -61,7 +58,7 @@
 #' \itemize{
 #'   \item \code{data} passed to \code{\link{write_plu}}, \code{\link{write_eto}}, \code{\link{write_tnx}}
 #'   \item \code{path} passed to all write functions
-#'   \item \code{stn} passed to all write functions
+#'   \item \code{site_name} passed to all write functions
 #'   \item \code{var_name_rain} passed to \code{\link{write_plu}} as \code{var_name}
 #'   \item \code{var_name_et0} passed to \code{\link{write_eto}} as \code{var_name}
 #'   \item \code{var_name_tmin} passed to \code{\link{write_tnx}} as \code{var_name_min}
@@ -89,7 +86,7 @@
 #' files <- write_climate(
 #'   data = weather,
 #'   path = "weather/",
-#'   stn = "Wakanda"
+#'   site_name = "Wakanda"
 #' )
 #'
 #' # Access individual file paths
@@ -100,7 +97,7 @@
 #' write_climate(
 #'   data = weather,
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   scenario = "rcp45"
 #' )
 #'
@@ -108,7 +105,7 @@
 #' write_climate(
 #'   data = my_weather_data,
 #'   path = "climate/",
-#'   stn = "MyStation",
+#'   site_name = "MyStation",
 #'   var_name_rain = "precipitation",
 #'   var_name_et0 = "pet",
 #'   var_name_tmin = "temp_min",
@@ -122,7 +119,7 @@
 #' write_climate(
 #'   data = weather,
 #'   path = "weather/",
-#'   stn = "Wakanda",
+#'   site_name = "Wakanda",
 #'   syear = 2000,
 #'   eyear = 2010
 #' )
@@ -135,14 +132,14 @@
 #' @export
 write_climate <- function(
     data = NULL,
-    path = "weather/",
-    stn = NULL,
+    path = "CLIMATE/",
+    site_name = NULL,
     var_name_rain = "rain",
     var_name_et0 = "et0",
     var_name_tmin = "tmin",
     var_name_tmax = "tmax",
     scenario = "hist",
-    eol = "windows",
+    eol = NULL,
     syear = NULL,
     eyear = NULL) {
   # Validate data
@@ -155,24 +152,26 @@ write_climate <- function(
     )
   }
 
-  # Extract station from data if available and stn not provided
-  if (is.null(stn) && "station" %in% names(data)) {
-    stn <- utils::head(data, 1) %>%
+  # Extract station from data if available and site_name not provided
+  if (is.null(site_name) && "station" %in% names(data)) {
+    site_name <- utils::head(data, 1) %>%
       dplyr::pull("station")
-    message("Using station name from data: '", stn, "'")
+    message("Using station name from data: '", site_name, "'")
   }
 
   # Set default station if still NULL
-  if (is.null(stn)) {
-    stn <- "station"
-    message("Using default station name: '", stn, "'")
+  if (is.null(site_name)) {
+    site_name <- "station"
+    message("Using default station name: '", site_name, "'")
   }
 
   # Ensure trailing slash on path
   path <- .add_trailing_slash(path)
 
   # Create directory if it doesn't exist
+
   fs::dir_create(path, recurse = TRUE)
+
   message("Writing climate files to: ", path)
 
   # Write rainfall file
@@ -180,7 +179,7 @@ write_climate <- function(
   plu_file <- write_plu(
     data = data,
     path = path,
-    stn = stn,
+    site_name = site_name,
     var_name = var_name_rain,
     syear = syear,
     eyear = eyear,
@@ -192,7 +191,7 @@ write_climate <- function(
   eto_file <- write_eto(
     data = data,
     path = path,
-    stn = stn,
+    site_name = site_name,
     var_name = var_name_et0,
     syear = syear,
     eyear = eyear,
@@ -204,7 +203,7 @@ write_climate <- function(
   tnx_file <- write_tnx(
     data = data,
     path = path,
-    stn = stn,
+    site_name = site_name,
     var_name_min = var_name_tmin,
     var_name_max = var_name_tmax,
     syear = syear,
@@ -216,13 +215,13 @@ write_climate <- function(
   message("  [4/4] Writing climate file (.CLI) with scenario: ", scenario, "...")
   cli_file <- write_cli(
     path = path,
-    stn = stn,
+    site_name = site_name,
     eol = eol,
     scenario = scenario,
     check_files = TRUE
   )
 
-  message("Successfully created all climate files for station '", stn, "'")
+  message("Successfully created all climate files for station '", site_name, "'")
 
   # Return paths to all created files
   result <- list(

@@ -1,14 +1,12 @@
+
 #' Package Attach Message
 #' @keywords internal
 .onAttach <- function(libname, pkgname) {
   version <- utils::packageVersion(pkgname)
-
   msg <- cli::format_inline(
-    "{.pkg aquacroptools} v{version}\n",
-    "Wrapper and Tools to streamline the use of FAO Crop Water Model AquaCrop (v7.0+)\n",
-    "\n",
-    "First time setup: use {.code init_aquacrop()} to create aquacroptools project structure."
+    "{.pkg aquacropr} v{version} — R interface to AquaCrop v7+\n",
+    "Run {.code init_aquacrop()} to initialize your project."
   )
-
   packageStartupMessage(msg)
 }
+

@@ -5,7 +5,7 @@
 #' containing daily ETo data for use in crop simulations.
 #'
 #' @param path Directory path where the output .ETo file will be written. Default = "CLIMATE/"
-#' @param stn Station name or identifier for the weather station. Default = NULL (extracted from data if available)
+#' @param site_name Station name or identifier for the weather station. Default = NULL (extracted from data if available)
 #' @param data Data frame containing daily ETo data. Can have either:
 #'   - Columns: station, year, month, day, et0 (legacy format), or
 #'   - Columns: year, month, day, et0 (new format)
@@ -20,7 +20,7 @@
 #'
 #' @return
 #' Invisibly returns the full path to the created .ETo file. Creates a formatted .ETo file
-#' in the specified directory with the format: <<stn>>.ETo containing daily reference
+#' in the specified directory with the format: <<site_name>>.ETo containing daily reference
 #' evapotranspiration data as required by AquaCrop v7.0.
 #'
 #' @examples
@@ -31,14 +31,14 @@
 #' # Write ETo file with default column name
 #' write_eto(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather
 #' )
 #'
 #' # Write ETo file with custom column name
 #' write_eto(
 #'   path = "weather/",
-#'   stn = "Wakanda_Station",
+#'   site_name = "Wakanda_Station",
 #'   data = weather,
 #'   var_name = "eto_calculated"
 #' )
@@ -52,7 +52,7 @@
 #'
 write_eto <- function(
     path = "CLIMATE/",
-    stn = NULL,
+    site_name = NULL,
     data = NULL,
     var_name = "et0",
     syear = NULL,
@@ -61,80 +61,22 @@ write_eto <- function(
     record_type = 1,
     first_day = 1,
     first_month = 1) {
-  # Handle NULL or invalid data
-  if (is.null(data) || !is.data.frame(data)) {
-    stop(
-      "data must be a data frame with columns: year, month, day, ", var_name,
-      "\nReceived: ", class(data)[1]
-    )
-  }
 
-  # Extract station from data if available and stn not provided
-  if (is.null(stn) && "station" %in% names(data)) {
-    stn <- utils::head(data, 1) %>%
-      dplyr::pull("station")
-  }
-
-  # Set default station if still NULL
-  if (is.null(stn)) {
-    stn <- "station"
-  }
-
-  # Validate required columns
-  required_cols <- c("year", "month", "day", var_name)
-  missing_cols <- setdiff(required_cols, names(data))
-  if (length(missing_cols) > 0) {
-    stop(
-      "Missing required columns: ", paste(missing_cols, collapse = ", "),
-      "\nRequired columns are: year, month, day, ", var_name
-    )
-  }
-
-  # Extract or validate years
-  if (is.null(syear)) {
-    syear <- utils::head(data, 1) %>%
-      dplyr::pull("year")
-  }
-
-  if (is.null(eyear)) {
-    eyear <- utils::tail(data, 1) %>%
-      dplyr::pull("year")
-  }
-
-  # Ensure trailing slash on path
-  path <- .add_trailing_slash(path)
-
-  # Create directory if it doesn't exist
-  fs::dir_create(path, recurse = TRUE)
-
-  # Format station name for filename
-  stn_formatted <- snakecase::to_any_case(stn, case = "snake", sep_out = "_")
-
-  # Get header
-  header <- .get_header(
-    var_name = "et0",
-    stn = stn,
+  .write_climate_file(
+    path = path,
+    site_name = site_name,
+    data = data,
+    var_cols = var_name,
+    header_var_name = "et0",
+    file_ext = ".ETo",
     syear = syear,
     eyear = eyear,
     eol = eol,
     record_type = record_type,
     first_day = first_day,
-    first_month = first_month
+    first_month = first_month,
+    col_widths = 10
   )
-
-  # Prepare data for output (select only the ETo column)
-  eto_data <- data %>%
-    dplyr::select(!!rlang::sym(var_name))
-
-  # Write file
-  output_file <- paste0(path, stn_formatted, ".ETo")
-
-  readr::write_file(x = header, file = output_file)
-
-  write_fwf(eto_data, file = output_file, width = 10, justify = "r")
-
-  # Return invisibly with file path
-  invisible(output_file)
 }
 
 

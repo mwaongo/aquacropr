@@ -6,7 +6,7 @@
 \usage{
 write_plu(
   path = "CLIMATE/",
-  stn = NULL,
+  site_name = NULL,
   data = NULL,
   var_name = "rain",
   syear = NULL,
@@ -20,7 +20,7 @@ write_plu(
 \arguments{
 \item{path}{Directory path where the output .PLU file will be written. Default = "CLIMATE/"}
 
-\item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
+\item{site_name}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 
 \item{data}{Data frame containing daily rainfall data. Can have either:
 \itemize{
@@ -45,7 +45,7 @@ Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 }
 \value{
 Invisibly returns the full path to the created .PLU file. Creates a formatted .PLU file
-in the specified directory with the format: <\if{html}{\out{<stn>}}>.PLU containing daily rainfall data
+in the specified directory with the format: <<site_name>>.PLU containing daily rainfall data
 as required by AquaCrop v7.0.
 }
 \description{
@@ -60,7 +60,7 @@ data("weather")
 # Write rainfall file with default column name
 write_plu(
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   data = weather
 )
 
@@ -75,10 +75,17 @@ write_plu(data = weather_with_station, path = "climate/")
 \code{\link{write_tnx}} for writing temperature files
 
 Other AquaCrop file writers: 
+\code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},
+\code{\link{write_gwt}()},
+\code{\link{write_irr}()},
 \code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()},
 \code{\link{write_tnx}()}

@@ -4,49 +4,44 @@
 \alias{install_binaries}
 \title{Install AquaCrop Binary}
 \usage{
-install_binaries(version = NULL, os = NULL, path, force = FALSE)
+install_binaries(
+  version = NULL,
+  os = NULL,
+  path,
+  force = FALSE,
+  compiler = "gfortran",
+  keep_source = FALSE
+)
 }
 \arguments{
 \item{version}{Character string specifying the AquaCrop version to install.
-If \code{NULL} (default), installs the latest available version.
+If NULL (default), installs the latest available version.
 Version must be >= 7.0. Accepts formats like "7.1", "v7.1", or "7.1.0".
+Use "dev" to compile from latest source code.
 If requested version is < 7.0 or > latest, falls back to latest version.}
 
-\item{os}{Character string specifying the operating system: "windows", "linux",
-or "macos". If \code{NULL} (default), automatically detects the current OS.}
+\item{os}{Character string specifying the operating system: "windows",
+"linux", or "macos". If NULL (default), automatically detects current OS.}
 
-\item{path}{Character string specifying the installation directory path where
-the AquaCrop executable will be installed.}
+\item{path}{Character string specifying the installation directory path
+where the AquaCrop executable will be installed.}
 
-\item{force}{Logical. If \code{TRUE}, reinstalls even if executable already exists.
-If \code{FALSE} (default), skips installation if executable is present.}
+\item{force}{Logical. If TRUE, reinstalls even if executable already exists.
+Default: FALSE.}
+
+\item{compiler}{Character. Fortran compiler for dev builds.
+Default: "gfortran". Only used when version = "dev".}
+
+\item{keep_source}{Logical. Keep source code after compilation.
+Default: FALSE. Only used when version = "dev".}
 }
 \value{
 Invisibly returns the installed version number as a character string.
 }
 \description{
-Downloads and installs the AquaCrop executable for the current operating system.
-Automatically detects OS, manages versioning with intelligent fallbacks, and caches
-downloads to avoid repeated transfers.
-}
-\details{
-The function performs the following steps:
-\itemize{
-\item Detects the operating system if not specified
-\item Queries GitHub for the latest AquaCrop release
-\item Validates the requested version (minimum 7.0)
-\item Downloads the binary from GitHub releases (with 5-minute timeout)
-\item Validates cached downloads to detect corruption
-\item Extracts and installs the executable
-\item Sets appropriate permissions on Unix systems
-}
-
-Fallback behavior:
-\itemize{
-\item Version < 7.0 → falls back to latest
-\item Version > latest → falls back to latest
-\item Download failure → retries with latest version
-}
+Downloads and installs the AquaCrop executable for the current operating
+system. Automatically detects OS, manages versioning with intelligent
+fallbacks, and caches downloads to avoid repeated transfers.
 }
 \examples{
 \dontrun{
@@ -56,11 +51,11 @@ install_binaries(path = "~/aquacrop")
 # Install specific version
 install_binaries(version = "7.1", path = "~/aquacrop")
 
+# Install dev version (compile from source)
+install_binaries(version = "dev", path = "~/aquacrop")
+
 # Force reinstall
 install_binaries(version = "7.1", path = "~/aquacrop", force = TRUE)
-
-# Specify OS explicitly
-install_binaries(version = "7.1", os = "linux", path = "~/aquacrop")
 }
 
 }

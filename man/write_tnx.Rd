@@ -6,13 +6,13 @@
 \usage{
 write_tnx(
   path = "CLIMATE/",
-  stn = NULL,
+  site_name = NULL,
   data = NULL,
   var_name_min = "tmin",
   var_name_max = "tmax",
   syear = NULL,
   eyear = NULL,
-  eol = "NULL",
+  eol = NULL,
   record_type = 1,
   first_day = 1,
   first_month = 1
@@ -21,7 +21,7 @@ write_tnx(
 \arguments{
 \item{path}{Directory path where the output .Tnx file will be written. Default = "CLIMATE/"}
 
-\item{stn}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
+\item{site_name}{Station name or identifier for the weather station. Default = NULL (extracted from data if available)}
 
 \item{data}{Data frame containing daily temperature data. Can have either:
 \itemize{
@@ -48,7 +48,7 @@ Options: "windows", "unix", "linux", or "macOS". Default = "windows"}
 }
 \value{
 Invisibly returns the full path to the created .Tnx file. Creates a formatted .Tnx file
-in the specified directory with the format: <\if{html}{\out{<stn>}}>.Tnx containing daily minimum and
+in the specified directory with the format: <<site_name>>.Tnx containing daily minimum and
 maximum temperature data as required by AquaCrop v7.0.
 }
 \description{
@@ -63,7 +63,7 @@ data("weather")
 # Write temperature file with default column names
 write_tnx(
   path = "weather/",
-  stn = "Wakanda_Station",
+  site_name = "Wakanda_Station",
   data = weather
 )
 
@@ -78,11 +78,18 @@ write_tnx(data = weather_with_station, path = "climate/")
 \code{\link{write_eto}} for writing ETo files
 
 Other AquaCrop file writers: 
+\code{\link{write_cal}()},
+\code{\link{write_cal_batch}()},
 \code{\link{write_cli}()},
 \code{\link{write_cro}()},
 \code{\link{write_eto}()},
+\code{\link{write_gwt}()},
+\code{\link{write_irr}()},
 \code{\link{write_man}()},
+\code{\link{write_obs}()},
+\code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()}
 }

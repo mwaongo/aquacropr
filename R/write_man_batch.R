@@ -2,7 +2,7 @@
 #'
 #' Generate AquaCrop MAN files for multiple stations in a batch.
 #'
-#' @param station_name Character vector or `NULL`. Names of stations to process:
+#' @param site_name Character vector or `NULL`. Names of stations to process:
 #'   - If `NULL`, all stations are automatically discovered from `.CLI` files in the `CLIMATE/` directory.
 #'   - If a vector, only the specified stations will be processed; all must have corresponding climate files.
 #' @param params Either:
@@ -38,7 +38,7 @@
 #' base_params <- list(var_03 = 20, var_04 = 60, var_05 = 50)
 #' stations <- c("grid_001", "grid_002")
 #' write_man_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   params = base_params
 #' )
 #'
@@ -48,14 +48,14 @@
 #'   list(var_03 = 60, var_04 = 80, var_05 = 70) # High fertility, heavy mulch
 #' )
 #' write_man_batch(
-#'   station_name = stations,
+#'   site_name = stations,
 #'   params = params_list,
 #'   path = "MANAGEMENT/"
 #' )
 #'
 #' # Example 3: Auto-discover all stations, default parameters
 #' write_man_batch(
-#'   station_name = NULL,
+#'   site_name = NULL,
 #'   params = NULL,
 #'   base_path = "/my/project/path",
 #'   verbose = FALSE
@@ -68,7 +68,7 @@
 #'   list(var_05 = 90) # Station 3: high fertility
 #' )
 #' write_man_batch(
-#'   station_name = c("site_A", "site_B", "site_C"),
+#'   site_name = c("site_A", "site_B", "site_C"),
 #'   params = params_list
 #' )
 #' }
@@ -82,7 +82,7 @@
 #' @importFrom fs dir_exists dir_ls file_delete
 #' @export
 write_man_batch <- function(
-    station_name = NULL,
+    site_name = NULL,
     params = NULL,
     path = "MANAGEMENT/",
     eol = NULL,
@@ -90,125 +90,52 @@ write_man_batch <- function(
     base_path = getwd(),
     verbose = TRUE,
     clean = FALSE) {
-  # Clean MANAGEMENT/ directory if clean = TRUE
-  if (clean && fs::dir_exists(path)) {
-    files <- fs::dir_ls(path, regexp = "\\.MAN$")
-    if (length(files) > 0) {
-      fs::file_delete(files)
-      if (verbose) message("Cleaned ", length(files), " file(s) from ", path)
-    }
+
+  # Clean directory if requested
+  if (clean) {
+    .clean_directory(path, "\\.MAN$", verbose)
   }
 
-  # Discover or validate station_name from climate files
-  cli_dir <- file.path(base_path, climate_path)
-  cli_files <- list.files(
-    cli_dir,
-    pattern = "\\.CLI$",
-    ignore.case = TRUE
+  # Discover or validate stations from climate files
+  site_name <- .discover_or_validate_items(
+    item_names = site_name,
+    climate_path = climate_path,
+    base_path = base_path,
+    item_type = "site",
+    verbose = verbose
   )
-  available_stations <- tools::file_path_sans_ext(cli_files)
 
-  if (is.null(station_name)) {
-    if (length(available_stations) == 0) {
-      stop(
-        "No stations to process.\n",
-        "No climate files were found in '", cli_dir, "'.\n",
-        "Please generate climate files first using write_climate().",
-        call. = FALSE
-      )
-    }
-    station_name <- available_stations
-    if (verbose) {
-      message(
-        "Auto-discovered ", length(station_name), " station(s): ",
-        paste(head(station_name, 5), collapse = ", "),
-        if (length(station_name) > 5) "..." else ""
-      )
-    }
-  } else {
-    missing <- setdiff(station_name, available_stations)
-    if (length(missing) > 0) {
-      stop(
-        "Some stations do not have corresponding climate files.\n",
-        "Missing climate files for: ",
-        paste(missing, collapse = ", "), "\n",
-        "Available stations: ",
-        paste(head(available_stations, 5), collapse = ", "),
-        if (length(available_stations) > 5) "..." else "", "\n",
-        "Please generate them first using write_climate().",
-        call. = FALSE
-      )
-    }
-  }
+  # Warn if single item
+  n <- length(site_name)
+  .warn_single_item(n, "write_man_batch", "write_man", verbose)
 
-  # Station count validation
-  n <- length(station_name)
-  if (n == 1 && verbose) {
-    warning(
-      "write_man_batch() called with a single station.\n",
-      "Consider using write_man() instead for clarity.",
-      call. = FALSE
-    )
-  }
+  # Normalize params to list of lists
+  params <- .normalize_batch_params(params, n, "management", verbose)
 
-  # Handle params
-  if (is.null(params)) {
-    params <- list()
-  }
-
-  if (is.list(params) && length(params) > 0 && !is.null(names(params))) {
-    # Single named list - apply to all stations
-    if (verbose) {
-      message("Applying the same management parameters to all ", n, " station(s)")
-    }
-    params <- rep(list(params), n)
-  } else if (is.list(params) && length(params) == 0) {
-    # Empty list - use defaults for all
-    if (verbose) {
-      message("Using default management parameters for all ", n, " station(s)")
-    }
-    params <- rep(list(list()), n)
-  } else if (!is.list(params) || length(params) != n) {
-    stop(
-      "params must be either:\n",
-      "  - A single named list (applied to all stations), or\n",
-      "  - A list of lists with length matching station_name\n",
-      "Expected length: ", n, ", got: ", length(params),
-      call. = FALSE
-    )
-  }
-
-  # Write MAN files for each station
+  # Write MAN files
   if (verbose) {
-    message("Writing MAN files for ", n, " station(s)...")
+    message("Writing MAN files for ", n, " site(s)...")
   }
 
-  # Progress counter
-  counter <- 0
-
-  purrr::pwalk(
-    .l = list(
-      station_name = station_name,
-      params = params
-    ),
-    .f = function(station_name, params) {
-      if (verbose) {
-        counter <<- counter + 1
-        message("  [", counter, "/", n, "] Processing station: ", station_name)
-      }
-
-      # Call write_man with explicit arguments
+  .batch_with_progress(
+    items = site_name,
+    params = params,
+    verbose = verbose,
+    item_type = "site",
+    fn = function(item, params, path, eol) {
       write_man(
-        management_name = station_name,
+        site_name = item,
         params = params,
         path = path,
         eol = eol
       )
-    }
+    },
+    path = path,
+    eol = eol
   )
 
   if (verbose) {
-    message("Successfully created MAN files for ", n, " station(s)")
+    message("Successfully created MAN files for ", n, " site(s)")
   }
 
   invisible(NULL)

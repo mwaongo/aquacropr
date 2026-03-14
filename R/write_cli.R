@@ -6,7 +6,7 @@
 #' for the simulation scenario.
 #'
 #' @param path Directory path where climate files are located and where .CLI will be written. Default = "weather/"
-#' @param stn Station name or identifier. The .Tnx, .ETo, and .PLU files with this
+#' @param site_name Station name or identifier. The .Tnx, .ETo, and .PLU files with this
 #'   station name must exist in the path. Default = "station"
 #' @param eol End-of-line character style for the output file.
 #'   Options: "windows", "unix", "linux", or "macOS". Default = "windows"
@@ -51,28 +51,28 @@
 #' \dontrun{
 #' # First, create the required climate files
 #' data("weather")
-#' write_plu(data = weather, stn = "Wakanda", path = "weather/")
-#' write_eto(data = weather, stn = "Wakanda", path = "weather/")
-#' write_tnx(data = weather, stn = "Wakanda", path = "weather/")
+#' write_plu(data = weather, site_name = "Wakanda", path = "weather/")
+#' write_eto(data = weather, site_name = "Wakanda", path = "weather/")
+#' write_tnx(data = weather, site_name = "Wakanda", path = "weather/")
 #'
 #' # Then write CLI file with historical CO2
 #' write_cli(
 #'   path = "weather/",
-#'   stn = "Wakanda",
+#'   site_name = "Wakanda",
 #'   scenario = "hist"
 #' )
 #'
 #' # Write CLI file with RCP 4.5 scenario
 #' write_cli(
 #'   path = "weather/",
-#'   stn = "Wakanda",
+#'   site_name = "Wakanda",
 #'   scenario = "rcp45"
 #' )
 #'
 #' # Skip validation (not recommended)
 #' write_cli(
 #'   path = "weather/",
-#'   stn = "Wakanda",
+#'   site_name = "Wakanda",
 #'   scenario = "hist",
 #'   check_files = FALSE
 #' )
@@ -86,7 +86,7 @@
 #' @export
 write_cli <- function(
     path = "weather/",
-    stn = "station",
+    site_name = "station",
     eol = "windows",
     scenario = "hist",
     check_files = TRUE) {
@@ -96,22 +96,21 @@ write_cli <- function(
   # Create directory if it doesn't exist
   fs::dir_create(path, recurse = TRUE)
 
-  # Format station name for filenames
-  stn_formatted <- snakecase::to_any_case(stn, case = "snake", sep_out = "_")
+  # Use station name as-is for filenames
 
   # Check if required climate files exist
   if (check_files) {
-    required_files <- paste0(path, stn_formatted, c(".Tnx", ".ETo", ".PLU"))
+    required_files <- paste0(path, site_name, c(".Tnx", ".ETo", ".PLU"))
     missing_files <- required_files[!fs::file_exists(required_files)]
 
     if (length(missing_files) > 0) {
       stop(
-        "Cannot create .CLI file: Missing required climate files for station '", stn, "':\n",
+        "Cannot create .CLI file: Missing required climate files for station '", site_name, "':\n",
         paste("  - ", basename(missing_files), collapse = "\n"),
         "\n\nPlease create these files first using:\n",
-        "  write_tnx(data = your_data, stn = '", stn, "', path = '", path, "')\n",
-        "  write_eto(data = your_data, stn = '", stn, "', path = '", path, "')\n",
-        "  write_plu(data = your_data, stn = '", stn, "', path = '", path, "')"
+        "  write_tnx(data = your_data, site_name = '", site_name, "', path = '", path, "')\n",
+        "  write_eto(data = your_data, site_name = '", site_name, "', path = '", path, "')\n",
+        "  write_plu(data = your_data, site_name = '", site_name, "', path = '", path, "')"
       )
     }
   }
@@ -162,9 +161,9 @@ write_cli <- function(
   cli_content <- c(
     header_1,
     header_2,
-    paste0(stn_formatted, ".Tnx"),
-    paste0(stn_formatted, ".ETo"),
-    paste0(stn_formatted, ".PLU"),
+    paste0(site_name, ".Tnx"),
+    paste0(site_name, ".ETo"),
+    paste0(site_name, ".PLU"),
     co2_file
   )
 
@@ -172,7 +171,7 @@ write_cli <- function(
   sep <- .get_eol(eol = eol)
 
   # Write CLI file
-  output_file <- paste0(path, stn_formatted, ".CLI")
+  output_file <- paste0(path, site_name, ".CLI")
 
   readr::write_lines(
     x = cli_content,

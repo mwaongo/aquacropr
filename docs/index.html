@@ -4,287 +4,326 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tools that make AquaCropv7 files handling easier • aquacroptools</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>R interface to the FAO AquaCrop crop water productivity model (v7.0+) • aquacropr</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Tools that make AquaCropv7 files handling easier">
-<meta property="og:description" content="Tools that make AquaCropv7 files handling easier.In other words, some functions that can allow you to handle aquacrop v7 data really quicly. AquaCrop is a crop growth model developed by the Land and Water Division of FAO to address food security and to assess the effect of environment and management on crop production.">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R interface to the FAO AquaCrop crop water productivity model (v7.0+)">
+<meta name="description" content="R interface to AquaCrop v7.0 and higher, the FAO crop water productivity model. Streamlines reading, writing, and managing AquaCrop input/output files for batch simulations, climate scenario analysis, and crop yield assessment.">
+<meta property="og:description" content="R interface to AquaCrop v7.0 and higher, the FAO crop water productivity model. Streamlines reading, writing, and managing AquaCrop input/output files for batch simulations, climate scenario analysis, and crop yield assessment.">
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">aquacroptools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <a class="navbar-brand me-2" href="index.html">aquacropr</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/regional_sim.html">Regional Crop Simulations Using aquacroptools</a>
-    </li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+<li><a class="dropdown-item" href="articles/settingup.html">Setting up</a></li>
+    <li><a class="dropdown-item" href="articles/sowingdate.html">Sowing date</a></li>
+    <li><a class="dropdown-item" href="articles/regionalsim.html">Regional simulation</a></li>
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/oousmane/aquacroptools/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/mwaongo/aquacropr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
-
-
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-
-<div class="section level2">
-<h2 id="aquacroptools-">aquacroptools <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#aquacroptools-"></a>
-</h2>
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="aquacropr-">aquacropr <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#aquacropr-"></a>
+</h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>R tools and wrappers for running FAO AquaCrop in reproducible workflows</p>
+<p>R tools and wrappers for running FAO AquaCrop in reproducible workflows.</p>
+</div>
+<div class="section level1">
+<h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h1>
+<p>AquaCrop is the FAO reference model for simulating crop yield response to water stress (Steduto et al., 2009; Raes et al., 2009). Its strong scientific foundation and relatively low data requirements have made it a reference tool for research, operational studies, and climate impact assessments worldwide.</p>
+<p>Running AquaCrop at scale, however, can be tedious. The model relies on a file-based workflow — each simulation requires manually preparing a set of formatted input files for climate, soil, crop, irrigation, and management parameters, then invoking the executable, and finally parsing the output files one by one. This becomes a bottleneck as soon as simulations span multiple sites, years, or scenarios.</p>
+<p><strong>aquacropr</strong> solves this by providing a lightweight R interface that automates the entire workflow. It handles input file generation, batch simulation orchestration, and output parsing — all from R, all scriptable, and all compatible with standard tidyverse and spatial workflows. The model engine itself is never touched: aquacropr always delegates computation to the official FAO AquaCrop binary, ensuring full scientific validity and consistency with published results.</p>
+<div class="section level2">
+<h2 id="what-you-can-do-with-aquacropr">What you can do with aquacropr<a class="anchor" aria-label="anchor" href="#what-you-can-do-with-aquacropr"></a>
+</h2>
+<ul>
+<li>
+<strong>Generate input files programmatically</strong> — convert R data frames directly into AquaCrop-compatible climate, soil, crop, irrigation, and management files, with no manual editing.</li>
+<li>
+<strong>Run batch simulations at scale</strong> — automate simulations across station networks, climate scenarios, planting date calendars, or multi-year periods.</li>
+<li>
+<strong>Parse and tidy outputs</strong> — read AquaCrop result files into structured data frames ready for analysis, visualization, or export.</li>
+<li>
+<strong>Build reproducible workflows</strong> — script the full chain from raw data to final results, enabling version control, traceability, and collaboration.</li>
+</ul>
 </div>
 <div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+<h2 id="who-it-is-for">Who it is for<a class="anchor" aria-label="anchor" href="#who-it-is-for"></a>
 </h2>
-<p>AquaCrop is a crop simulation model developed by the Food and Agriculture Organization of the United Nations (FAO) to simulate crop yield response to water availability, climate variability, and management practices. Due to its strong scientific foundation and relatively low data requirements, AquaCrop is widely used in research, operational studies, and climate impact assessments worldwide.</p>
-<p>The aquacrotools R package provides a lightweight interface and a comprehensive set of utilities to run AquaCrop from R, automate batch simulations, and post-process model outputs in a reproducible and scalable manner. By bridging the gap between AquaCrop’s file-based workflow and modern data analysis environments, aquacrotools enables researchers and practitioners to leverage the full power of both AquaCrop’s simulation engine and R’s data science ecosystem.</p>
-</div>
-<div class="section level2">
-<h2 id="key-capabilities">Key Capabilities<a class="anchor" aria-label="anchor" href="#key-capabilities"></a>
-</h2>
-<p>aquacrotools enables users to:</p>
-<p><strong>Input Management</strong>: Programmatically generate AquaCrop input files for climate, crop parameters, soil properties, and management practices. Convert data frames and spatial datasets directly into AquaCrop-compatible formats without manual file editing.</p>
-<p><strong>Batch Simulation</strong>: Run AquaCrop simulations at scale across multiple stations, scenarios, years, or climate projections. Automate repetitive simulation tasks and parallelize computations for large-scale assessments.</p>
-<p><strong>Output Processing</strong>: Read, parse, and tidy AquaCrop output files into structured data frames ready for analysis. Extract time series data, final yields, water balance components, and other model outputs programmatically.</p>
-<p><strong>Workflow Integration</strong>: Seamlessly integrate AquaCrop simulations into tidyverse and spatial R workflows. Combine crop modeling with climate data processing, statistical analysis, and visualization in a single reproducible script.</p>
-<p><strong>Reproducibility</strong>: Version control your entire modeling workflow, from data preparation through simulation to analysis. Document parameter choices, ensure traceability, and facilitate collaboration through scripted workflows.</p>
-</div>
-<div class="section level2">
-<h2 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
-</h2>
-<p>The package does not modify AquaCrop equations or internal model logic. All simulations rely on the official AquaCrop engine distributed by FAO, ensuring scientific validity and consistency with published research. aquacrotools acts as an interface layer, handling file I/O, batch orchestration, and data transformation while preserving AquaCrop’s core functionality.</p>
-</div>
-<div class="section level2">
-<h2 id="typical-applications">Typical Applications<a class="anchor" aria-label="anchor" href="#typical-applications"></a>
-</h2>
-<p><strong>Regional and Large-Scale Crop Yield Assessments</strong>: Simulate crop performance across multiple locations using gridded climate data, station networks, or spatial datasets. Aggregate results at administrative boundaries for decision support and policy analysis.</p>
-<p><strong>Climate Variability and Change Impact Studies</strong>: Evaluate crop response to historical climate variability, drought events, or future climate projections. Quantify yield impacts under different Representative Concentration Pathways (RCPs) or Shared Socioeconomic Pathways (SSPs).</p>
-<p><strong>Water Management and Irrigation Optimization</strong>: Compare rainfed versus irrigated conditions, test deficit irrigation strategies, or optimize irrigation schedules. Assess water productivity and identify water-saving management practices.</p>
-<p><strong>Agronomic Practice Evaluation</strong>: Explore the impact of planting dates, cultivar selection, fertilization regimes, or mulching practices on crop performance. Identify optimal management strategies for specific agro-climatic zones.</p>
-<p><strong>Operational Crop Monitoring</strong>: Integrate near-real-time climate data for within-season yield forecasting. Support early warning systems and agricultural advisory services with up-to-date simulation results.</p>
-<p><strong>Research and Capacity Building</strong>: Facilitate reproducible crop modeling research, enable sensitivity analyses, and support training activities. Lower the technical barrier to AquaCrop adoption through accessible R-based workflows.</p>
-</div>
-<div class="section level2">
-<h2 id="target-users">Target Users<a class="anchor" aria-label="anchor" href="#target-users"></a>
-</h2>
-<p>aquacrotools is designed for agronomists, climate scientists, hydrologists, agricultural economists, and data analysts working on crop-water-climate interactions. The package is particularly useful for researchers conducting regional assessments, operational services requiring automated simulation pipelines, and anyone seeking to integrate crop modeling into broader analytical workflows.</p>
-</div>
-<div class="section level2">
-<h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
-</h2>
-<p>The package documentation includes detailed vignettes on setting up your AquaCrop environment, preparing input data, running simulations, and analyzing outputs. Example datasets and workflows demonstrate common use cases and best practices for reproducible crop modeling with R and AquaCrop.</p>
+<p>aquacropr is aimed at agronomists, climate scientists, hydrologists, and data analysts working on crop-water-climate interactions — whether for regional yield assessments, climate change impact studies, irrigation optimization, operational crop monitoring, or research and capacity building.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of aquacroptools from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mwaongo/aquacroptools"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mwaongo/aquacropr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example---basic-usage">Example - Basic Usage<a class="anchor" aria-label="anchor" href="#example---basic-usage"></a>
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>This is a basic example which shows you how to use aquacroptools to create climate files:</p>
+<p>The first step is to set up a dedicated project directory. <code><a href="reference/init_aquacrop.html">init_aquacrop()</a></code> creates the standard AquaCrop folder structure and downloads the official FAO binary appropriate for your operating system.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/oousmane/aquacroptools" class="external-link">aquacroptools</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mwaongo/aquacropr" class="external-link">aquacropr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Load example dataset</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"weather"</span><span class="op">)</span> <span class="co"># load example weather dataset</span></span>
-<span></span>
-<span><span class="co"># Check the data structure</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather</span><span class="op">)</span></span>
-<span><span class="co"># The dataset should contain columns: year, month, day, rain, et0, tmin, tmax</span></span>
-<span></span>
-<span><span class="co">## Create output directory if it doesn't exist</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://fs.r-lib.org/reference/file_access.html" class="external-link">dir_exists</a></span><span class="op">(</span><span class="st">"climate/"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="st">"climate/"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Write individual climate files</span></span>
-<span><span class="fu"><a href="reference/write_plu.html">write_plu</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"climate/"</span>, data <span class="op">=</span> <span class="va">weather</span><span class="op">)</span>  <span class="co"># write .PLU file (rainfall)</span></span>
-<span><span class="fu"><a href="reference/write_tnx.html">write_tnx</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"climate/"</span>, data <span class="op">=</span> <span class="va">weather</span><span class="op">)</span>  <span class="co"># write .Tnx file (temperature)</span></span>
-<span><span class="fu"><a href="reference/write_eto.html">write_eto</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"climate/"</span>, data <span class="op">=</span> <span class="va">weather</span><span class="op">)</span>  <span class="co"># write .ETo file (reference ET)</span></span>
-<span></span>
-<span><span class="co">## Write climate master file that links all the above</span></span>
-<span><span class="fu"><a href="reference/write_cli.html">write_cli</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"climate/"</span>,      <span class="co"># path where we have station files (PLU, ETo, Tnx)</span></span>
-<span>  stn <span class="op">=</span> <span class="st">"wakanda"</span>,        <span class="co"># name of the station for files: wakanda.PLU, wakanda.ETo, wakanda.Tnx</span></span>
-<span>  scenario <span class="op">=</span> <span class="st">"hist"</span>,      <span class="co"># climate data scenario: hist, rcp26, rcp45, rcp60, rcp85, ssp119, ssp126, ssp245, ssp370, ssp585</span></span>
-<span>  check_files <span class="op">=</span> <span class="cn">TRUE</span>      <span class="co"># verify that all required files exist</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="example---using-write_climate-recommended">Example - Using write_climate() (Recommended)<a class="anchor" aria-label="anchor" href="#example---using-write_climate-recommended"></a>
-</h2>
-<p>For convenience, you can create all climate files at once using <code><a href="reference/write_climate.html">write_climate()</a></code>:</p>
+<span><span class="fu"><a href="reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"my-project"</span>, version <span class="op">=</span> <span class="st">"7.2"</span><span class="op">)</span></span></code></pre></div>
+<p>This will open by default a new clean RStudio project. Consult <code>readme.txt</code> to understand the directory structure.</p>
+<p>The workflow below walks through a complete single-station simulation: <strong>climate → crop → soil → management → irrigation → onset calendar → project file → run</strong>. Every step produces one or more AquaCrop-formatted files directly from R objects, with no manual editing.</p>
+<div class="section level3">
+<h3 id="climate">Climate<a class="anchor" aria-label="anchor" href="#climate"></a>
+</h3>
+<p>aquacropr ships with a built-in <code>weather</code> dataset containing daily observations for a single station. Inspect it first, then a single call to <code><a href="reference/write_climate.html">write_climate()</a></code> generates all four climate files required by AquaCrop.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/oousmane/aquacroptools" class="external-link">aquacroptools</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   year month day rain  et0 tmin tmax</span></span>
+<span><span class="co">#&gt; 1 1976     1   1  0.0 3.21  9.2 24.1</span></span>
+<span><span class="co">#&gt; 2 1976     1   2  0.0 3.45 10.1 25.3</span></span>
+<span><span class="co">#&gt; 3 1976     1   3  2.4 2.87  8.7 21.6</span></span>
 <span></span>
-<span><span class="co">## Load example dataset</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"weather"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Create output directory</span></span>
-<span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="st">"climate/"</span>, recurse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Write all climate files at once</span></span>
 <span><span class="fu"><a href="reference/write_climate.html">write_climate</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"climate/"</span>,</span>
-<span>  stn <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">weather</span>,         <span class="co"># Must contain: year, month, day, rain, et0, tmin, tmax</span></span>
-<span>  scenario <span class="op">=</span> <span class="st">"hist"</span></span>
+<span>  data      <span class="op">=</span> <span class="va">weather</span>,</span>
+<span>  site_name <span class="op">=</span> <span class="st">"wakanda"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># This creates: wakanda.PLU, wakanda.Tnx, wakanda.ETo, wakanda.CLI</span></span></code></pre></div>
+<span><span class="co"># → CLIMATE/wakanda.PLU  (rainfall)</span></span>
+<span><span class="co"># → CLIMATE/wakanda.Tnx  (min/max temperature)</span></span>
+<span><span class="co"># → CLIMATE/wakanda.ETo  (reference evapotranspiration)</span></span>
+<span><span class="co"># → CLIMATE/wakanda.CLI  (master file linking the three above)</span></span></code></pre></div>
+<p>If you need finer control over file content or naming, individual writers (<code><a href="reference/write_plu.html">write_plu()</a></code>, <code><a href="reference/write_tnx.html">write_tnx()</a></code>, <code><a href="reference/write_eto.html">write_eto()</a></code>, <code><a href="reference/write_cli.html">write_cli()</a></code>) are also available.</p>
 </div>
-<div class="section level2">
-<h2 id="example---complete-workflow">Example - Complete Workflow<a class="anchor" aria-label="anchor" href="#example---complete-workflow"></a>
-</h2>
-<p>Here’s a more complete example showing the full simulation workflow:</p>
+<div class="section level3">
+<h3 id="crop">Crop<a class="anchor" aria-label="anchor" href="#crop"></a>
+</h3>
+<p><code><a href="reference/write_cro.html">write_cro()</a></code> generates the crop parameter file. Default parameters are provided for all crops supported by AquaCrop. Individual parameters can be overridden via <code>params = list(...)</code>, where each element is named by its AquaCrop variable identifier.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/oousmane/aquacroptools" class="external-link">aquacroptools</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 1. Initialize AquaCrop project</span></span>
-<span><span class="fu"><a href="reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"my-aquacrop-project"</span>, version <span class="op">=</span> <span class="st">"7.2"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 2. Set working directory to project</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"my-aquacrop-project"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3. Load and prepare your data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"weather"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 4. Create climate files</span></span>
-<span><span class="fu"><a href="reference/write_climate.html">write_climate</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"CLIMATE/"</span>,</span>
-<span>  stn <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">weather</span>,</span>
-<span>  scenario <span class="op">=</span> <span class="st">"hist"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 5. Create crop file</span></span>
-<span><span class="fu"><a href="reference/write_cro.html">write_cro</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"CROP/"</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/write_cro.html">write_cro</a></span><span class="op">(</span></span>
 <span>  crop_name <span class="op">=</span> <span class="st">"maize"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="co"># Add your crop parameters here</span></span>
+<span>    var_35 <span class="op">=</span> <span class="fl">1.10</span>,  <span class="co"># higher crop coefficient</span></span>
+<span>    var_50 <span class="op">=</span> <span class="fl">0.85</span>,  <span class="co"># maximum canopy cover</span></span>
+<span>    var_64 <span class="op">=</span> <span class="fl">35</span>     <span class="co"># reference harvest index</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 6. Create soil files</span></span>
-<span><span class="fu"><a href="reference/write_sol.html">write_sol</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"SOIL/"</span>,</span>
+<span><span class="co"># → CROP/maize.CRO</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="soil">Soil<a class="anchor" aria-label="anchor" href="#soil"></a>
+</h3>
+<p><code><a href="reference/write_sol.html">write_sol()</a></code> generates the soil profile and initial water content from layer-wise descriptors. Pedotransfer functions (Saxton &amp; Rawls, 2006) are applied automatically to derive hydraulic properties from texture when measured values are unavailable. Salinity class and curve number can be specified per layer.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/write_sol.html">write_sol</a></span><span class="op">(</span></span>
+<span>  site_name     <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
+<span>  cn            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">65</span>, <span class="fl">70</span><span class="op">)</span>,</span>
+<span>  rew           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  texture       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sandy loam"</span>, <span class="st">"clay loam"</span><span class="op">)</span>,</span>
+<span>  thickness     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.6</span><span class="op">)</span>,</span>
+<span>  initial_water <span class="op">=</span> <span class="st">"WP"</span>,</span>
+<span>  salinity      <span class="op">=</span> <span class="st">"very slight"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># → SOIL/wakanda.SOL</span></span>
+<span><span class="co"># → SOIL/wakanda.SW0</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="management">Management<a class="anchor" aria-label="anchor" href="#management"></a>
+</h3>
+<p><code><a href="reference/write_man.html">write_man()</a></code> generates the field management file. Soil fertility level, mulch cover, and evaporation reduction from mulch are controlled via <code>params</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/write_man.html">write_man</a></span><span class="op">(</span></span>
+<span>  path      <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
 <span>  site_name <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
-<span>  texture <span class="op">=</span> <span class="st">"loam"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/write_swo.html">write_swo</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"SOIL/"</span>,</span>
-<span>  soil_name <span class="op">=</span> <span class="st">"wakanda"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 7. Create management file (optional)</span></span>
-<span><span class="fu"><a href="reference/write_man.html">write_man</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
-<span>  management_name <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="co"># Add your management parameters here</span></span>
+<span>    var_05 <span class="op">=</span> <span class="fl">35</span>,  <span class="co"># 35% fertility level</span></span>
+<span>    var_03 <span class="op">=</span> <span class="fl">30</span>,  <span class="co"># 30% mulch cover</span></span>
+<span>    var_04 <span class="op">=</span> <span class="fl">50</span>   <span class="co"># 50% evaporation reduction from mulch</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 8. Create project file</span></span>
-<span><span class="fu"><a href="reference/write_prm.html">write_prm</a></span><span class="op">(</span></span>
-<span>  path <span class="op">=</span> <span class="st">"LIST/"</span>,</span>
-<span>  station_name <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
-<span>  year <span class="op">=</span> <span class="fl">2020</span>,</span>
-<span>  planting_doy <span class="op">=</span> <span class="fl">121</span>,  <span class="co"># May 1st</span></span>
-<span>  crop_name <span class="op">=</span> <span class="st">"maize"</span>,</span>
-<span>  crop_path <span class="op">=</span> <span class="st">"./CROP/"</span>,</span>
-<span>  climate_path <span class="op">=</span> <span class="st">"./CLIMATE/"</span>,</span>
-<span>  management_path <span class="op">=</span> <span class="st">"./MANAGEMENT/"</span>,</span>
-<span>  soil_path <span class="op">=</span> <span class="st">"./SOIL/"</span>,</span>
-<span>  base_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># → MANAGEMENT/wakanda.MAN</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="irrigation">Irrigation<a class="anchor" aria-label="anchor" href="#irrigation"></a>
+</h3>
+<p>aquacropr supports all AquaCrop irrigation modes. For automatic irrigation (mode 2), <code><a href="reference/create_irr_schedule.html">create_irr_schedule()</a></code> first builds the schedule data frame — defining trigger thresholds and application depths for successive crop periods — which is then passed to <code><a href="reference/write_irr.html">write_irr()</a></code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">schedule_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_irr_schedule.html">create_irr_schedule</a></span><span class="op">(</span></span>
+<span>  from_day        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">30</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  time_crit       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">40</span>, <span class="fl">30</span><span class="op">)</span>,   <span class="co"># % RAW depletion threshold per period</span></span>
+<span>  depth_crit      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,      <span class="co"># back to FC (+ 5 mm on last period)</span></span>
+<span>  ecw             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span><span class="op">)</span>,</span>
+<span>  time_crit_code  <span class="op">=</span> <span class="fl">3</span>,               <span class="co"># criterion: % RAW</span></span>
+<span>  depth_crit_code <span class="op">=</span> <span class="fl">1</span>                <span class="co"># application: back to field capacity</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 9. Run simulation</span></span>
-<span><span class="fu"><a href="reference/run_aquacrop.html">run_aquacrop</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 10. Read and analyze results</span></span>
-<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">read_seas_out</span><span class="op">(</span><span class="st">"OUTP/wakandaPRMseason.OUT"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/write_irr.html">write_irr</a></span><span class="op">(</span></span>
+<span>  path        <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
+<span>  site_name   <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
+<span>  method      <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  wet_surface <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  mode        <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  irr_data    <span class="op">=</span> <span class="va">schedule_raw</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># → MANAGEMENT/wakanda.IRR</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="onset-calendar">Onset calendar<a class="anchor" aria-label="anchor" href="#onset-calendar"></a>
+</h3>
+<p>When planting dates depend on seasonal rainfall onset rather than a fixed calendar date — the standard situation in rainfed systems — <code><a href="reference/write_cal.html">write_cal()</a></code> defines the onset criterion. <code><a href="reference/find_onset.html">find_onset()</a></code> is then called internally by <code><a href="reference/write_prm.html">write_prm()</a></code> to derive planting dates for each year in the climate record.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/write_cal.html">write_cal</a></span><span class="op">(</span></span>
+<span>  site_name     <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
+<span>  onset         <span class="op">=</span> <span class="st">"rainfall"</span>,</span>
+<span>  window_start  <span class="op">=</span> <span class="fl">121</span>,   <span class="co"># search starts at DOY 121 (May 1)</span></span>
+<span>  window_length <span class="op">=</span> <span class="fl">92</span>,    <span class="co"># 92-day search window</span></span>
+<span>  criterion     <span class="op">=</span> <span class="fl">4</span>,     <span class="co"># cumulative rainfall criterion</span></span>
+<span>  preset_value  <span class="op">=</span> <span class="fl">50</span>,    <span class="co"># 50 mm threshold</span></span>
+<span>  occurrences   <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># → CAL/wakanda.CAL</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="project-file">Project file<a class="anchor" aria-label="anchor" href="#project-file"></a>
+</h3>
+<p><code><a href="reference/write_prm.html">write_prm()</a></code> assembles all inputs into a single <code>.PRM</code> file. When <code>calendar_path</code> is provided, <code><a href="reference/find_onset.html">find_onset()</a></code> is called internally to derive planting dates from the climate series and the <code>.CAL</code> criterion — no <code>planting_schedule</code> argument is needed. Fixed planting dates can alternatively be supplied directly as a data frame.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/write_prm.html">write_prm</a></span><span class="op">(</span></span>
+<span>  site_name       <span class="op">=</span> <span class="st">"wakanda"</span>,</span>
+<span>  crop_name       <span class="op">=</span> <span class="st">"maize"</span>,</span>
+<span>  irrigation_path <span class="op">=</span> <span class="st">"MANAGEMENT"</span>,</span>
+<span>  calendar_path   <span class="op">=</span> <span class="st">"CAL/"</span></span>
+<span>  <span class="co"># or, for fixed dates:</span></span>
+<span>  <span class="co"># planting_schedule = data.frame(year = 1976:2005, planting_doy = 121)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># → LIST/wakanda.PRM</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="running-the-simulation">Running the simulation<a class="anchor" aria-label="anchor" href="#running-the-simulation"></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/run_aquacrop.html">run_aquacrop</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
-<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
+<h2 id="reading-input-files">Reading input files<a class="anchor" aria-label="anchor" href="#reading-input-files"></a>
 </h2>
-<ul>
-<li>The <code>weather</code> dataset is included in aquacroptools for testing and examples</li>
-<li>Column names in your data should match: <code>year</code>, <code>month</code>, <code>day</code>, <code>rain</code>, <code>et0</code>, <code>tmin</code>, <code>tmax</code>
-</li>
-<li>The <code><a href="reference/write_climate.html">write_climate()</a></code> function is recommended as it ensures all files are created consistently</li>
-<li>For custom column names, use the <code>var_name_*</code> parameters in individual write functions</li>
-</ul>
+<p>All climate and calendar input files can be read back into tidy data frames for inspection or further processing.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/read_cli.html">read_climate</a></span><span class="op">(</span><span class="st">"CLIMATE/wakanda.CLI"</span><span class="op">)</span>  <span class="co"># master file + data</span></span>
+<span><span class="fu"><a href="reference/read_plu.html">read_plu</a></span><span class="op">(</span><span class="st">"CLIMATE/wakanda.PLU"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/read_tnx.html">read_tnx</a></span><span class="op">(</span><span class="st">"CLIMATE/wakanda.Tnx"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/read_eto.html">read_eto</a></span><span class="op">(</span><span class="st">"CLIMATE/wakanda.ETo"</span><span class="op">)</span>      <span class="co"># alias: read_et0()</span></span>
+<span><span class="fu"><a href="reference/read_cal.html">read_cal</a></span><span class="op">(</span><span class="st">"CAL/wakanda.CAL"</span><span class="op">)</span>          <span class="co"># onset parameters</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="key-functions">Key functions<a class="anchor" aria-label="anchor" href="#key-functions"></a>
+</h2>
+<table class="table">
+<thead><tr>
+<th>File type</th>
+<th>Writer</th>
+<th>Batch writer</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Climate (all)</td>
+<td><code><a href="reference/write_climate.html">write_climate()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Rainfall</td>
+<td><code><a href="reference/write_plu.html">write_plu()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td><code><a href="reference/write_tnx.html">write_tnx()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Reference ET</td>
+<td><code><a href="reference/write_eto.html">write_eto()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Crop</td>
+<td><code><a href="reference/write_cro.html">write_cro()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Soil profile</td>
+<td><code><a href="reference/write_sol.html">write_sol()</a></code></td>
+<td><code><a href="reference/write_sol_batch.html">write_sol_batch()</a></code></td>
+</tr>
+<tr>
+<td>Management</td>
+<td><code><a href="reference/write_man.html">write_man()</a></code></td>
+<td><code><a href="reference/write_man_batch.html">write_man_batch()</a></code></td>
+</tr>
+<tr>
+<td>Irrigation</td>
+<td><code><a href="reference/write_irr.html">write_irr()</a></code></td>
+<td><code>write_irr_batch()</code></td>
+</tr>
+<tr>
+<td>Irr. schedule</td>
+<td><code><a href="reference/create_irr_schedule.html">create_irr_schedule()</a></code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Calendar (onset)</td>
+<td><code><a href="reference/write_cal.html">write_cal()</a></code></td>
+<td><code><a href="reference/write_cal_batch.html">write_cal_batch()</a></code></td>
+</tr>
+<tr>
+<td>Project file</td>
+<td><code><a href="reference/write_prm.html">write_prm()</a></code></td>
+<td><code><a href="reference/write_prm_batch.html">write_prm_batch()</a></code></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+  </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/oousmane/aquacroptools/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/oousmane/aquacroptools/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/mwaongo/aquacropr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/mwaongo/aquacropr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -300,7 +339,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing aquacroptools</a></li>
+<li><a href="authors.html#citation">Citing aquacropr</a></li>
 </ul>
 </div>
 
@@ -313,23 +352,20 @@
 
 
 
-  </div>
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Ousmane Ouedraogo.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Ousmane Ouedraogo.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 
