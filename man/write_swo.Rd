@@ -222,6 +222,7 @@ Other AquaCrop file writers:
 \code{\link{write_obs}()},
 \code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_tnx}()}
 }

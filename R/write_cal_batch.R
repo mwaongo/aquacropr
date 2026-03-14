@@ -13,6 +13,13 @@
 #'   Overridden per row if a \code{path} column is present in \code{params}.
 #' @param version Numeric. AquaCrop version number. Default: 7.1.
 #'   Overridden per row if a \code{version} column is present in \code{params}.
+#' @param climate_path Character. Path to climate files directory. Used for
+#'   auto-discovery of stations when \code{site_name} is absent from
+#'   \code{params}. Default: \code{"CLIMATE/"}.
+#' @param base_path Character. Base absolute path. Default: \code{getwd()}.
+#' @param verbose Logical. If \code{TRUE} (default), prints progress messages.
+#' @param clean Logical. If \code{TRUE}, removes existing .CAL files from
+#'   \code{path} before writing. Default: \code{FALSE}.
 #' @param eol End-of-line character style. One of \code{"windows"},
 #'   \code{"linux"}, \code{"macos"}. If \code{NULL} (default), auto-detected.
 #'   Overridden per row if an \code{eol} column is present in \code{params}.

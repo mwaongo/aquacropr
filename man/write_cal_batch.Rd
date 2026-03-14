@@ -4,7 +4,16 @@
 \alias{write_cal_batch}
 \title{Write AquaCrop Calendar (.CAL) Files for Multiple Sites}
 \usage{
-write_cal_batch(params, path = "CAL/", version = 7.1, eol = NULL)
+write_cal_batch(
+  params,
+  path = "CAL/",
+  version = 7.1,
+  eol = NULL,
+  climate_path = "CLIMATE/",
+  base_path = getwd(),
+  verbose = TRUE,
+  clean = FALSE
+)
 }
 \arguments{
 \item{params}{A data frame or list of named lists, each containing the
@@ -22,6 +31,17 @@ Overridden per row if a \code{version} column is present in \code{params}.}
 \item{eol}{End-of-line character style. One of \code{"windows"},
 \code{"linux"}, \code{"macos"}. If \code{NULL} (default), auto-detected.
 Overridden per row if an \code{eol} column is present in \code{params}.}
+
+\item{climate_path}{Character. Path to climate files directory. Used for
+auto-discovery of stations when \code{site_name} is absent from
+\code{params}. Default: \code{"CLIMATE/"}.}
+
+\item{base_path}{Character. Base absolute path. Default: \code{getwd()}.}
+
+\item{verbose}{Logical. If \code{TRUE} (default), prints progress messages.}
+
+\item{clean}{Logical. If \code{TRUE}, removes existing .CAL files from
+\code{path} before writing. Default: \code{FALSE}.}
 }
 \value{
 Invisibly returns a character vector of output file paths, one per
@@ -80,6 +100,7 @@ Other AquaCrop file writers:
 \code{\link{write_obs}()},
 \code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()},
 \code{\link{write_tnx}()}

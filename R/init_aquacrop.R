@@ -6,7 +6,8 @@
 #' @keywords internal
 #' @noRd
 .AQUACROP_DIRS <- c(
-"CLIMATE",
+  "CLIMATE",
+  "CAL",
   "CROP",
   "LIST",
   "MANAGEMENT",
@@ -417,6 +418,10 @@ init_aquacrop <- function(path = ".",
     "  Crop parameter files (*.CRO): growth, development, yield parameters,",
     "  water stress responses. Examples: Maize.CRO, Wheat.CRO, Potato.CRO",
     "",
+    "CAL/",
+    "  Calendar files (*.CAL): used to determinate sowing date.",
+    "  Examples: Wakanda.CAL, Ottawa.CAL, Kaya.CAL",
+    "",
     "SOIL/",
     "  Soil profile files (*.SOL): hydraulic properties, texture, water retention",
     "  Initial soil water (*.SW0): initial conditions for each soil layer",
@@ -539,8 +544,6 @@ init_aquacrop <- function(path = ".",
 #' @keywords internal
 .install_templates <- function(path, overwrite) {
   template_files <- c(
-    "AggregationResults.SIM",
-    "DailyResultsFullList.SIM",
     "MaunaLoa.CO2",
     "ParticularResultsFullList.SIM"
   )

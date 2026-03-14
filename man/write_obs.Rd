@@ -93,6 +93,7 @@ Other AquaCrop file writers:
 \code{\link{write_man}()},
 \code{\link{write_off}()},
 \code{\link{write_plu}()},
+\code{\link{write_ppn}()},
 \code{\link{write_prm}()},
 \code{\link{write_swo}()},
 \code{\link{write_tnx}()}
