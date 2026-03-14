@@ -257,6 +257,7 @@ init_aquacrop <- function(path = ".",
   dir_descriptions <- c(
     CLIMATE = "Climate input files (*.Tnx, *.PLU, *.ETo, *.CLI)",
     CROP = "Crop parameter files (*.CRO)",
+    CAL = "Crop calendar files (*.CAL)",
     LIST = "Project simulation files (*.PRM)",
     MANAGEMENT = "Field management practice  and irrigation files (*.MAN, *.IRR)",
     OBS = "Field observation files (*.OBS)",

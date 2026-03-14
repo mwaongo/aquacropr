@@ -43,7 +43,7 @@
 #' @importFrom utils download.file unzip
 #' @export
 install_binaries <- function(
-    version     = NULL,
+    version     = "7.2",
     os          = NULL,
     path,
     force       = FALSE,
@@ -81,29 +81,53 @@ install_binaries <- function(
   latest_tag     <- latest_release$tag_name
   latest_version <- gsub("^v", "", latest_tag)
 
-  # Determine version to install
+  # # Determine version to install
+  # if (is.null(version)) {
+  #   version <- latest_version
+  #   tag     <- latest_tag
+  #   message("Installing latest version: ", version)
+  #
+  # } else {
+  #   version       <- gsub("^v", "", as.character(version))
+  #   version_parts <- strsplit(version, "\\.")[[1]]
+  #   major         <- as.numeric(version_parts[1])
+  #
+  #   if (is.na(major) || major < 7) {
+  #     message("Requested version (", version, ") is below minimum (7.0), ",
+  #             "falling back to latest: ", latest_version)
+  #     version <- latest_version
+  #     tag     <- latest_tag
+  #
+  #   } else if (numeric_version(version) > numeric_version(latest_version)) {
+  #     message("Requested version (", version, ") is above latest (",
+  #             latest_version, "), falling back to latest")
+  #     version <- latest_version
+  #     tag     <- latest_tag
+  #
+  #   } else {
+  #     tag <- .get_version_tag(version)
+  #   }
+  # }
+
+  # Determine version to install (due to 7.3_typo error)
   if (is.null(version)) {
     version <- latest_version
     tag     <- latest_tag
     message("Installing latest version: ", version)
-
   } else {
     version       <- gsub("^v", "", as.character(version))
     version_parts <- strsplit(version, "\\.")[[1]]
     major         <- as.numeric(version_parts[1])
-
     if (is.na(major) || major < 7) {
       message("Requested version (", version, ") is below minimum (7.0), ",
               "falling back to latest: ", latest_version)
       version <- latest_version
       tag     <- latest_tag
-
-    } else if (numeric_version(version) > numeric_version(latest_version)) {
-      message("Requested version (", version, ") is above latest (",
-              latest_version, "), falling back to latest")
-      version <- latest_version
-      tag     <- latest_tag
-
+    } else if (numeric_version(version) > numeric_version("7.2")) {
+      message("Requested version (", version, ") is above maximum (7.2), ",
+              "falling back to 7.3")
+      version <- "7.2"
+      tag     <- .get_version_tag("7.3")
     } else {
       tag <- .get_version_tag(version)
     }
