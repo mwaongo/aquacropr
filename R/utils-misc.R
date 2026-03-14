@@ -34,7 +34,7 @@
 #   rainfall → pass-through (user == internal)
 #   thermal  → internal = user + 10
 #
-# Criteria 5-7 are aquacroptools extensions (not AquaCrop standalone):
+# Criteria 5-7 are aquacropr extensions (not AquaCrop standalone):
 #   5 = Generalised Sivakumar (1988)
 #   6 = Marteau et al. (2009)
 #   7 = Fuzzy logic — Waongo et al. (2014)
@@ -65,21 +65,21 @@
     preset_fmt   = "int",
     needs_succ   = FALSE
   ),
-  # Generalised Sivakumar (aquacroptools extension, internal: 5)
+  # Generalised Sivakumar (aquacropr extension, internal: 5)
   "5" = list(
     label        = "Criterion Nr (Generalised Sivakumar: cumulative rainfall x rainy days x dry spell check)",
     preset_label = "Preset value of cumulative rainfall (mm) [preset_value]",
     preset_fmt   = "int",
     needs_succ   = TRUE   # successive_days = accumulation window length
   ),
-  # Marteau et al. (2009) (aquacroptools extension, internal: 6)
+  # Marteau et al. (2009) (aquacropr extension, internal: 6)
   "6" = list(
     label        = "Criterion Nr (Marteau 2009: wet-day trigger x rolling dry spell check in look-ahead)",
     preset_label = "Preset value of total rainfall over trigger window (mm) [preset_value]",
     preset_fmt   = "int",
     needs_succ   = TRUE   # successive_days = 1 or 2 (trigger window)
   ),
-  # Fuzzy logic — Waongo et al. (2014) (aquacroptools extension, internal: 7)
+  # Fuzzy logic — Waongo et al. (2014) (aquacropr extension, internal: 7)
   "7" = list(
     label        = "Criterion Nr (Fuzzy logic: cumulative rainfall x wet days x dry spell index)",
     preset_label = "Preset value of cumulative rainfall lower bound (mm) [cum_rain_lower]",

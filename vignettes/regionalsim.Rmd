@@ -1,8 +1,8 @@
 ---
-title: "Regional Crop Simulations Using aquacroptools"
+title: "Regional Crop Simulations Using aquacropr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Regional Crop Simulations Using aquacroptools}
+  %\VignetteIndexEntry{Regional Crop Simulations Using aquacropr}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 This vignette describes the complete pipeline for running **AquaCrop**
 simulations across Burkina Faso using gridded ERA5 data and the
-`aquacroptools` package. AquaCrop (Steduto et al., 2009; Raes et al.,
+`aquacropr` package. AquaCrop (Steduto et al., 2009; Raes et al.,
 2009) is the FAO reference model for simulating crop yield response to
 water stress. The package automates the entire file-based workflow —
 input file generation, batch simulation, and output parsing — while
@@ -72,7 +72,7 @@ project/
 ### Required packages
 
 ```{r packages}
-library(aquacroptools)
+library(aquacropr)
 library(tidyverse)
 library(terra)
 library(sf)

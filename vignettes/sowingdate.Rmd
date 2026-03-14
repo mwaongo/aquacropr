@@ -33,13 +33,13 @@ runtime is therefore, in practice, irrelevant.
 
 
 
-### The `aquacroptools` approach
+### The `aquacropr` approach
 
-What `aquacroptools` does is straightforward: `find_onset()` reads the
+What `aquacropr` does is straightforward: `find_onset()` reads the
 `.CAL`, computes the sowing date series from the climate data, and
 `write_prm()` writes those dates directly into the `.PRM`. The
 standalone receives exactly what it expects. By owning this
-computation in R, `aquacroptools` is free to implement any onset rule
+computation in R, `aquacropr` is free to implement any onset rule
 that can be expressed as a function of daily climate data — the four
 native AquaCrop criteria are fully reproduced, and three additional
 methods designed for rainfall-limited environments are added on top.
@@ -54,7 +54,7 @@ into the planting-date engine, not a required step.
 The typical workflow is:
 
 ```{r workflow}
-library(aquacroptools)
+library(aquacropr)
 
 # 1. Choose and encode your onset rule
 write_cal(
@@ -80,10 +80,10 @@ write_prm(site_name = "Ouaga", ...)
 
 
 
-## Novel implementations in `aquacroptools`
+## Novel implementations in `aquacropr`
 
 The three Sahelian methods below are **exclusively available in
-`aquacroptools`**. They are not accessible through the AquaCrop
+`aquacropr`**. They are not accessible through the AquaCrop
 standalone GUI and are not part of the official AquaCrop criterion
 set.
 
@@ -91,9 +91,9 @@ set.
 |---|---|---|
 | Native criteria 1–4 (rainfall) | AquaCrop / FAO | ✅ Yes |
 | Native criteria 1–4 (thermal) | AquaCrop / FAO | ✅ Yes |
-| **Sivakumar (1988)** | Agroclimatology literature | ❌ `aquacroptools` only |
-| **Marteau et al. (2009)** | Agroclimatology literature | ❌ `aquacroptools` only |
-| **Fuzzy logic — Criterion 5 (Waongo et al., 2014)** | Agroclimatology literature | ❌ `aquacroptools` only |
+| **Sivakumar (1988)** | Agroclimatology literature | ❌ `aquacropr` only |
+| **Marteau et al. (2009)** | Agroclimatology literature | ❌ `aquacropr` only |
+| **Fuzzy logic — Criterion 5 (Waongo et al., 2014)** | Agroclimatology literature | ❌ `aquacropr` only |
 
 Their inclusion is a direct consequence of the reimplementation
 strategy: once onset detection is in R, adding a new method is a matter
@@ -283,7 +283,7 @@ Because the index is a product, all three components must contribute
 simultaneously. Abundant rain concentrated in a single event
 ($\gamma_2$ low), or rain immediately followed by a long dry spell
 ($\gamma_3$ low), will not trigger onset even if the cumulative total
-is high. This makes criterion 5 the only method in `aquacroptools`
+is high. This makes criterion 5 the only method in `aquacropr`
 that explicitly and continuously penalises post-planting dry spell
 risk.
 
@@ -314,7 +314,7 @@ automatically when `find_onset()` or `write_prm()` is called.
 
 Native to AquaCrop, thermal criteria use the `.Tnx` file and are
 designed for temperature-limited growing seasons. They are not relevant
-for the Sahel but are fully available when `aquacroptools` is used in
+for the Sahel but are fully available when `aquacropr` is used in
 temperate or highland contexts.
 
 | Criterion | Trigger condition |

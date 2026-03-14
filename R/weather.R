@@ -3,7 +3,7 @@
 #' @description
 #' Daily weather data from Wakanda (fictional location) Automatic Weather Station.
 #' Contains 30 years of climate records (1976-2005) suitable for testing and
-#' demonstrating aquacroptools functions.
+#' demonstrating aquacropr functions.
 #'
 #' @format A tibble with 10,958 rows and 8 variables:
 #' \describe{

@@ -1,7 +1,7 @@
-#' Get access to CO2 Files Bundled in aquacroptools
+#' Get access to CO2 Files Bundled in aquacropr
 #'
 #' @description
-#' Access CO2 concentration data files bundled with aquacroptools. The package includes
+#' Access CO2 concentration data files bundled with aquacropr. The package includes
 #' historical CO2 data and climate scenario projections in the `inst/extdata` directory,
 #' formatted for AquaCrop v7.0 (August 2022). These files are automatically used by
 #' \code{\link{write_cli}} when generating climate files.
@@ -91,7 +91,7 @@
 path_to_file <- function(path = NULL) {
   if (is.null(path)) {
     # List all files in extdata directory
-    dir(system.file("extdata", package = "aquacroptools"))
+    dir(system.file("extdata", package = "aquacropr"))
   } else {
     # Validate input
     if (!is.character(path) || length(path) != 1) {
@@ -105,7 +105,7 @@ path_to_file <- function(path = NULL) {
     file_path <- system.file(
       "extdata",
       path,
-      package = "aquacroptools",
+      package = "aquacropr",
       mustWork = TRUE
     )
 

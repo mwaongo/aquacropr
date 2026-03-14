@@ -25,7 +25,7 @@ The setup workflow is three steps: load, initialize, reload.
 **1. Load the package**
 
 ```{r library}
-library(aquacroptools)
+library(aquacropr)
 ```
 
 **2. Initialize the project**
@@ -46,7 +46,7 @@ session inside the new project directory. Simply reload the package to
 continue your work:
 
 ```{r reload}
-library(aquacroptools)
+library(aquacropr)
 ```
 
 You are now ready to write input files and run simulations with
@@ -174,9 +174,9 @@ my_project/
 
 Users already familiar with the [FAO AquaCrop standalone
 (plug-in)](https://www.fao.org/aquacrop/en) will recognize the structure
-immediately. `aquacroptools` preserves all four core directories of the official standalone (`LIST`, `PARAM`, `SIMUL`, `OUTP`) and extends the design by replacing the historical catch-all `DATA/` folder with clearly typed, dedicated directories — one per input category.
+immediately. `aquacropr` preserves all four core directories of the official standalone (`LIST`, `PARAM`, `SIMUL`, `OUTP`) and extends the design by replacing the historical catch-all `DATA/` folder with clearly typed, dedicated directories — one per input category.
 
-| Directory     | AquaCrop Standalone v7.1      | `aquacroptools`    |
+| Directory     | AquaCrop Standalone v7.1      | `aquacropr`    |
 |---------------|-------------------------------|--------------------|
 | `LIST/`       | ✅ Project files (.PRO, .PRM) | ✅                 |
 | `SIMUL/`      | ✅ Simulation settings        | ✅                 |

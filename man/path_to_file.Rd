@@ -2,7 +2,7 @@
 % Please edit documentation in R/path-to-file.R
 \name{path_to_file}
 \alias{path_to_file}
-\title{Get access to CO2 Files Bundled in aquacroptools}
+\title{Get access to CO2 Files Bundled in aquacropr}
 \usage{
 path_to_file(path = NULL)
 }
@@ -18,7 +18,7 @@ available CO2 files.}
 }
 }
 \description{
-Access CO2 concentration data files bundled with aquacroptools. The package includes
+Access CO2 concentration data files bundled with aquacropr. The package includes
 historical CO2 data and climate scenario projections in the \code{inst/extdata} directory,
 formatted for AquaCrop v7.0 (August 2022). These files are automatically used by
 \code{\link{write_cli}} when generating climate files.

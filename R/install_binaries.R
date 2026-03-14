@@ -130,7 +130,7 @@ install_binaries <- function(
   )
 
   # Cache
-  cache_dir  <- rappdirs::user_cache_dir("aquacroptools")
+  cache_dir  <- rappdirs::user_cache_dir("aquacropr")
   dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
   cached_zip <- file.path(cache_dir, zip_name)
 
