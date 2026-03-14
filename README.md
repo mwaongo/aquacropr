@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# aquacroptools <img src="man/figures/logo.png" align="right" height="139"/>
+# aquacropr <img src="man/figures/logo.png" align="right" height="139"/>
 
 <!-- badges: start -->
 
@@ -24,16 +24,15 @@ management parameters, then invoking the executable, and finally parsing
 the output files one by one. This becomes a bottleneck as soon as
 simulations span multiple sites, years, or scenarios.
 
-**aquacroptools** solves this by providing a lightweight R interface
-that automates the entire workflow. It handles input file generation,
-batch simulation orchestration, and output parsing — all from R, all
+**aquacropr** solves this by providing a lightweight R interface that
+automates the entire workflow. It handles input file generation, batch
+simulation orchestration, and output parsing — all from R, all
 scriptable, and all compatible with standard tidyverse and spatial
-workflows. The model engine itself is never touched: aquacroptools
-always delegates computation to the official FAO AquaCrop binary,
-ensuring full scientific validity and consistency with published
-results.
+workflows. The model engine itself is never touched: aquacropr always
+delegates computation to the official FAO AquaCrop binary, ensuring full
+scientific validity and consistency with published results.
 
-## What you can do with aquacroptools
+## What you can do with aquacropr
 
 - **Generate input files programmatically** — convert R data frames
   directly into AquaCrop-compatible climate, soil, crop, irrigation, and
@@ -49,17 +48,17 @@ results.
 
 ## Who it is for
 
-aquacroptools is aimed at agronomists, climate scientists, hydrologists,
-and data analysts working on crop-water-climate interactions — whether
-for regional yield assessments, climate change impact studies,
-irrigation optimization, operational crop monitoring, or research and
-capacity building.
+aquacropr is aimed at agronomists, climate scientists, hydrologists, and
+data analysts working on crop-water-climate interactions — whether for
+regional yield assessments, climate change impact studies, irrigation
+optimization, operational crop monitoring, or research and capacity
+building.
 
 ## Installation
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mwaongo/aquacroptools")
+devtools::install_github("mwaongo/aquacropr")
 ```
 
 ## Getting started
@@ -69,7 +68,7 @@ The first step is to set up a dedicated project directory.
 downloads the official FAO binary appropriate for your operating system.
 
 ``` r
-library(aquacroptools)
+library(aquacropr)
 
 init_aquacrop(path = "my-project", version = "7.2")
 ```
@@ -84,7 +83,7 @@ files directly from R objects, with no manual editing.
 
 ### Climate
 
-aquacroptools ships with a built-in `weather` dataset containing daily
+aquacropr ships with a built-in `weather` dataset containing daily
 observations for a single station. Inspect it first, then a single call
 to `write_climate()` generates all four climate files required by
 AquaCrop.
@@ -172,7 +171,7 @@ write_man(
 
 ### Irrigation
 
-aquacroptools supports all AquaCrop irrigation modes. For automatic
+aquacropr supports all AquaCrop irrigation modes. For automatic
 irrigation (mode 2), `create_irr_schedule()` first builds the schedule
 data frame — defining trigger thresholds and application depths for
 successive crop periods — which is then passed to `write_irr()`.
