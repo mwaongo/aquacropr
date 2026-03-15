@@ -12,7 +12,7 @@
 #' @param os Character string specifying the operating system: "windows",
 #'   "linux", or "macos". If NULL (default), automatically detects current OS.
 #' @param path Character string specifying the installation directory path
-#'   where the AquaCrop executable will be installed.
+#'   where the AquaCrop executable will be installed. Current working directory by default.
 #' @param force Logical. If TRUE, reinstalls even if executable already exists.
 #'   Default: FALSE.
 #' @param compiler Character. Fortran compiler for dev builds.
@@ -45,7 +45,7 @@
 install_binaries <- function(
     version     = "7.2",
     os          = NULL,
-    path,
+    path        = getwd(),
     force       = FALSE,
     compiler    = "gfortran",
     keep_source = FALSE
@@ -81,7 +81,21 @@ install_binaries <- function(
   latest_tag     <- latest_release$tag_name
   latest_version <- gsub("^v", "", latest_tag)
 
-  # # Determine version to install
+  # TO DO: Version tag naming convention
+  # Currently, patch releases use inconsistent tag formats (e.g. "7.3_typo")
+  # which makes programmatic version resolution fragile.
+  #
+  # A cleaner convention would follow semantic versioning:
+  #   - tag:      v7.3.1
+  #   - archive:  aquacrop-7.3.1-x86_64-{os}.zip
+  #
+  # This would allow aquacropr to expose the latest patch release
+  # automatically, with no manual workaround needed.
+  #
+  # Kindly requesting the AquaCrop development team to consider adopting
+  # this convention for future releases.
+
+  # Determine version to install
   # if (is.null(version)) {
   #   version <- latest_version
   #   tag     <- latest_tag
@@ -109,7 +123,8 @@ install_binaries <- function(
   #   }
   # }
 
-  # Determine version to install (due to 7.3_typo error)
+  # Determine version to install (due to 7.3_typo error, fall back to 7.2)
+  # the code below is a trick to contourn bad tag naming.
   if (is.null(version)) {
     version <- latest_version
     tag     <- latest_tag
@@ -121,11 +136,11 @@ install_binaries <- function(
     if (is.na(major) || major < 7) {
       message("Requested version (", version, ") is below minimum (7.0), ",
               "falling back to latest: ", latest_version)
-      version <- latest_version
-      tag     <- latest_tag
+      version <- "7.2"
+      tag     <- .get_version_tag(version)
     } else if (numeric_version(version) > numeric_version("7.2")) {
       message("Requested version (", version, ") is above maximum (7.2), ",
-              "falling back to 7.3")
+              "falling back to 7.2")
       version <- "7.2"
       tag     <- .get_version_tag("7.2")
     } else {
