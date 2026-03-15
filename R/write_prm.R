@@ -66,7 +66,7 @@
 
   sep <- .get_eol(eol)
 
-  # ---- Climate files (required) --------------------------------------------
+  # Climate files (Mandatory)
   cli_file <- fs::path(base_path, climate_path, paste0(site_name, ".CLI"))
   tnx_file <- fs::path(base_path, climate_path, paste0(site_name, ".Tnx"))
   eto_file <- fs::path(base_path, climate_path, paste0(site_name, ".ETo"))
@@ -77,22 +77,22 @@
   if (!file.exists(eto_file)) stop("ETo file not found: ", eto_file)
   if (!file.exists(plu_file)) stop("PLU file not found: ", plu_file)
 
-  # ---- Management (required) -----------------------------------------------
+  # Management (Mandatory ? should check)
   man_file <- fs::path(base_path, management_path, paste0(site_name, ".MAN"))
   if (!file.exists(man_file)) stop("MAN file not found: ", man_file)
 
-  # ---- Soil (required) -----------------------------------------------------
+  # Soil (Mandatory)
   sol_file <- fs::path(base_path, soil_path, paste0(site_name, ".SOL"))
   sw0_file <- fs::path(base_path, soil_path, paste0(site_name, ".SW0"))
   if (!file.exists(sol_file)) stop("SOL file not found: ", sol_file)
   if (!file.exists(sw0_file)) stop("SW0 file not found: ", sw0_file)
 
-  # ---- Simulation timing ---------------------------------------------------
+  # Simulation timing
   if (is.null(simulation_start_doy)) {
     simulation_start_doy <- ifelse(is_leap_year(year), 92, 91)  # April 1st
   }
 
-  # ---- Resolve crop duration ----------------------------------------------
+  # Resolve crop duration, find crop_duration from crop file
   cro_file <- fs::path(base_path, crop_path, paste0(crop_name, ".CRO"))
   if (is.null(crop_duration)) {
     if (!fs::file_exists(cro_file)) stop("CRO file not found: ", cro_file, call. = FALSE)
@@ -114,21 +114,22 @@
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
   output_file <- file.path(path, paste0(site_name, ".PRM"))
 
-  # ---- PRM path helpers ----------------------------------------------------
+  # PRM path helpers
   climate_path_prm    <- path_for_prm(climate_path,    use_standalone = use_standalone, base_path = base_path)
   crop_path_prm       <- path_for_prm(crop_path,       use_standalone = use_standalone, base_path = base_path)
   management_path_prm <- path_for_prm(management_path, use_standalone = use_standalone, base_path = base_path)
   soil_path_prm       <- path_for_prm(soil_path,       use_standalone = use_standalone, base_path = base_path)
 
-  # ---- Optional section helpers --------------------------------------------
-  # Returns list(name, dir) -- "(None)" when path is NULL
+  # Optional section helpers
+  # Returns list(name, dir) both set to "(None)" when path is NULL
+
   .opt_file <- function(opt_path, ext) {
     if (is.null(opt_path)) return(list(name = "(None)", dir = "(None)"))
-    f <- fs::path(base_path, opt_path, paste0(site_name, ext))
-    list(
-      name = basename(f),
-      dir  = path_for_prm(opt_path, use_standalone = use_standalone, base_path = base_path)
-    )
+     f <- fs::path(base_path, opt_path, paste0(site_name, ext))
+     list(
+       name = basename(f),
+       dir  = path_for_prm(opt_path, use_standalone = use_standalone, base_path = base_path)
+     )
   }
   .fmt_section <- function(info, sep) {
     paste0(
@@ -137,13 +138,15 @@
     )
   }
 
+  # Name of the file and relative path  for PRM sections
+
   cal_info <- .opt_file(calendar_path,    ".CAL")
   irr_info <- .opt_file(irrigation_path,  ".IRR")
   gwt_info <- .opt_file(groundwater_path, ".GWT")
   off_info <- .opt_file(offseason_path,   ".OFF")
   obs_info <- .opt_file(obs_path,         ".OBS")
 
-  # ---- Build PRM content ---------------------------------------------------
+  # Build PRM content, line by line
   prm_lines <- c(
     paste0(.format_string3(1,                     "%7.0f", 16), ": Year number of cultivation (Seeding/planting year)", sep),
     paste0(.format_string3(sim_start_day_number,  "%7.0f", 16), ": First day of simulation period - ",  sim_start_date_str,  sep),
@@ -200,6 +203,7 @@
   )
 
   if (write_header) {
+    # this is internal trick to have header for the first  year before writing repeated block
     .write_prm_header(path = path, crop = crop_name, site_name = site_name, eol = eol)
   }
 
@@ -237,8 +241,7 @@
 #' @param management_path Character. Path to management file directory.
 #'   Default: \code{"MANAGEMENT/"}.
 #' @param irrigation_path Character or NULL. Path to the IRR file directory.
-#'   If the \code{.IRR} file is not found, a warning is issued and the
-#'   section is written as \code{(None)}. Default: \code{"MANAGEMENT/"}.
+#'   If NULL (default), the section is written as \code{(None)}
 #' @param soil_path Character. Path to soil file directory.
 #'   Default: \code{"SOIL/"}.
 #' @param groundwater_path Character or NULL. Path to the GWT file directory.
@@ -273,7 +276,7 @@ write_prm <- function(
     climate_path         = "CLIMATE/",
     calendar_path        = NULL,
     management_path      = "MANAGEMENT/",
-    irrigation_path      = "MANAGEMENT/",
+    irrigation_path      = NULL,
     soil_path            = "SOIL/",
     groundwater_path     = NULL,
     offseason_path       = NULL,
@@ -294,12 +297,12 @@ write_prm <- function(
     stop("crop_name and crop_path must both be provided or both be NULL.")
   }
 
-  # ---- Warn + nullify optional paths when files are missing ----------------
+  # Warn and set path to NULL, if optional path is provided with  missing file
   if (!is.null(irrigation_path)) {
     irr_file <- fs::path(base_path, irrigation_path, paste0(site_name, ".IRR"))
     if (!fs::file_exists(irr_file)) {
       warning("Irrigation file not found: ", irr_file,
-              " -- irrigation_path set to NULL.", call. = FALSE)
+              "irrigation_path set to NULL.", call. = FALSE)
       irrigation_path <- NULL
     }
   }
@@ -308,7 +311,7 @@ write_prm <- function(
     obs_file <- fs::path(base_path, obs_path, paste0(site_name, ".OBS"))
     if (!fs::file_exists(obs_file)) {
       warning("Observations file not found: ", obs_file,
-              " -- obs_path set to NULL.", call. = FALSE)
+              "obs_path set to NULL.", call. = FALSE)
       obs_path <- NULL
     }
   }
@@ -317,12 +320,13 @@ write_prm <- function(
     off_file <- fs::path(base_path, offseason_path, paste0(site_name, ".OFF"))
     if (!fs::file_exists(off_file)) {
       warning("Off-season file not found: ", off_file,
-              " -- offseason_path set to NULL.", call. = FALSE)
+              "offseason_path set to NULL.", call. = FALSE)
       offseason_path <- NULL
     }
   }
 
-  # ---- Calendar path  derive planting schedule ----------------------------
+  # Calendar path  is used to derive planting/sowing dates
+
   if (!is.null(calendar_path)) {
     if (!is.null(planting_schedule)) {
       warning(
@@ -331,6 +335,7 @@ write_prm <- function(
         call. = FALSE
       )
     }
+    # use of the calendar file to compute sowing dates
     onset <- find_onset(
       site_name    = site_name,
       cal_path     = calendar_path,
@@ -343,7 +348,7 @@ write_prm <- function(
       warning(
         "Onset criterion not met for ", length(na_years), " year(s): ",
         paste(na_years, collapse = ", "),
-        " -- these years are excluded from the PRM.",
+        " these years are excluded from the PRM.",
         call. = FALSE
       )
       planting_schedule <- planting_schedule[!is.na(planting_schedule$planting_doy), ]
@@ -351,7 +356,7 @@ write_prm <- function(
   }
 
   if (is.null(planting_schedule)) {
-    stop("planting_schedule is required when calendar_path is NULL.", call. = FALSE)
+    stop("planting_schedule is required when calendar_path is set to NULL.", call. = FALSE)
   }
   if (
     !is.data.frame(planting_schedule) ||
@@ -359,12 +364,12 @@ write_prm <- function(
     nrow(planting_schedule) == 0
   ) {
     stop(
-      "planting_schedule must be a data.frame with columns year and planting_doy.",
+      "planting_schedule must be a non-empty data.frame with columns year and planting_doy.",
       call. = FALSE
     )
   }
 
-  # ---- Write PRM -----------------------------------------------------------
+  #  Write PRM file
   if (!dir.exists(path)) dir.create(path, recursive = TRUE)
   output_file <- file.path(path, paste0(site_name, ".PRM"))
   if (file.exists(output_file)) file.remove(output_file)
@@ -379,7 +384,7 @@ write_prm <- function(
       crop_path            = crop_path,
       crop_duration        = crop_duration,
       climate_path         = climate_path,
-      calendar_path        = NULL,
+      calendar_path        = NULL, # set to (None) in PRM, already used tp get planting_doy for each year
       management_path      = management_path,
       irrigation_path      = irrigation_path,
       soil_path            = soil_path,

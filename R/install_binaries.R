@@ -43,7 +43,7 @@
 #' @importFrom utils download.file unzip
 #' @export
 install_binaries <- function(
-    version     = "7.2",
+    version     = NULL,
     os          = NULL,
     path        = getwd(),
     force       = FALSE,
@@ -66,21 +66,6 @@ install_binaries <- function(
   if (is.null(os)) os <- get_os()
   os <- match.arg(tolower(os), choices = c("windows", "linux", "macos"))
 
-  # Get latest version info from GitHub
-  latest_release <- tryCatch(
-    gh::gh("/repos/KUL-RSDA/AquaCrop/releases/latest"),
-    error = function(e) {
-      stop(
-        "Failed to fetch release info from GitHub.\n",
-        "Check your internet connection or try again later.\n",
-        "Error: ", conditionMessage(e),
-        call. = FALSE
-      )
-    }
-  )
-  latest_tag     <- latest_release$tag_name
-  latest_version <- gsub("^v", "", latest_tag)
-
   # TO DO: Version tag naming convention
   # Currently, patch releases use inconsistent tag formats (e.g. "7.3_typo")
   # which makes programmatic version resolution fragile.
@@ -94,6 +79,21 @@ install_binaries <- function(
   #
   # Kindly requesting the AquaCrop development team to consider adopting
   # this convention for future releases.
+
+  # Get latest version info from GitHub
+  # latest_release <- tryCatch(
+  #   gh::gh("/repos/KUL-RSDA/AquaCrop/releases/latest"),
+  #   error = function(e) {
+  #     stop(
+  #       "Failed to fetch release info from GitHub.\n",
+  #       "Check your internet connection or try again later.\n",
+  #       "Error: ", conditionMessage(e),
+  #       call. = FALSE
+  #     )
+  #   }
+  # )
+  # latest_tag     <- latest_release$tag_name
+  # latest_version <- gsub("^v", "", latest_tag)
 
   # Determine version to install
   # if (is.null(version)) {
@@ -125,27 +125,27 @@ install_binaries <- function(
 
   # Determine version to install (due to 7.3_typo error, fall back to 7.2)
   # the code below is a trick to contourn bad tag naming.
+  # Once AquaCrop adopts a clean semantic versioning convention (see TO DO above),
+  # replace MAX_VERSION with a GitHub API call to fetch the latest release tag.
+  MAX_VERSION <- "7.2"
+
   if (is.null(version)) {
-    version <- latest_version
-    tag     <- latest_tag
-    message("Installing latest version: ", version)
+    version <- MAX_VERSION
+    tag     <- .get_version_tag(version)
+    message("Installing latest available version: ", version)
   } else {
-    version       <- gsub("^v", "", as.character(version))
-    version_parts <- strsplit(version, "\\.")[[1]]
-    major         <- as.numeric(version_parts[1])
+    version <- gsub("^v", "", as.character(version))
+    major   <- as.numeric(strsplit(version, "\\.")[[1]][1])
     if (is.na(major) || major < 7) {
       message("Requested version (", version, ") is below minimum (7.0), ",
-              "falling back to latest: ", latest_version)
-      version <- "7.2"
-      tag     <- .get_version_tag(version)
-    } else if (numeric_version(version) > numeric_version("7.2")) {
-      message("Requested version (", version, ") is above maximum (7.2), ",
-              "falling back to 7.2")
-      version <- "7.2"
-      tag     <- .get_version_tag("7.2")
-    } else {
-      tag <- .get_version_tag(version)
+              "falling back to ", MAX_VERSION)
+      version <- MAX_VERSION
+    } else if (numeric_version(version) > numeric_version(MAX_VERSION)) {
+      message("Requested version (", version, ") is above maximum (", MAX_VERSION, "), ",
+              "falling back to ", MAX_VERSION)
+      version <- MAX_VERSION
     }
+    tag <- .get_version_tag(version)
   }
 
   exe_name <- if (os == "windows") "aquacrop.exe" else "aquacrop"
@@ -194,26 +194,15 @@ install_binaries <- function(
     on.exit(options(timeout = old_timeout), add = TRUE)
     options(timeout = 300)
 
-    success <- tryCatch(
+    tryCatch(
       {
         utils::download.file(url, cached_zip, mode = "wb", quiet = TRUE)
         message("Downloaded: ", basename(cached_zip))
-        TRUE
       },
       error = function(e) {
-        if (version != latest_version) {
-          message("Download failed, retrying with latest (", latest_version, ")...")
-          return(FALSE)
-        }
         stop("Download failed.\nURL: ", url, "\nError: ", e$message, call. = FALSE)
       }
     )
-
-    if (!success) {
-      return(install_binaries(
-        version = latest_version, os = os, path = path, force = force
-      ))
-    }
   }
 
   # Extract
