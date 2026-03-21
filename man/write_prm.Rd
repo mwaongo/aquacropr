@@ -14,7 +14,7 @@ write_prm(
   climate_path = "CLIMATE/",
   calendar_path = NULL,
   management_path = "MANAGEMENT/",
-  irrigation_path = "MANAGEMENT/",
+  irrigation_path = NULL,
   soil_path = "SOIL/",
   groundwater_path = NULL,
   offseason_path = NULL,
@@ -54,8 +54,7 @@ ignored with a warning.}
 Default: \code{"MANAGEMENT/"}.}
 
 \item{irrigation_path}{Character or NULL. Path to the IRR file directory.
-If the \code{.IRR} file is not found, a warning is issued and the
-section is written as \code{(None)}. Default: \code{"MANAGEMENT/"}.}
+If NULL (default), the section is written as \code{(None)}}
 
 \item{soil_path}{Character. Path to soil file directory.
 Default: \code{"SOIL/"}.}

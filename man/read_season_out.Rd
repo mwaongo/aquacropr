@@ -43,7 +43,7 @@ renamed to valid R names:
 # Seasonal totals only
 season <- read_season_out("LIST/C1PRMSeason.OUT")
 
-# With decadal or monthly intermediates
+# With daily or decadal or monthly intermediates
 out <- read_season_out("LIST/C1PRMSeason.OUT", intermediate = TRUE)
 out$season
 out$intermediate

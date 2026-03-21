@@ -253,7 +253,6 @@ read_season_out <- function(file, intermediate = FALSE) {
 #' @param file    Path to the `day.out` file.
 #' @param na      Numeric sentinel values coerced to `NA`.
 #'   Default: `c(-9, -9.9, -99, -99.9, -999, -999.9)`.
-#' @param n_head  Number of lines read for header detection. Default `20`.
 #' @param verbose If `TRUE`, prints column count and duplicate names.
 #'
 #' @return A [tibble][tibble::tibble] with a trailing `prm_file` column
@@ -293,7 +292,7 @@ read_day_out <- function(
 
   # 2. Single read
   all_lines <- readLines(file, warn = FALSE)
-  head_lines <- head(all_lines, n_head)
+  head_lines <- head(all_lines, 10)
 
   # 3. Detect header and build column names
   data_start <- .find_data_start(head_lines)

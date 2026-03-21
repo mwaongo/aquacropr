@@ -7,7 +7,7 @@
 install_binaries(
   version = NULL,
   os = NULL,
-  path,
+  path = getwd(),
   force = FALSE,
   compiler = "gfortran",
   keep_source = FALSE
@@ -24,7 +24,7 @@ If requested version is < 7.0 or > latest, falls back to latest version.}
 "linux", or "macos". If NULL (default), automatically detects current OS.}
 
 \item{path}{Character string specifying the installation directory path
-where the AquaCrop executable will be installed.}
+where the AquaCrop executable will be installed. Current working directory by default.}
 
 \item{force}{Logical. If TRUE, reinstalls even if executable already exists.
 Default: FALSE.}
