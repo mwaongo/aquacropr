@@ -33,7 +33,7 @@
 #' # Seasonal totals only
 #' season <- read_season_out("LIST/C1PRMSeason.OUT")
 #'
-#' # With decadal or monthly intermediates
+#' # With daily or decadal or monthly intermediates
 #' out <- read_season_out("LIST/C1PRMSeason.OUT", intermediate = TRUE)
 #' out$season
 #' out$intermediate
@@ -134,13 +134,232 @@ read_season_out <- function(file, intermediate = FALSE) {
 
   if (is.null(inter_df)) {
     warning(
-      "intermediate = TRUE but no decadal (10Day) or monthly (Month) rows ",
+      "intermediate = TRUE but no, daily (Day) or decadal (10Day) or monthly (Month) rows ",
       "found in: ",
       file,
-      " -- returning NULL for $intermediate.",
+      " returning NULL for $intermediate.",
       call. = FALSE
     )
   }
 
   list(season = season_df, intermediate = inter_df)
+}
+
+# Daily output, more complicated
+
+# Constants
+
+.DAY_FILE_RE <- "day\\.out$" # fix 1
+.DAY_NUM_RE <- "^-?[0-9]+\\.?[0-9]*([eE][+-]?[0-9]+)?$"
+.DAY_RUN_RE <- "^\\s*Run:\\s*([0-9]+)\\s*$"
+.DAY_INT_COLS <- c("Day", "Month", "Year", "DAP", "Stage")
+.DAY_NA_VALS <- c(-9, -9.9, -99, -99.9, -999, -999.9)
+
+
+# Merge isolated numeric suffix: "WC" "2" -> "WC2"
+.merge_numeric_suffixes <- function(tokens) {
+  out <- character()
+  i <- 1L
+  while (i <= length(tokens)) {
+    fused <- i < length(tokens) && grepl("^[0-9]+$", tokens[i + 1L])
+    out <- c(out, if (fused) paste0(tokens[i], tokens[i + 1L]) else tokens[i])
+    i <- i + if (fused) 2L else 1L
+  }
+  out
+}
+
+#  Minimal tidying: WC(1.20) -> WC_120 | Tr/Trx -> Tr_Trx
+.tidy_names <- function(x) {
+  x |>
+    gsub(pattern = "[(/]", replacement = "_") |>
+    gsub(pattern = "[). ]", replacement = "") |>
+    gsub(pattern = "_{2,}", replacement = "_") |>
+    gsub(pattern = "_$", replacement = "")
+}
+
+# Deduplicate: Z -> Z_1, Z_2, Z_3
+.dedup_names <- function(x) {
+  counts <- table(x)
+  for (nm in names(counts[counts > 1L])) {
+    idx <- which(x == nm)
+    x[idx] <- paste0(nm, "_", seq_along(idx))
+  }
+  x
+}
+
+# TRUE if line has exactly n_cols numeric tokens
+.is_numeric_line <- function(line, n_cols) {
+  tok <- strsplit(trimws(line), "\\s+")[[1L]]
+  length(tok) == n_cols && all(grepl(.DAY_NUM_RE, tok))
+}
+
+# Header = line with most tokens before data
+.find_day_header <- function(lines) {
+  n_tok <- vapply(
+    lines,
+    \(l) length(strsplit(trimws(l), "\\s+")[[1L]]),
+    integer(1L)
+  )
+  lines[[which.max(n_tok)]]
+}
+
+# First fully numeric line with more than 5 tokens
+.find_data_start <- function(lines) {
+  for (i in seq_along(lines)) {
+    tok <- strsplit(trimws(lines[[i]]), "\\s+")[[1L]]
+    if (length(tok) >= 5L && all(grepl(.DAY_NUM_RE, tok))) return(i)
+  }
+  NA_integer_
+}
+
+# Split lines into a tibble; all columns as double (caller handles NA/typing)
+.parse_result_lines <- function(lines, idx, col_names) {
+  if (length(idx) == 0L) {
+    return(NULL)
+  }
+
+  n_cols <- length(col_names)
+  tok_list <- strsplit(trimws(lines[idx]), "\\s+")
+
+  mat <- do.call(
+    rbind,
+    lapply(tok_list, function(tok) {
+      n <- length(tok)
+      if (n < n_cols) {
+        length(tok) <- n_cols
+      } else if (n > n_cols) {
+        tok <- c(
+          tok[seq_len(n_cols - 1L)],
+          paste(tok[n_cols:n], collapse = " ")
+        )
+      }
+      tok
+    })
+  )
+
+  df <- as.data.frame(mat, stringsAsFactors = FALSE)
+  names(df) <- col_names
+  df[] <- lapply(df, \(x) suppressWarnings(as.double(x))) # fix 2: no NA here
+  tibble::as_tibble(df)
+}
+
+
+#' Read an AquaCrop day.out file
+#'
+#' Auto-detects columns and multi-run structure. Handles duplicated column
+#' names (suffixed `_1`, `_2`, ...) and space-separated numeric suffixes
+#' (e.g. `"WC 2"` becomes `WC2`).
+#'
+#' @param file    Path to the `day.out` file.
+#' @param na      Numeric sentinel values coerced to `NA`.
+#'   Default: `c(-9, -9.9, -99, -99.9, -999, -999.9)`.
+#' @param n_head  Number of lines read for header detection. Default `20`.
+#' @param verbose If `TRUE`, prints column count and duplicate names.
+#'
+#' @return A [tibble][tibble::tibble] with a trailing `prm_file` column
+#'   (base name of the `.PRM` file inferred from `file`).
+#'
+#' @examples
+#' \dontrun{
+#' # Single-run file
+#' df <- read_day_out("path/to/day.out")
+#' df
+#'
+#' # Multi-run file with diagnostic info
+#' df <- read_day_out("path/to/day.out", verbose = TRUE)
+#'
+#' # Filter one year after reading
+#' library(dplyr)
+#' df |> filter(Year == 1976)
+#' }
+#'
+#' @export
+read_day_out <- function(
+  file,
+  na = .DAY_NA_VALS,
+  verbose = FALSE
+) {
+  # 1. Validate
+  if (!file.exists(file)) {
+    stop("File not found: ", file, call. = FALSE)
+  }
+  if (!grepl(.DAY_FILE_RE, basename(file), ignore.case = TRUE)) {
+    warning(
+      "File does not appear to be a day.out: ",
+      basename(file),
+      call. = FALSE
+    )
+  }
+
+  # 2. Single read
+  all_lines <- readLines(file, warn = FALSE)
+  head_lines <- head(all_lines, n_head)
+
+  # 3. Detect header and build column names
+  data_start <- .find_data_start(head_lines)
+  if (is.na(data_start)) {
+    stop("Cannot detect data start in: ", file, call. = FALSE)
+  }
+
+  header <- .find_day_header(head_lines[seq_len(data_start - 1L)])
+  raw_tokens <- strsplit(trimws(header), "\\s+")[[1L]]
+  tidy_names <- .merge_numeric_suffixes(raw_tokens) |> .tidy_names()
+  final_names <- .dedup_names(tidy_names)
+
+  # 4. Guard: token count vs data column count
+  n_cols <- length(strsplit(trimws(head_lines[[data_start]]), "\\s+")[[1L]])
+
+  if (length(final_names) != n_cols) {
+    warning(
+      sprintf(
+        "%d header tokens but %d data columns in '%s'. Falling back to V1...V%d.",
+        length(final_names),
+        n_cols,
+        basename(file),
+        n_cols
+      ),
+      call. = FALSE
+    )
+    tidy_names <- paste0("V", seq_len(n_cols))
+    final_names <- tidy_names
+  }
+
+  if (verbose) {
+    message(sprintf(
+      "  %d columns | duplicates: [%s]",
+      length(final_names),
+      paste(tidy_names[duplicated(tidy_names)], collapse = ", ")
+    ))
+  }
+
+  # 5. Locate data lines (vectorised)
+  candidate_idx <- grep("^\\s*-?[0-9]", all_lines)
+  data_idx <- candidate_idx[
+    vapply(
+      all_lines[candidate_idx],
+      .is_numeric_line,
+      logical(1L),
+      n_cols = n_cols
+    )
+  ]
+
+  if (length(data_idx) == 0L) {
+    stop("No data lines found in: ", file, call. = FALSE)
+  }
+
+  # 6. Parse
+  df <- .parse_result_lines(all_lines, data_idx, final_names)
+
+  # 7. Re-type integer columns
+  int_present <- intersect(.DAY_INT_COLS, final_names)
+  df[int_present] <- lapply(df[int_present], as.integer)
+
+  # 8. Sentinel -> NA (column-wise — %in% on a whole tibble is unreliable)
+  df[] <- lapply(df, \(x) replace(x, x %in% na, NA))
+
+  # 9. Append prm_file
+  tibble::add_column(
+    df,
+    prm_file = sub(.DAY_FILE_RE, ".PRM", basename(file), ignore.case = TRUE)
+  )
 }
