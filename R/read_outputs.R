@@ -42,44 +42,52 @@
 #' @family AquaCrop readers
 #' @export
 read_season_out <- function(file, intermediate = FALSE) {
-
-  if (!file.exists(file)) stop("File not found: ", file, call. = FALSE)
+  if (!file.exists(file)) {
+    stop("File not found: ", file, call. = FALSE)
+  }
   if (!grepl("PRMSeason\\.OUT$", basename(file), ignore.case = TRUE)) {
-    warning("File does not appear to be a PRMSeason.OUT file: ", basename(file),
-            call. = FALSE)
+    warning(
+      "File does not appear to be a PRMSeason.OUT file: ",
+      basename(file),
+      call. = FALSE
+    )
   }
 
   lines <- readLines(file, warn = FALSE)
 
   # ---- Locate header line (contains RunNr) ----------------------------------
   hdr_idx <- grep("RunNr", lines)[1L]
-  if (is.na(hdr_idx)) stop("Cannot find header line in: ", file, call. = FALSE)
+  if (is.na(hdr_idx)) {
+    stop("Cannot find header line in: ", file, call. = FALSE)
+  }
 
   # ---- Parse column names from header --------------------------------------
   raw_cols <- strsplit(trimws(lines[hdr_idx]), "\\s+")[[1L]]
   # Append prm_file for the last unnamed column
   col_names <- c(raw_cols, "prm_file")
   # Sanitise problematic names
-  col_names <- gsub("E/Ex",      "E_Ex",      col_names, fixed = TRUE)
-  col_names <- gsub("Tr/Trx",    "Tr_Trx",    col_names, fixed = TRUE)
-  col_names <- gsub("Y(dry)",    "Y_dry",      col_names, fixed = TRUE)
-  col_names <- gsub("Y(fresh)",  "Y_fresh",    col_names, fixed = TRUE)
-  col_names <- gsub("Brelative", "Brelative",  col_names, fixed = TRUE)
+  col_names <- gsub("E/Ex", "E_Ex", col_names, fixed = TRUE)
+  col_names <- gsub("Tr/Trx", "Tr_Trx", col_names, fixed = TRUE)
+  col_names <- gsub("Y(dry)", "Y_dry", col_names, fixed = TRUE)
+  col_names <- gsub("Y(fresh)", "Y_fresh", col_names, fixed = TRUE)
+  col_names <- gsub("Brelative", "Brelative", col_names, fixed = TRUE)
 
   # ---- Identify data lines --------------------------------------------------
   # Data lines start with Tot(N), 10Day(N), or Month(N)
-  tot_idx    <- grep("^\\s*Tot\\(",    lines)
-  day_idx    <- grep("^\\s*Day",    lines)
-  tenday_idx <- grep("^\\s*10Day",  lines)
-  month_idx  <- grep("^\\s*Month",  lines)
-  inter_idx  <- sort(c(day_idx,tenday_idx, month_idx))
+  tot_idx <- grep("^\\s*Tot\\(", lines)
+  day_idx <- grep("^\\s*Day", lines)
+  tenday_idx <- grep("^\\s*10Day", lines)
+  month_idx <- grep("^\\s*Month", lines)
+  inter_idx <- sort(c(day_idx, tenday_idx, month_idx))
 
   # ---- Parser: fixed-width split then prm_file -----------------------------
   .parse_lines <- function(idx) {
-    if (length(idx) == 0L) return(NULL)
+    if (length(idx) == 0L) {
+      return(NULL)
+    }
 
     rows <- lapply(idx, function(i) {
-      ln  <- lines[i]
+      ln <- lines[i]
       # Split on whitespace; last token is prm_file (filename with no spaces)
       toks <- strsplit(trimws(ln), "\\s+")[[1L]]
       # Expect length(col_names) tokens; pad or trim if needed
@@ -89,7 +97,7 @@ read_season_out <- function(file, intermediate = FALSE) {
       } else if (length(toks) > n_expected) {
         # Extra tokens: collapse excess into prm_file
         extra <- paste(toks[n_expected:length(toks)], collapse = " ")
-        toks  <- c(toks[seq_len(n_expected - 1L)], extra)
+        toks <- c(toks[seq_len(n_expected - 1L)], extra)
       }
       toks
     })
@@ -106,23 +114,30 @@ read_season_out <- function(file, intermediate = FALSE) {
 
     # All numeric columns except RunNr and prm_file
     num_cols <- setdiff(col_names, c("RunNr", "prm_file"))
-    df[num_cols] <- lapply(df[num_cols], function(x) suppressWarnings(as.numeric(x)))
+    df[num_cols] <- lapply(df[num_cols], function(x) {
+      suppressWarnings(as.numeric(x))
+    })
 
-    df
+    tibble::as_tibble(df)
   }
 
   season_df <- .parse_lines(tot_idx)
-  inter_df  <- if (length(inter_idx) > 0L) .parse_lines(inter_idx) else NULL
+  inter_df <- if (length(inter_idx) > 0L) .parse_lines(inter_idx) else NULL
 
-  season_df <- season_df[,2:length(season_df)]
-  inter_df <- inter_df[,2:length(inter_df)]
+  season_df <- tibble::as_tibble(season_df[, 2:length(season_df)])
 
-  if (!intermediate) return(season_df)
+  inter_df <- tibble::as_tibble(inter_df[, 2:length(inter_df)])
+
+  if (!intermediate) {
+    return(season_df)
+  }
 
   if (is.null(inter_df)) {
     warning(
       "intermediate = TRUE but no decadal (10Day) or monthly (Month) rows ",
-      "found in: ", file, " -- returning NULL for $intermediate.",
+      "found in: ",
+      file,
+      " -- returning NULL for $intermediate.",
       call. = FALSE
     )
   }
