@@ -130,7 +130,7 @@ including:</p><ul><li><p>Temperature data for calculating growing degree days an
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load the weather data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"weather"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   station  year month   day  tmin  tmax  rain   et0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -142,7 +142,7 @@ including:</p><ul><li><p>Temperature data for calculating growing degree days an
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> wakanda  <span style="text-decoration: underline;">1</span>976     1     6   7.9  25.5     0   6  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Summary statistics</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weather</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tmin"</span>, <span class="st">"tmax"</span>, <span class="st">"rain"</span>, <span class="st">"et0"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weather</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tmin"</span>, <span class="st">"tmax"</span>, <span class="st">"rain"</span>, <span class="st">"et0"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       tmin            tmax            rain             et0        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   : 6.50   Min.   :22.50   Min.   : 0.000   Min.   : 1.300  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:14.90   1st Qu.:32.90   1st Qu.: 0.000   1st Qu.: 5.400  </span>
@@ -155,7 +155,7 @@ including:</p><ul><li><p>Temperature data for calculating growing degree days an
 <span class="r-in"><span><span class="va">weather_2000</span> <span class="op">&lt;-</span> <span class="va">weather</span><span class="op">[</span><span class="va">weather</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2000</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate annual rainfall</span></span></span>
-<span class="r-in"><span><span class="va">annual_rain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">rain</span> <span class="op">~</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">weather</span>, FUN <span class="op">=</span> <span class="va">sum</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">annual_rain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">rain</span> <span class="op">~</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">weather</span>, FUN <span class="op">=</span> <span class="va">sum</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
