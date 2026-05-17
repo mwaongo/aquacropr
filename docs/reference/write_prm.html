@@ -26,6 +26,7 @@ find_onset."></head><body>
     <li><a class="dropdown-item" href="../articles/sowingdate.html">Sowing date</a></li>
     <li><a class="dropdown-item" href="../articles/regionalsim.html">Regional simulation</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mwaongo/aquacropr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -60,7 +61,7 @@ schedule can be supplied directly or derived from a <code>.CAL</code> file via
 <span>  climate_path <span class="op">=</span> <span class="st">"CLIMATE/"</span>,</span>
 <span>  calendar_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  management_path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
-<span>  irrigation_path <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
+<span>  irrigation_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  soil_path <span class="op">=</span> <span class="st">"SOIL/"</span>,</span>
 <span>  groundwater_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  offseason_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -123,8 +124,7 @@ Default: <code>"MANAGEMENT/"</code>.</p></dd>
 
 <dt id="arg-irrigation-path">irrigation_path<a class="anchor" aria-label="anchor" href="#arg-irrigation-path"></a></dt>
 <dd><p>Character or NULL. Path to the IRR file directory.
-If the <code>.IRR</code> file is not found, a warning is issued and the
-section is written as <code>(None)</code>. Default: <code>"MANAGEMENT/"</code>.</p></dd>
+If NULL (default), the section is written as <code>(None)</code></p></dd>
 
 
 <dt id="arg-soil-path">soil_path<a class="anchor" aria-label="anchor" href="#arg-soil-path"></a></dt>

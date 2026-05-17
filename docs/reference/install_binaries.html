@@ -26,6 +26,7 @@ fallbacks, and caches downloads to avoid repeated transfers."></head><body>
     <li><a class="dropdown-item" href="../articles/sowingdate.html">Sowing date</a></li>
     <li><a class="dropdown-item" href="../articles/regionalsim.html">Regional simulation</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/mwaongo/aquacropr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -53,7 +54,7 @@ fallbacks, and caches downloads to avoid repeated transfers.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">install_binaries</span><span class="op">(</span></span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  os <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">path</span>,</span>
+<span>  path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  compiler <span class="op">=</span> <span class="st">"gfortran"</span>,</span>
 <span>  keep_source <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -79,7 +80,7 @@ If requested version is &lt; 7.0 or &gt; latest, falls back to latest version.</
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
 <dd><p>Character string specifying the installation directory path
-where the AquaCrop executable will be installed.</p></dd>
+where the AquaCrop executable will be installed. Current working directory by default.</p></dd>
 
 
 <dt id="arg-force">force<a class="anchor" aria-label="anchor" href="#arg-force"></a></dt>

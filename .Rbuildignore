@@ -9,3 +9,5 @@
 paper.md
 ^doc$
 ^Meta$
+^\.positai$
+^\.claude$
