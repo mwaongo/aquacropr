@@ -166,7 +166,7 @@ soil water potential for each USDA soil texture class.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compare with SoilWater data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">SoilWater</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">SWOData</span>, <span class="va">SoilWater</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"description"</span>, <span class="st">"fc"</span>, <span class="st">"sat"</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">SWOData</span>, <span class="va">SoilWater</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"description"</span>, <span class="st">"fc"</span>, <span class="st">"sat"</span><span class="op">)</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  by.x <span class="op">=</span> <span class="st">"texture"</span>, by.y <span class="op">=</span> <span class="st">"description"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            texture   wp ece fc_approx   fc  sat</span>
@@ -191,7 +191,7 @@ soil water potential for each USDA soil texture class.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ousmane Ouedraogo.</p>
+  <p>Developed by Moussa Waongo, Ousmane Ouedraogo.</p>
 </div>
 
 <div class="pkgdown-footer-right">

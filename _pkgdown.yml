@@ -1,10 +1,4 @@
 url: https://mwaongo.github.io/aquacropr/
-articles:
-- title: "Articles"
-  contents:
-  - settingup
-  - regionalsim
-  - sowingdate
 template:
   bootstrap: 5
 
