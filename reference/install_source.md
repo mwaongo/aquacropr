@@ -1,0 +1,86 @@
+# Install AquaCrop from Source
+
+Complete workflow to download, compile, and install the AquaCrop
+executable from source. Always compiles from the latest development
+version (main branch). This function is called internally by
+install_binaries(version = "dev").
+
+## Usage
+
+``` r
+install_source(
+  install_dir = getwd(),
+  compiler = NULL,
+  keep_source = FALSE,
+  force = FALSE,
+  verbose = TRUE
+)
+```
+
+## Arguments
+
+- install_dir:
+
+  Character. Destination directory for the AquaCrop executable. Default:
+  current working directory.
+
+- compiler:
+
+  Character or NULL. Fortran compiler to use. If NULL (default),
+  auto-detected once via R CMD config FC and reused across all steps.
+  Can be set explicitly as a binary name (e.g., "gfortran"), a versioned
+  name (e.g., "gfortran-14"), or a full absolute path (e.g.,
+  "/opt/gfortran/bin/gfortran").
+
+- keep_source:
+
+  Logical. If TRUE, keeps source code after compilation. Default: FALSE.
+
+- force:
+
+  Logical. If TRUE, overwrites existing installation. Default: FALSE.
+
+- verbose:
+
+  Logical. If TRUE (default), prints progress messages. If FALSE, runs
+  silently except for errors.
+
+## Value
+
+Invisibly returns "dev" as the version string.
+
+## Details
+
+System requirements on Linux and macOS: GNU Make (\>= 3.82) and a
+Fortran compiler (gfortran \>= 6.4.0 or ifort \>= 18.0.1). On macOS, the
+official R toolchain from mac.r-project.org/tools is recommended. On
+Windows, installing Rtools is sufficient as it provides both make and
+gfortran.
+
+The function detects the Fortran compiler once in step 1 and reuses the
+result in step 3, avoiding redundant calls to R CMD config FC.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Usually called via install_binaries
+install_binaries(version = "dev", path = "~/aquacrop")
+
+# Install to current directory with auto-detected compiler
+install_source()
+
+# Install to specific directory, silent
+install_source(install_dir = "~/aquacrop", verbose = FALSE)
+
+# Keep source code after compilation
+install_source(install_dir = "~/aquacrop", keep_source = TRUE)
+
+# Force reinstall with explicit compiler path
+install_source(
+  install_dir = "~/aquacrop",
+  compiler    = "/opt/gfortran/bin/gfortran",
+  force       = TRUE
+)
+} # }
+```
