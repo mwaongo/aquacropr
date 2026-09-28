@@ -25,7 +25,8 @@ write_prm_batch(
   use_standalone = TRUE,
   base_path = getwd(),
   verbose = TRUE,
-  clean = FALSE
+  clean = FALSE,
+  update_list = TRUE
 )
 }
 \arguments{
@@ -101,6 +102,10 @@ If FALSE, runs silently.}
 
 \item{clean}{Logical. If TRUE, removes existing .PRM files from path
 before writing new files. Default: FALSE.}
+
+\item{update_list}{Logical. If TRUE (default), ListProjects.txt is
+(re)written once in path from the .PRM files it contains, after all
+stations have been processed.}
 }
 \value{
 Invisibly returns NULL. The main effect is writing PRM files to
@@ -118,6 +123,10 @@ to all stations.
 Validation of optional file paths (irrigation, off-season, observations)
 is delegated to \code{\link{write_prm}}, which issues a warning and sets
 the corresponding path to NULL when the file is not found.
+
+After all stations are written, \code{ListProjects.txt} is refreshed once
+in \code{path} so that it lists every \code{.PRM} file present in the
+directory, one per line, as expected by AquaCrop standalone.
 }
 \examples{
 \dontrun{

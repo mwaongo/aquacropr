@@ -23,7 +23,8 @@ write_prm(
   scenario = "hist",
   eol = NULL,
   use_standalone = TRUE,
-  base_path = getwd()
+  base_path = getwd(),
+  update_list = TRUE
 )
 }
 \arguments{
@@ -83,6 +84,9 @@ or \code{"macos"}. If \code{NULL} (default), eol is auto-detected.}
 standalone mode. Default: \code{TRUE}.}
 
 \item{base_path}{Character. Base absolute path. Default: \code{getwd()}.}
+
+\item{update_list}{Logical. If \code{TRUE} (default), \code{ListProjects.txt}
+is (re)written in \code{path} from the \code{.PRM} files it contains.}
 }
 \value{
 Invisibly returns the output file path.

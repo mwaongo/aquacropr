@@ -54,6 +54,9 @@
 #'   If FALSE, runs silently.
 #' @param clean Logical. If TRUE, removes existing .PRM files from path
 #'   before writing new files. Default: FALSE.
+#' @param update_list Logical. If TRUE (default), ListProjects.txt is
+#'   (re)written once in path from the .PRM files it contains, after all
+#'   stations have been processed.
 #'
 #' @details
 #' The function validates that all specified stations have corresponding
@@ -64,6 +67,10 @@
 #' Validation of optional file paths (irrigation, off-season, observations)
 #' is delegated to \code{\link{write_prm}}, which issues a warning and sets
 #' the corresponding path to NULL when the file is not found.
+#'
+#' After all stations are written, \code{ListProjects.txt} is refreshed once
+#' in \code{path} so that it lists every \code{.PRM} file present in the
+#' directory, one per line, as expected by AquaCrop standalone.
 #'
 #' @family batch operations
 #' @return Invisibly returns NULL. The main effect is writing PRM files to
@@ -132,7 +139,8 @@ write_prm_batch <- function(
     use_standalone       = TRUE,
     base_path            = getwd(),
     verbose              = TRUE,
-    clean                = FALSE
+    clean                = FALSE,
+    update_list          = TRUE
 ) {
 
   # Clean directory if requested
@@ -239,7 +247,8 @@ write_prm_batch <- function(
         simulation_start_doy = simulation_start_doy,
         scenario             = scenario,
         eol                  = eol,
-        use_standalone       = use_standalone
+        use_standalone       = use_standalone,
+        update_list          = FALSE
       )
     },
     crop_name            = crop_name,
@@ -259,6 +268,9 @@ write_prm_batch <- function(
     eol                  = eol,
     use_standalone       = use_standalone
   )
+
+  # Refresh the project list AquaCrop reads from LIST/, once for all sites
+  if (update_list) .write_list_projects(path = path, eol = eol)
 
   if (verbose) message("Successfully created PRM files for ", n, " site(s)")
 

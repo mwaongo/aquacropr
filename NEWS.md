@@ -1,3 +1,14 @@
+# aquacropr (development version)
+
+- `write_prm()` and `write_prm_batch()` now refresh `LIST/ListProjects.txt`
+  after writing. The file is rebuilt from the `.PRM` files actually present in
+  `path`, one name per line, which is the list AquaCrop standalone reads to
+  decide which projects to run. Set `update_list = FALSE` to skip it.
+  `write_prm_batch()` writes the list once, after all sites, rather than once
+  per site.
+
+---
+
 # aquacropr 0.3.0
 
 ## Breaking changes
