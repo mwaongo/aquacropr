@@ -26,7 +26,8 @@ write_prm_batch(
   use_standalone = TRUE,
   base_path = getwd(),
   verbose = TRUE,
-  clean = FALSE
+  clean = FALSE,
+  update_list = TRUE
 )
 ```
 
@@ -145,6 +146,12 @@ write_prm_batch(
   Logical. If TRUE, removes existing .PRM files from path before writing
   new files. Default: FALSE.
 
+- update_list:
+
+  Logical. If TRUE (default), ListProjects.txt is (re)written once in
+  path from the .PRM files it contains, after all stations have been
+  processed.
+
 ## Value
 
 Invisibly returns NULL. The main effect is writing PRM files to the
@@ -163,6 +170,10 @@ is delegated to
 which issues a warning and sets the corresponding path to NULL when the
 file is not found.
 
+After all stations are written, `ListProjects.txt` is refreshed once in
+`path` so that it lists every `.PRM` file present in the directory, one
+per line, as expected by AquaCrop standalone.
+
 ## See also
 
 [`write_prm`](https://mwaongo.github.io/aquacropr/reference/write_prm.md)
@@ -170,7 +181,7 @@ for single station PRM file generation.
 
 Other batch operations:
 [`write_gwt_batch()`](https://mwaongo.github.io/aquacropr/reference/write_gwt_batch.md),
-[`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md),
+[`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md),
 [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md),
 [`write_obs_batch()`](https://mwaongo.github.io/aquacropr/reference/write_obs_batch.md),
 [`write_off_batch()`](https://mwaongo.github.io/aquacropr/reference/write_off_batch.md),

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aquacropr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,8 +19,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/regionalsim.html">Regional Crop Simulations Using aquacropr</a></li>
-    <li><a class="dropdown-item" href="../articles/settingup.html">Getting Started: Initializing an AquaCrop Project</a></li>
-    <li><a class="dropdown-item" href="../articles/sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a></li>
+    <li><a class="dropdown-item" href="../articles/settingup.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/sowingdate.html">Sowing Dates: Extensible Onset Detection in aquacropr</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -38,6 +38,70 @@
       <small>Source: <a href="https://github.com/mwaongo/aquacropr/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="aquacropr-development-version">aquacropr (development version)<a class="anchor" aria-label="anchor" href="#aquacropr-development-version"></a></h2>
+<ul><li>
+<code><a href="../reference/write_prm.html">write_prm()</a></code> and <code><a href="../reference/write_prm_batch.html">write_prm_batch()</a></code> now refresh <code>LIST/ListProjects.txt</code> after writing. The file is rebuilt from the <code>.PRM</code> files actually present in <code>path</code>, one name per line, which is the list AquaCrop standalone reads to decide which projects to run. Set <code>update_list = FALSE</code> to skip it. <code><a href="../reference/write_prm_batch.html">write_prm_batch()</a></code> writes the list once, after all sites, rather than once per site.</li>
+</ul><hr></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="aquacropr-030">aquacropr 0.3.0<a class="anchor" aria-label="anchor" href="#aquacropr-030"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
+<ul><li>
+<strong><code>%&gt;%</code> is no longer re-exported.</strong> Package code uses the native pipe <code>|&gt;</code> throughout, so <code>R/utils-pipe.R</code> and the <code>magrittr</code> dependency are gone. Code that relied on <code><a href="https://github.com/mwaongo/aquacropr" class="external-link">library(aquacropr)</a></code> providing <code>%&gt;%</code> must now load it from magrittr or dplyr directly, or switch to <code>|&gt;</code>.</li>
+<li>
+<strong><code>Depends: R (&gt;= 4.1.0)</code></strong>, raised from <code>R (&gt;= 3.5)</code>. Package code now uses the native pipe <code>|&gt;</code> throughout (51 call sites converted from <code>%&gt;%</code>), which requires R 4.1. The shipped <code>regionalsim</code> vignette already used <code>|&gt;</code>, so the previous <code>R (&gt;= 3.5)</code> declaration was not accurate in any case.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="climate-writers-0-3-0">Climate writers<a class="anchor" aria-label="anchor" href="#climate-writers-0-3-0"></a></h3>
+<ul><li>
+<code><a href="../reference/write_climate.html">write_climate()</a></code> is substantially faster. Writing the 427-cell regional grid (156,282 rows) went from <strong>25.2 s to 4.4 s</strong> (~5.7x). Three changes account for it: each climate file is now written through a single connection instead of a <code><a href="https://readr.tidyverse.org/reference/read_file.html" class="external-link">readr::write_file()</a></code> header pass followed by a <code><a href="https://readr.tidyverse.org/reference/read_lines.html" class="external-link">readr::write_lines()</a></code> append pass; <code>readr</code>’s per-call overhead is replaced with base connections; and the repeated OS/path lookups (<code><a href="https://rdrr.io/r/base/Sys.info.html" class="external-link">Sys.info()</a></code> via <code><a href="../reference/get_os.html">get_os()</a></code>, <code><a href="https://fs.r-lib.org/reference/file_access.html" class="external-link">fs::dir_exists()</a></code>) are cached or moved to their base equivalents. Output is byte-identical.</li>
+<li>Fixed <code><a href="../reference/write_climate.html">write_climate()</a></code> erroring on a <strong>tibble containing <code>NA</code></strong>. <code><a href="../reference/write_fwf.html">write_fwf()</a></code> replaced missing values with <code>x[is.na(x)] &lt;- replace_na</code>, which a tibble rejects as an incompatible assignment. This affected the bundled <code>weather</code> data and anything coming from <code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_csv()</a></code>.</li>
+<li>Fixed <code>eol</code> being ignored for data rows. The header honoured the requested <code>eol</code> but <code><a href="../reference/write_fwf.html">write_fwf()</a></code> re-detected it from the host OS, so <code>eol = "windows"</code> on Linux or macOS produced a file with CRLF header lines and LF data lines.</li>
+<li>
+<code><a href="../reference/write_fwf.html">write_fwf()</a></code> now warns when a formatted value is wider than its column. Previously such values silently ran into the neighbouring column, emitting e.g. <code>14.61234567890129.487654321098</code> with no separator between <code>tmin</code> and <code>tmax</code> – a corrupt file that AquaCrop reads without complaint.</li>
+<li>
+<code>.get_eol()</code> accepts <code>eol</code> case-insensitively, as documented.</li>
+<li>
+<code><a href="../reference/write_climate.html">write_climate()</a></code> gains <code>quiet</code>. A single call reports six lines, which is ~2,500 lines of output over the 427-cell regional grid; pass <code>quiet = TRUE</code> to silence it. Default <code>FALSE</code>, so existing output is unchanged.</li>
+<li>
+<code><a href="../reference/write_cli.html">write_cli()</a></code> now defaults to <code>eol = NULL</code> (auto-detect), matching every other writer – it was the only one hard-coded to <code>"windows"</code>. Behaviour change for direct <code><a href="../reference/write_cli.html">write_cli()</a></code> calls on Linux and macOS, which now get LF rather than CRLF; a CRLF <code>.CLI</code> on a unix host can leave a trailing <code>\r</code> on the climate filenames it lists. <code><a href="../reference/write_climate.html">write_climate()</a></code> is unaffected, as it already passed <code>eol</code> through explicitly.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="consistency-0-3-0">Consistency<a class="anchor" aria-label="anchor" href="#consistency-0-3-0"></a></h3>
+<ul><li>
+<code>eol</code> now defaults to <code>NULL</code> (auto-detect) in every writer. <code><a href="../reference/write_cro.html">write_cro()</a></code> and <code><a href="../reference/write_prm.html">write_prm()</a></code> were the last two hard-coded to <code>"windows"</code>; <code><a href="../reference/write_cro.html">write_cro()</a></code>’s documentation already claimed <code>NULL</code>, so its code and docs now agree. Files written with the default on Linux/macOS change from CRLF to LF; passing <code>eol = "windows"</code> explicitly is unchanged.</li>
+<li>
+<code><a href="../reference/write_cli.html">write_cli()</a></code> defaults to <code>path = "CLIMATE/"</code>, matching <code><a href="../reference/write_plu.html">write_plu()</a></code>, <code><a href="../reference/write_eto.html">write_eto()</a></code>, <code><a href="../reference/write_tnx.html">write_tnx()</a></code> and <code><a href="../reference/write_climate.html">write_climate()</a></code>. It was the only climate writer defaulting to <code>"weather/"</code>.</li>
+<li>Package-level environments are now declared together in <code>globals.R</code>; <code>zzz.R</code> holds only the attach hook.</li>
+<li>
+<code>CONTRIBUTING.md</code> updated for the native pipe, the R 4.1 minimum, the <code>.data</code>/string column-reference rules, the repo’s mixed line endings, and the new test suite.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internals-0-3-0">Internals<a class="anchor" aria-label="anchor" href="#internals-0-3-0"></a></h3>
+<ul><li>Removed <code><a href="https://rdrr.io/r/utils/globalVariables.html" class="external-link">utils::globalVariables()</a></code>. The 130-name list was roughly 85% stale (every <code>var_02</code>..<code>var_84</code> entry, plus <code>x</code>, <code>path</code>, <code>%&gt;%</code>, <code>.</code>, <code>value</code>, <code>fmt</code>, <code>width</code>, <code>thickness_vec</code>), and it masked real lookup errors rather than fixing them. The 23 names actually needed are now explicit: data-masking references use the <code><a href="https://rlang.r-lib.org/reference/dot-data.html" class="external-link">rlang::.data</a></code> pronoun, tidyselect references use strings, and the four bundled datasets are fetched through a new internal <code>.pkg_data()</code> helper instead of <code>utils::data(envir = environment())</code>. <code>R CMD check</code> reports no visible-binding notes.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="testing-0-3-0">Testing<a class="anchor" aria-label="anchor" href="#testing-0-3-0"></a></h3>
+<ul><li>Added <code>tests/testthat/</code> with regression tests covering the above.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-0-3-0">Other<a class="anchor" aria-label="anchor" href="#other-0-3-0"></a></h3>
+<ul><li>Renamed <code>write_irrig_batch()</code> to <code><a href="../reference/write_irr_batch.html">write_irr_batch()</a></code>, matching the <code>write_&lt;type&gt;_batch()</code> pattern used by every other batch writer (<code><a href="../reference/write_sol_batch.html">write_sol_batch()</a></code>, <code><a href="../reference/write_man_batch.html">write_man_batch()</a></code>, <code><a href="../reference/write_cal_batch.html">write_cal_batch()</a></code>, <code><a href="../reference/write_prm_batch.html">write_prm_batch()</a></code>) and the single-site <code><a href="../reference/write_irr.html">write_irr()</a></code>. Breaking change: update any code calling <code>write_irrig_batch()</code>.</li>
+<li>
+<code><a href="../reference/install_binaries.html">install_binaries()</a></code>: <code>compiler</code> defaults to <code>NULL</code> (was <code>"gfortran"</code>), matching <code><a href="../reference/install_source.html">install_source()</a></code>.</li>
+<li>
+<code><a href="../reference/install_binaries.html">install_binaries()</a></code>: safer archive extraction, download validation, and post-install checks.</li>
+<li>
+<code><a href="../reference/install_binaries.html">install_binaries()</a></code>: stricter <code>path</code>/<code>force</code>/version argument validation.</li>
+<li>
+<code><a href="../reference/run_aquacrop.html">run_aquacrop()</a></code>: clearer error messages for a missing executable.</li>
+<li>Fixed <code>|&gt;</code> and <code>\(...)</code> lambda usage inconsistent with <code>Depends: R (&gt;= 3.5)</code>; switched to <code>%&gt;%</code>/<code>function()</code>.</li>
+<li>Removed unused <code>gh</code> dependency and dead code in <code>utils-readers.R</code>.</li>
+<li>Deduplicated OS/executable-name detection via <code><a href="../reference/get_os.html">get_os()</a></code> and <code>.aquacrop_exe_name()</code>.</li>
+<li>Fixed non-ASCII characters in <code><a href="../reference/run_aquacrop.html">run_aquacrop()</a></code> and excluded <code>.claude/</code> from the build (<code>R CMD check</code> now passes clean).</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="aquacropr-020">aquacropr 0.2.0<a class="anchor" aria-label="anchor" href="#aquacropr-020"></a></h2>
 <div class="section level3">
@@ -70,7 +134,7 @@
 <li>
 <code><a href="../reference/write_gwt.html">write_gwt()</a></code> / <code><a href="../reference/write_gwt_batch.html">write_gwt_batch()</a></code> — write groundwater table (<code>.GWT</code>) files.</li>
 <li>
-<code><a href="../reference/write_irr.html">write_irr()</a></code> / <code><a href="../reference/write_irrig_batch.html">write_irrig_batch()</a></code> — write irrigation schedule (<code>.IRR</code>) files.</li>
+<code><a href="../reference/write_irr.html">write_irr()</a></code> / <code>write_irrig_batch()</code> — write irrigation schedule (<code>.IRR</code>) files.</li>
 <li>
 <code><a href="../reference/write_obs.html">write_obs()</a></code> / <code><a href="../reference/write_obs_batch.html">write_obs_batch()</a></code> — write field observation (<code>.OBS</code>) files.</li>
 <li>
@@ -153,7 +217,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

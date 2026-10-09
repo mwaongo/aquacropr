@@ -24,9 +24,10 @@ write_prm(
   obs_path = NULL,
   simulation_start_doy = NULL,
   scenario = "hist",
-  eol = "windows",
+  eol = NULL,
   use_standalone = TRUE,
-  base_path = getwd()
+  base_path = getwd(),
+  update_list = TRUE
 )
 ```
 
@@ -109,8 +110,8 @@ write_prm(
 
 - eol:
 
-  Character. End-of-line style: `"windows"`, `"linux"`, or `"macos"`.
-  Default: `"windows"`.
+  Character. End-of-line style: `"windows"`, `"linux"`, or `"macos"`. If
+  `NULL` (default), eol is auto-detected.
 
 - use_standalone:
 
@@ -121,6 +122,11 @@ write_prm(
 
   Character. Base absolute path. Default:
   [`getwd()`](https://rdrr.io/r/base/getwd.html).
+
+- update_list:
+
+  Logical. If `TRUE` (default), `ListProjects.txt` is (re)written in
+  `path` from the `.PRM` files it contains.
 
 ## Value
 

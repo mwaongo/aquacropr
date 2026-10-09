@@ -14,12 +14,12 @@ Source:
 
 Waongo M, Ouedraogo O (2026). *aquacropr: R Interface to the FAO
 AquaCrop Crop Water Productivity Model (v7.0+)*. R package version
-0.2.0, <https://github.com/mwaongo/aquacropr>.
+0.3.1, <https://github.com/mwaongo/aquacropr>.
 
     @Manual{,
       title = {aquacropr: R Interface to the FAO AquaCrop Crop Water Productivity Model (v7.0+)},
       author = {Moussa Waongo and Ousmane Ouedraogo},
       year = {2026},
-      note = {R package version 0.2.0},
+      note = {R package version 0.3.1},
       url = {https://github.com/mwaongo/aquacropr},
     }

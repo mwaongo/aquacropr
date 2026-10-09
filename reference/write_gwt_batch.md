@@ -9,7 +9,7 @@ write_gwt_batch(
   site_name = NULL,
   code,
   gwt_data = NULL,
-  path = "MANAGEMENT/",
+  path = "SOIL/",
   climate_path = "CLIMATE/",
   start_day = 1,
   start_month = 1,
@@ -47,7 +47,7 @@ write_gwt_batch(
 
 - path:
 
-  Output directory path for GWT files. Default: "MANAGEMENT/".
+  Output directory path for GWT files. Default: "SOIL/".
 
 - climate_path:
 
@@ -112,7 +112,7 @@ applied to all stations. For code 0, gwt_data is ignored entirely.
 for single station GWT file generation.
 
 Other batch operations:
-[`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md),
+[`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md),
 [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md),
 [`write_obs_batch()`](https://mwaongo.github.io/aquacropr/reference/write_obs_batch.md),
 [`write_off_batch()`](https://mwaongo.github.io/aquacropr/reference/write_off_batch.md),

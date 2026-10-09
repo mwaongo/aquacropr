@@ -13,12 +13,31 @@ scientific validity.
 
 The workflow is divided into five steps:
 
-1.  **Project setup** — Initialise the AquaCrop directory structure
-2.  **`process_climate`** — Preprocess ERA5 climate data and build the
-    simulation grid
-3.  **`process_soil`** — Extract soil properties from HWSD
-4.  **`write_inputs`** — Write all AquaCrop input files in batch
-5.  **`run_aquacrop`** — Launch simulations
+1.  **Project setup** — Initialise the AquaCrop directory structure with
+    [`init_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/init_aquacrop.md)
+2.  **Climate preprocessing** — Preprocess ERA5 climate data and build
+    the simulation grid (custom `terra`/`sf` code; not an `aquacropr`
+    function)
+3.  **Soil properties extraction** — Extract soil properties from HWSD
+    (custom code)
+4.  **Writing AquaCrop input files** — Write all AquaCrop input files in
+    batch, using
+    [`write_climate()`](https://mwaongo.github.io/aquacropr/reference/write_climate.md),
+    [`write_cro()`](https://mwaongo.github.io/aquacropr/reference/write_cro.md),
+    [`write_sol_batch()`](https://mwaongo.github.io/aquacropr/reference/write_sol_batch.md),
+    [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md),
+    [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md),
+    [`write_cal_batch()`](https://mwaongo.github.io/aquacropr/reference/write_cal_batch.md),
+    and
+    [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md)
+5.  **[`run_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/run_aquacrop.md)**
+    — Launch simulations
+
+Only steps 1, 4, and 5 call `aquacropr` functions directly. Steps 2 and
+3 are preprocessing you write yourself with `terra`/`sf` (and, for
+soils, a couple of small helper functions defined in this vignette) —
+shown here as a complete, reproducible example, not as package
+functionality.
 
 ### Project folder structure
 
@@ -36,16 +55,64 @@ The workflow is divided into five steps:
     ├── DATA/
     │   ├── climate/             # Masked GeoTIFFs + final CSV
     │   ├── soil/                # Soil CSV per grid cell
-    │   └── shapefiles/          # ERA5 grid (pts_grid.shp)
+    │   └── shapefiles/          # pts_grid.shp + grids0p25_bfa_clip.gpkg
     ├── SRC/
-    │   └── hwsdb_helpers.R      # HWSD utility functions
+    │   └── hwsdb_helpers.R      # HWSD utility functions used in this vignette
     ├── CLIMATE/                 # .PLU .Tnx .ETo .CLI (generated)
     ├── CROP/                    # .CRO (generated)
     ├── SOIL/                    # .SOL .SW0 (generated)
     ├── MANAGEMENT/              # .MAN .IRR (generated)
     ├── CAL/                     # .CAL onset calendars (optional)
     ├── LIST/                    # .PRM project files (generated)
-    └── RESULTS/                 # AquaCrop outputs (generated)
+    └── OUTP/                    # AquaCrop outputs (generated)
+
+> **Only `CLIMATE/`, `CAL/`, `CROP/`, `LIST/`, `MANAGEMENT/`, `OBS/`,
+> `OUTP/`, `PARAM/`, `SIMUL/`, and `SOIL/` are created automatically by
+> [`init_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/init_aquacrop.md).**
+> `RAWDATA/`, `DATA/`, and `SRC/` are this pipeline’s own preprocessing
+> folders – create them yourself (e.g.
+> [`dir.create()`](https://rdrr.io/r/base/files2.html), or by placing
+> raw inputs there) before Step 2.
+>
+> **If you download a pre-built example project rather than starting
+> from raw inputs:** some example archives carry extra standalone
+> scripts under `SRC/` (e.g. an older `process_climate.R`,
+> `process_soil.R`, `write_input_and_run.R` trio) left over from earlier
+> package versions. Only `hwsdb_helpers.R` is required by this vignette
+> – the rest may predate a package rename or a
+> `site_name`/`station_name` argument change and are not guaranteed to
+> run against the current `aquacropr`. Treat the code chunks in this
+> vignette, not files incidentally bundled in a downloaded project, as
+> the source of truth.
+
+### Download the example dataset
+
+The raw ERA5 NetCDF files, the HWSD soil raster, and the Burkina Faso
+boundary shapefile referenced throughout this vignette are too large to
+ship inside the `aquacropr` package. They are bundled as `TEST.zip` and
+hosted on [OSF](https://osf.io) (Open Science Framework).
+
+``` r
+
+osf_url  <- "<OSF_DIRECT_DOWNLOAD_URL>"  # e.g. https://osf.io/<id>/download
+zip_path <- file.path(tempdir(), "TEST.zip")
+
+download.file(osf_url, destfile = zip_path, mode = "wb")
+unzip(zip_path, exdir = "my-project", overwrite = TRUE)
+```
+
+This populates `RAWDATA/` (and, if you download the pre-processed
+archive rather than only the raw inputs, `DATA/` and `SRC/` as well)
+inside the project created in Step 1. Re-running Steps 2-3 from scratch
+is also fully supported – the archive is a convenience, not a
+requirement.
+
+> **File size.** The full archive is on the order of 1 GB, driven mostly
+> by the raw ERA5 NetCDFs and the HWSD raster. If you are hosting your
+> own copy, consider trimming `RAWDATA/shapefiles/` down to the
+> administrative level this vignette actually reads
+> (`bfa_admbnda_adm0_igb_20200323.*`) – the finer admin levels are not
+> used by any step here and add unnecessary download size.
 
 ### Required packages
 
@@ -71,13 +138,28 @@ creates the standard AquaCrop folder structure and downloads the
 official FAO binary for your operating system. Run this once per
 project.
 
+This pipeline processes many grid cells in batch, so it is written as a
+script rather than interactive RStudio work – pass
+`use_rproject = FALSE` (see the “Getting Started” vignette for why) and
+capture the returned path so every later step can use it:
+
 ``` r
 
-init_aquacrop(path = "my-project", version = "7.2")
+proj_dir <- init_aquacrop(
+  path         = "my-project",
+  version      = "7.2",
+  use_rproject = FALSE
+)
+
+setwd(proj_dir)
 ```
 
-This opens a new RStudio project with a `readme.txt` explaining the
-directory layout.
+[`init_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/init_aquacrop.md)
+writes a `README.txt` describing the directory layout, but does **not**
+itself change the R session’s working directory – that is what
+`setwd(proj_dir)` above is for. Every relative path used from here on
+(`RAWDATA/...`, `DATA/...`, `CLIMATE/...`) assumes the working directory
+is now `proj_dir`.
 
 ------------------------------------------------------------------------
 
@@ -160,10 +242,39 @@ ggplot() +
   labs(
     title    = "ERA5 Grid (0.25 deg) - Burkina Faso",
     subtitle = sprintf("%d simulation cells", nrow(pts))
-  ) 
+  )
 ```
 
 ![](figures/grids_bf.png)
+
+### Clip the grid to the national boundary
+
+[`st_grid()`](https://mwaongo.github.io/aquacropr/reference/st_grid.md)
+builds a *square* cell centred on every point, so cells along the border
+extend past the actual national outline – a border-adjacent grid cell
+can cover territory that isn’t Burkina Faso at all. Clip the cell
+polygons (not just the centre points, which are already inside the
+boundary because they came from the masked raster) against `shp`, and
+save the result as a single-file GeoPackage instead of a four-file
+shapefile bundle:
+
+``` r
+
+grid_bfa <- sf::st_read("DATA/shapefiles/pts_grid.shp")
+
+grid_bfa_clip <- sf::st_intersection(grid_bfa, shp) |>
+  dplyr::select(station)
+
+sf::write_sf(grid_bfa_clip, "DATA/shapefiles/grids0p25_bfa_clip.gpkg")
+```
+
+> [`st_intersection()`](https://r-spatial.github.io/sf/reference/geos_binary_ops.html)
+> will warn
+> `attribute variables are assumed to be spatially constant throughout all geometries`
+> – expected here, since `station` is a per-cell identifier, not a field
+> that varies continuously in space. From this point on,
+> `grids0p25_bfa_clip.gpkg` – not `pts_grid.shp` – is the grid used
+> downstream (Step 3).
 
 ### Build the climate data frame
 
@@ -315,7 +426,7 @@ grid cell. Ties are broken by returning the first encountered value.
 
 ``` r
 
-grid_shp <- read_sf("DATA/shapefiles/pts_grid.shp")
+grid_shp <- read_sf("DATA/shapefiles/grids0p25_bfa_clip.gpkg")
 
 soilc   <- rast("RAWDATA/soil/hwsd_wa_usda_all_layers.tif") |> crop(grid_shp)
 soil_df <- terra::extract(soilc, grid_shp, fun = .get_mode)
@@ -372,7 +483,8 @@ datal <- read_csv("DATA/climate/climate_grid_data.csv") |>
   group_split(station, .keep = TRUE)
 
 tic("Writing climate files")
-walk(datal, write_climate, path = "CLIMATE/")
+# quiet = TRUE: write_climate() otherwise prints six lines per grid cell
+walk(datal, write_climate, path = "CLIMATE/", quiet = TRUE)
 toc()
 # → CLIMATE/grid_XXX.PLU   (rainfall)
 # → CLIMATE/grid_XXX.Tnx   (min/max temperature)
@@ -447,12 +559,19 @@ write_man_batch(
 # → MANAGEMENT/grid_XXX.MAN
 ```
 
-### 4.5 Irrigation files (`.IRR`)
+### 4.5 Irrigation files (`.IRR`) — optional
 
 [`create_irr_schedule()`](https://mwaongo.github.io/aquacropr/reference/create_irr_schedule.md)
 builds the schedule data frame defining trigger thresholds and
 application depths for successive crop periods, which is then passed to
-`write_irr_batch()`.
+[`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md).
+
+> This step is optional and independent of the rest of the pipeline: the
+> example dataset in [Download the example
+> dataset](#download-the-example-dataset) was validated as a purely
+> rainfed run (no `.IRR`, no `.CAL` – Option A below). Sections 4.5 and
+> 4.6 show how to add irrigation or onset-based planting on top of the
+> same grid; test on a handful of cells first if you enable either.
 
 ``` r
 
@@ -554,8 +673,9 @@ write_prm_batch(
 ## Step 5 — Running the simulations
 
 [`run_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/run_aquacrop.md)
-automatically discovers all `.PRM` files in `LIST/` and runs AquaCrop
-for each site × year combination.
+automatically discovers all `.PRM` files in `LIST/` and runs them as a
+single AquaCrop batch. Each `.PRM` becomes one run inside one combined
+output file – **not** one output file per grid cell.
 
 ``` r
 
@@ -564,13 +684,14 @@ run_aquacrop()
 toc()
 ```
 
-> **Test on a subset first.** For ~100 grid cells × 40 years, runtime
-> can range from minutes to hours. Validate the full pipeline on a few
-> stations before launching the complete run:
+> **Test on a subset first.** For the ~427 grid cells produced by the
+> 0.25° grid over Burkina Faso × 40 years, runtime can range from
+> minutes to hours. Validate the full pipeline on a few stations before
+> launching the complete run:
 >
 > ``` r
 >
-> walk(datal[1:5], write_climate, path = "CLIMATE/")
+> walk(datal[1:5], write_climate, path = "CLIMATE/", quiet = TRUE)
 > run_aquacrop()
 > ```
 
@@ -589,9 +710,31 @@ read_plu("CLIMATE/grid_001.PLU")
 read_tnx("CLIMATE/grid_001.Tnx")
 read_eto("CLIMATE/grid_001.ETo")       # alias: read_et0()
 
-# Onset calendar
+# Onset calendar (only if Step 4.6 / Option B was used)
 read_cal("CAL/grid_001.CAL")
 ```
+
+### Reading simulation results
+
+AquaCrop writes **one combined seasonal-output file for the whole
+batch** – not one file per grid cell. With `n` grid cells, `OUTP/`
+contains a single `ProjectPRMseason.OUT` holding one row per grid cell
+(more if `crop_duration` spans multiple growing seasons), distinguished
+by the trailing `prm_file` column that
+[`read_season_out()`](https://mwaongo.github.io/aquacropr/reference/read_season_out.md)
+parses out for you:
+
+``` r
+
+season <- read_season_out("OUTP/ProjectPRMseason.OUT")
+
+# One row per grid cell (per season); prm_file identifies the source .PRM
+season |> dplyr::count(prm_file)
+```
+
+`ListProjectsLoaded.OUT` in the same folder reports which `.PRM` files,
+if any, failed to load (missing input files, bad paths) – check it first
+if `season` looks incomplete.
 
 ------------------------------------------------------------------------
 
@@ -601,14 +744,14 @@ read_cal("CAL/grid_001.CAL")
 |----|----|----|
 | `DATA/climate/` | `climate_grid_data.csv` | Daily climate data per cell |
 | `DATA/soil/` | `hwsd_grids.csv` | Soil properties per cell |
-| `DATA/shapefiles/` | `pts_grid.shp` | Spatial ERA5 grid |
+| `DATA/shapefiles/` | `pts_grid.shp`, `grids0p25_bfa_clip.gpkg` | Raw square grid, then clipped to the national boundary (used downstream) |
 | `CLIMATE/` | `grid_XXX.PLU/Tnx/ETo/CLI` | AquaCrop climate files |
 | `CROP/` | `maize90days.CRO` | Crop parameters |
 | `SOIL/` | `grid_XXX.SOL`, `grid_XXX.SW0` | Soil profile + initial water |
-| `MANAGEMENT/` | `grid_XXX.MAN`, `grid_XXX.IRR` | Field management + irrigation |
+| `MANAGEMENT/` | `grid_XXX.MAN`, `grid_XXX.IRR` | Field management + irrigation (optional) |
 | `CAL/` | `grid_XXX.CAL` | Onset calendars (optional) |
 | `LIST/` | `grid_XXX.PRM` | Simulation project files |
-| `RESULTS/` | `grid_XXX_YYYY.*` | AquaCrop simulation outputs |
+| `OUTP/` | `ProjectPRMseason.OUT`, `ListProjectsLoaded.OUT` | Combined simulation outputs for all grid cells (see below) |
 
 ------------------------------------------------------------------------
 
@@ -623,7 +766,7 @@ read_cal("CAL/grid_001.CAL")
 | Crop | [`write_cro()`](https://mwaongo.github.io/aquacropr/reference/write_cro.md) | — | — |
 | Soil profile | [`write_sol()`](https://mwaongo.github.io/aquacropr/reference/write_sol.md) | [`write_sol_batch()`](https://mwaongo.github.io/aquacropr/reference/write_sol_batch.md) | — |
 | Management | [`write_man()`](https://mwaongo.github.io/aquacropr/reference/write_man.md) | [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md) | — |
-| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | `write_irr_batch()` | — |
+| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md) | — |
 | Irrigation schedule | [`create_irr_schedule()`](https://mwaongo.github.io/aquacropr/reference/create_irr_schedule.md) | — | — |
 | Onset calendar | [`write_cal()`](https://mwaongo.github.io/aquacropr/reference/write_cal.md) | [`write_cal_batch()`](https://mwaongo.github.io/aquacropr/reference/write_cal_batch.md) | [`read_cal()`](https://mwaongo.github.io/aquacropr/reference/read_cal.md) |
 | Project file | [`write_prm()`](https://mwaongo.github.io/aquacropr/reference/write_prm.md) | [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md) | — |
@@ -637,9 +780,9 @@ read_cal("CAL/grid_001.CAL")
 sessionInfo()
 ```
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -659,9 +802,9 @@ sessionInfo()
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] digest_0.6.39     desc_1.4.3        R6_2.6.1          fastmap_1.2.0    
-    #>  [5] xfun_0.57         cachem_1.1.0      knitr_1.51        htmltools_0.5.9  
-    #>  [9] rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      
-    #> [13] pkgdown_2.2.0     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2
-    #> [17] compiler_4.6.0    tools_4.6.0       ragg_1.5.2        evaluate_1.0.5   
-    #> [21] bslib_0.11.0      yaml_2.3.12       jsonlite_2.0.0    rlang_1.2.0      
-    #> [25] fs_2.1.0
+    #>  [5] xfun_0.61         cachem_1.1.0      knitr_1.52        htmltools_0.5.9  
+    #>  [9] rmarkdown_2.32    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      
+    #> [13] pkgdown_2.2.1     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2
+    #> [17] compiler_4.6.1    tools_4.6.1       ragg_1.5.2        bslib_0.12.0     
+    #> [21] evaluate_1.0.5    yaml_2.3.12       otel_0.2.0        jsonlite_2.0.0   
+    #> [25] rlang_1.3.0       fs_2.1.0

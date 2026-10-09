@@ -84,5 +84,5 @@ to_aquacrop_day("2023-06-15")
 to_aquacrop_day(as.Date("2023-06-15"))
 #> [1] 44726
 to_aquacrop_day(Sys.Date())
-#> [1] 45793
+#> [1] 45938
 ```

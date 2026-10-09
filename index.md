@@ -288,7 +288,7 @@ read_cal("CAL/wakanda.CAL")          # onset parameters
 | Crop | [`write_cro()`](https://mwaongo.github.io/aquacropr/reference/write_cro.md) | — |
 | Soil profile | [`write_sol()`](https://mwaongo.github.io/aquacropr/reference/write_sol.md) | [`write_sol_batch()`](https://mwaongo.github.io/aquacropr/reference/write_sol_batch.md) |
 | Management | [`write_man()`](https://mwaongo.github.io/aquacropr/reference/write_man.md) | [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md) |
-| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | `write_irr_batch()` |
+| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md) |
 | Irr. schedule | [`create_irr_schedule()`](https://mwaongo.github.io/aquacropr/reference/create_irr_schedule.md) | — |
 | Calendar (onset) | [`write_cal()`](https://mwaongo.github.io/aquacropr/reference/write_cal.md) | [`write_cal_batch()`](https://mwaongo.github.io/aquacropr/reference/write_cal_batch.md) |
 | Project file | [`write_prm()`](https://mwaongo.github.io/aquacropr/reference/write_prm.md) | [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md) |

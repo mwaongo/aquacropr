@@ -74,7 +74,7 @@
 - [`round_to()`](https://mwaongo.github.io/aquacropr/reference/round_to.md)
   : Round to Nearest Multiple
 - [`run_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/run_aquacrop.md)
-  : Run AquaCrop simulation
+  : Run an AquaCrop simulation
 - [`salinity_to_ece()`](https://mwaongo.github.io/aquacropr/reference/salinity_to_ece.md)
   : Convert Salinity Level to ECe Value
 - [`st_grid()`](https://mwaongo.github.io/aquacropr/reference/st_grid.md)
@@ -104,7 +104,7 @@
   : Write AquaCrop Groundwater Table (.GWT) Files for Multiple Stations
 - [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md)
   : Write AquaCrop Irrigation File
-- [`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md)
+- [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md)
   : Write AquaCrop Irrigation (.IRR) Files for Multiple Stations
 - [`write_man()`](https://mwaongo.github.io/aquacropr/reference/write_man.md)
   : Write AquaCrop Management File

@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Getting Started: Initializing an AquaCrop Project • aquacropr</title>
+<title> • aquacropr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started: Initializing an AquaCrop Project">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aquacropr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,8 +34,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/regionalsim.html">Regional Crop Simulations Using aquacropr</a></li>
-    <li><a class="dropdown-item" href="../articles/settingup.html">Getting Started: Initializing an AquaCrop Project</a></li>
-    <li><a class="dropdown-item" href="../articles/sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a></li>
+    <li><a class="dropdown-item" href="../articles/settingup.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/sowingdate.html">Sowing Dates: Extensible Onset Detection in aquacropr</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -58,7 +58,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Getting Started: Initializing an AquaCrop Project</h1>
+      <h1></h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/mwaongo/aquacropr/blob/master/vignettes/settingup.Rmd" class="external-link"><code>vignettes/settingup.Rmd</code></a></small>
@@ -67,256 +67,532 @@
 
     
     
-<div class="section level2">
-<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h2>
-<p>The setup workflow is three steps: load, initialize, reload.</p>
-<p><strong>1. Load the package</strong></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mwaongo/aquacropr" class="external-link">aquacropr</a></span><span class="op">)</span></span></code></pre></div>
-<p><strong>2. Initialize the project</strong></p>
-<p><code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> creates the full directory structure and
-downloads the AquaCrop binary in one call. By default
-(<code>version = NULL</code>), it always fetches the latest officially
-released binary for your platform — no compiler required:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>3. Reload after RStudio switches sessions</strong></p>
-<p>Once initialization is complete, RStudio automatically opens a fresh
-session inside the new project directory. Simply reload the package to
-continue your work:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mwaongo/aquacropr" class="external-link">aquacropr</a></span><span class="op">)</span></span></code></pre></div>
-<p>You are now ready to write input files and run simulations with
-<code><a href="../reference/run_aquacrop.html">run_aquacrop()</a></code>.</p>
-</div>
-<div class="section level2">
-<h2 id="choosing-an-aquacrop-version">Choosing an AquaCrop Version<a class="anchor" aria-label="anchor" href="#choosing-an-aquacrop-version"></a>
-</h2>
-<p>The <code>version</code> argument gives you full control over which
-binary is installed.</p>
-<div class="section level3">
-<h3 id="latest-release-default">Latest release <code>(default)</code><a class="anchor" aria-label="anchor" href="#latest-release-default"></a>
-</h3>
-<p><code>version = NULL</code> always downloads the most recent stable
-binary published by FAO. This is the recommended option for most users:
-it requires no compilation and guarantees access to the latest AquaCrop
-features the moment they are officially released.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="pinned-release">Pinned release<a class="anchor" aria-label="anchor" href="#pinned-release"></a>
-</h3>
-<p>Pass an explicit version string when reproducibility matters — for
-instance, to match a binary used in a published study:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span>, version <span class="op">=</span> <span class="st">"7.1"</span><span class="op">)</span></span></code></pre></div>
-<p>Note : When <code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> downloads a binary, it saves
-it to a local cache directory on your machine. The next time you call
-<code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> with the same version, the binary is loaded
-directly from cache — no internet connection needed, no waiting. The
-cache is keyed by version string, so <code>"7.1"</code> and
-<code>"7.2"</code> are stored independently. Switching versions is
-instant if you have already downloaded them before. The only way to
-bypass the cache and force a fresh download is to pass
-<code>force = TRUE</code>.</p>
-</div>
-<div class="section level3">
-<h3 id="development-version">Development version<a class="anchor" aria-label="anchor" href="#development-version"></a>
-</h3>
-<p><code>version = "dev"</code> compiles AquaCrop directly from the
-latest <code>main</code> branch source code. Use this when you need
-features that have not yet made it into an official release. A Fortran
-compiler is required (see <a href="#installing-aquacrop-from-source">Installing from Source</a>
-below):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span>, version <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="additional-options">Additional Options<a class="anchor" aria-label="anchor" href="#additional-options"></a>
-</h2>
-<div class="section level3">
-<h3 id="overwriting-an-existing-project">Overwriting an existing project<a class="anchor" aria-label="anchor" href="#overwriting-an-existing-project"></a>
-</h3>
-<p>By default, <code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> will not touch an existing
-installation. Use <code>force</code> to reinstall the binary and
-<code>overwrite</code> to reset the directory structure:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span>, force <span class="op">=</span> <span class="cn">TRUE</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="skipping-the-rstudio-project-file">Skipping the RStudio project file<a class="anchor" aria-label="anchor" href="#skipping-the-rstudio-project-file"></a>
-</h3>
-<p>An <code>.Rproj</code> file is created at the project root by
-default. Set <code>use_rproject = FALSE</code> to opt out:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span>, use_rproject <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="cross-platform-projects">Cross-platform projects<a class="anchor" aria-label="anchor" href="#cross-platform-projects"></a>
-</h3>
-<p>The operating system is auto-detected at runtime. You can override
-this with the <code>os</code> argument — useful when preparing a project
-on one machine that will run on another:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Build a Windows-ready project from Linux or macOS</span></span>
-<span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_project"</span>, os <span class="op">=</span> <span class="st">"windows"</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="installing-aquacrop-from-source">Installing AquaCrop from Source<a class="anchor" aria-label="anchor" href="#installing-aquacrop-from-source"></a>
-</h2>
-<p>When <code>version = "dev"</code> is used,
-<code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> internally delegates to
-<code><a href="../reference/install_source.html">install_source()</a></code>, which runs the following steps
-automatically:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Compiler detection</strong> — queries
-<code>R CMD config FC</code> once and reuses the result throughout.
-Override with the <code>compiler</code> argument if needed.</li>
-<li>
-<strong>Source download</strong> — fetches the latest
-<code>main</code> branch archive from the AquaCrop repository.</li>
-<li>
-<strong>Compilation</strong> — invokes <code>make</code> with the
-detected Fortran compiler.</li>
-<li>
-<strong>Installation</strong> — copies the compiled executable to
-<code>path</code>.</li>
-<li>
-<strong>Cleanup</strong> — removes temporary build files unless
-<code>keep_source = TRUE</code>.</li>
-</ol>
-<p>System requirements by platform:</p>
-<table class="table">
-<colgroup>
-<col width="44%">
-<col width="55%">
-</colgroup>
-<thead><tr class="header">
-<th>Platform</th>
-<th>Required tools</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><strong>Linux</strong></td>
-<td>GNU Make ≥ 3.82 · gfortran ≥ 6.4.0 <em>or</em> ifort ≥ 18.0.1</td>
-</tr>
-<tr class="even">
-<td><strong>macOS</strong></td>
-<td>GNU Make ≥ 3.82 · gfortran from <a href="https://mac.r-project.org/tools" class="external-link">mac.r-project.org/tools</a>
-</td>
-</tr>
-<tr class="odd">
-<td><strong>Windows</strong></td>
-<td><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">Rtools</a></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>macOS note:</strong> The <code>clang</code> compiler bundled
-with Xcode does not include Fortran support. Always use the gfortran
-binary from the official R toolchain at mac.r-project.org/tools.</p>
-</blockquote>
-</div>
-<div class="section level2">
-<h2 id="project-directory-structure">Project Directory Structure<a class="anchor" aria-label="anchor" href="#project-directory-structure"></a>
-</h2>
-<p>A successful call to <code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> produces the
-following layout under <code>path</code>:</p>
-<pre><code>my_project/
-├── my_project.Rproj      # RStudio project file (if use_rproject = TRUE)
-├── aquacrop[.exe]        # AquaCrop executable
-├── README.txt            # Project notes
-├── CAL/                  # Calendar files (.CAL)
-├── CLIMATE/              # Climate input files (.Tnx, .ETo, .PLU, .CLI, .CO2)
-├── CROP/                 # Crop parameter files (.CRO)
-├── LIST/                 # Project Master files (.PRM)
-├── MANAGEMENT/           # Field management files: (.MAN, .IRR)
-├── OBS/                  # Observed field data for simulation evaluation
-├── OUTP/                 # Simulation output files
-├── PARAM/                # AquaCrop program parameter files
-├── SIMUL/                # Simulation settings
-└── SOIL/                 # Soil profile files (.SOL, .SW0, .GWT)</code></pre>
-</div>
-<div class="section level2">
-<h2 id="relationship-to-the-official-aquacrop-standalone">Relationship to the Official AquaCrop Standalone<a class="anchor" aria-label="anchor" href="#relationship-to-the-official-aquacrop-standalone"></a>
-</h2>
-<p>Users already familiar with the <a href="https://www.fao.org/aquacrop/en" class="external-link">FAO AquaCrop standalone
-(plug-in)</a> will recognize the structure immediately.
-<code>aquacropr</code> preserves all four core directories of the
-official standalone (<code>LIST</code>, <code>PARAM</code>,
-<code>SIMUL</code>, <code>OUTP</code>) and extends the design by
-replacing the historical catch-all <code>DATA/</code> folder with
-clearly typed, dedicated directories — one per input category.</p>
-<table class="table">
-<thead><tr class="header">
-<th>Directory</th>
-<th>AquaCrop Standalone v7.1</th>
-<th><code>aquacropr</code></th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>LIST/</code></td>
-<td>✅ Project files (.PRO, .PRM)</td>
-<td>✅</td>
-</tr>
-<tr class="even">
-<td><code>SIMUL/</code></td>
-<td>✅ Simulation settings</td>
-<td>✅</td>
-</tr>
-<tr class="odd">
-<td><code>PARAM/</code></td>
-<td>✅ Program parameters</td>
-<td>✅</td>
-</tr>
-<tr class="even">
-<td><code>OUTP/</code></td>
-<td>✅ Output files</td>
-<td>✅</td>
-</tr>
-<tr class="odd">
-<td><code>OBS/</code></td>
-<td>✅ Observed field data</td>
-<td>✅</td>
-</tr>
-<tr class="even">
-<td><code>CLIMATE/</code></td>
-<td>❌ (merged in <code>DATA/</code>)</td>
-<td>✅ Explicit folder</td>
-</tr>
-<tr class="odd">
-<td><code>CROP/</code></td>
-<td>❌ (merged in <code>DATA/</code>)</td>
-<td>✅ Explicit folder</td>
-</tr>
-<tr class="even">
-<td><code>SOIL/</code></td>
-<td>❌ (merged in <code>DATA/</code>)</td>
-<td>✅ Explicit folder</td>
-</tr>
-<tr class="odd">
-<td><code>MANAGEMENT/</code></td>
-<td>❌ (merged in <code>DATA/</code>)</td>
-<td>✅ Explicit folder</td>
-</tr>
-<tr class="even">
-<td><code>CAL/</code></td>
-<td>❌ (merged in <code>DATA/</code>)</td>
-<td>✅ Explicit folder</td>
-</tr>
-</tbody>
-</table>
-<p>This structure makes large-scale simulation projects easier to
-navigate, script, and version-control, while remaining fully compatible
-with the input file formats expected by the AquaCrop executable.</p>
-</div>
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
-    </nav></aside>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Getting Started: Initializing an AquaCrop Project"</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="an">output:</span><span class="co"> rmarkdown::html_vignette</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="an">vignette:</span><span class="co"> &gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">  %\VignetteEncoding{UTF-8}</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">  %\VignetteIndexEntry{Getting Started: Initializing an AquaCrop Project}</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">  %\VignetteEngine{knitr::rmarkdown}</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="an">editor_options:</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">  markdown:</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">    wrap: 72</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="in">`aquacropr`</span> can initialize a complete AquaCrop project in one call.</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="in">`init_aquacrop()`</span> creates the expected project structure, installs the</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>AquaCrop executable, and prepares the workspace for the rest of the</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>package workflow.</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>It also manages the AquaCrop version used by the project. You can install</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>the latest official release, pin a specific release for reproducibility,</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>or build the current development version from source.</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>Downloaded binaries are cached locally and can be reused across</span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>projects.</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>A minimal setup is:</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a><span class="fu">library</span>(aquacropr)</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>proj_dir <span class="ot">&lt;-</span> <span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>  <span class="at">use_rproject =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>)</span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a><span class="fu">setwd</span>(proj_dir)</span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" tabindex="-1"></a><span class="in">`init_aquacrop()`</span> returns the normalized project path invisibly. Keeping</span>
+<span id="cb1-45"><a href="#cb1-45" tabindex="-1"></a>this value is useful because many <span class="in">`aquacropr`</span> functions use paths relative</span>
+<span id="cb1-46"><a href="#cb1-46" tabindex="-1"></a>to the project root.</span>
+<span id="cb1-47"><a href="#cb1-47" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" tabindex="-1"></a>The project is now ready for writing AquaCrop inputs and running</span>
+<span id="cb1-49"><a href="#cb1-49" tabindex="-1"></a>simulations with <span class="in">`run_aquacrop()`</span>.</span>
+<span id="cb1-50"><a href="#cb1-50" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" tabindex="-1"></a><span class="fu">## Quick start</span></span>
+<span id="cb1-52"><a href="#cb1-52" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" tabindex="-1"></a>The usual workflow has three steps.</span>
+<span id="cb1-54"><a href="#cb1-54" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" tabindex="-1"></a><span class="fu">### 1. Load `aquacropr`</span></span>
+<span id="cb1-56"><a href="#cb1-56" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-59"><a href="#cb1-59" tabindex="-1"></a><span class="fu">library</span>(aquacropr)</span>
+<span id="cb1-60"><a href="#cb1-60" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-61"><a href="#cb1-61" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" tabindex="-1"></a><span class="fu">### 2. Initialize the project</span></span>
+<span id="cb1-63"><a href="#cb1-63" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" tabindex="-1"></a></span>
+<span id="cb1-65"><a href="#cb1-65" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-66"><a href="#cb1-66" tabindex="-1"></a>proj_dir <span class="ot">&lt;-</span> <span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-67"><a href="#cb1-67" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-68"><a href="#cb1-68" tabindex="-1"></a>  <span class="at">use_rproject =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-69"><a href="#cb1-69" tabindex="-1"></a>)</span>
+<span id="cb1-70"><a href="#cb1-70" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-71"><a href="#cb1-71" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" tabindex="-1"></a>With the default <span class="in">`version = NULL`</span>, <span class="in">`init_aquacrop()`</span> installs the latest</span>
+<span id="cb1-73"><a href="#cb1-73" tabindex="-1"></a>supported official AquaCrop release for the selected platform.</span>
+<span id="cb1-74"><a href="#cb1-74" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" tabindex="-1"></a>When a prebuilt binary is available, no compiler is required.</span>
+<span id="cb1-76"><a href="#cb1-76" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" tabindex="-1"></a>The function also creates the directories used for climate, crop, soil,</span>
+<span id="cb1-78"><a href="#cb1-78" tabindex="-1"></a>management, calendar, project, and output files.</span>
+<span id="cb1-79"><a href="#cb1-79" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" tabindex="-1"></a><span class="fu">### 3. Work from the project root</span></span>
+<span id="cb1-81"><a href="#cb1-81" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" tabindex="-1"></a>Most writer and reader functions use project-relative paths by default.</span>
+<span id="cb1-83"><a href="#cb1-83" tabindex="-1"></a></span>
+<span id="cb1-84"><a href="#cb1-84" tabindex="-1"></a>For example, climate files are usually written below <span class="in">`CLIMATE/`</span>, while</span>
+<span id="cb1-85"><a href="#cb1-85" tabindex="-1"></a>project master files are stored below <span class="in">`LIST/`</span>.</span>
+<span id="cb1-86"><a href="#cb1-86" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" tabindex="-1"></a>The simplest workflow is therefore:</span>
+<span id="cb1-88"><a href="#cb1-88" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-91"><a href="#cb1-91" tabindex="-1"></a><span class="fu">setwd</span>(proj_dir)</span>
+<span id="cb1-92"><a href="#cb1-92" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-93"><a href="#cb1-93" tabindex="-1"></a></span>
+<span id="cb1-94"><a href="#cb1-94" tabindex="-1"></a>From this point onward, package defaults can be used directly:</span>
+<span id="cb1-95"><a href="#cb1-95" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-98"><a href="#cb1-98" tabindex="-1"></a><span class="co"># Write AquaCrop input files.</span></span>
+<span id="cb1-99"><a href="#cb1-99" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb1-100"><a href="#cb1-100" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" tabindex="-1"></a><span class="fu">run_aquacrop</span>()</span>
+<span id="cb1-102"><a href="#cb1-102" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-103"><a href="#cb1-103" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" tabindex="-1"></a>If changing the working directory is not appropriate, such as in a</span>
+<span id="cb1-105"><a href="#cb1-105" tabindex="-1"></a>script managing several projects, pass <span class="in">`base_path = proj_dir`</span> to</span>
+<span id="cb1-106"><a href="#cb1-106" tabindex="-1"></a>functions that support it.</span>
+<span id="cb1-107"><a href="#cb1-107" tabindex="-1"></a></span>
+<span id="cb1-108"><a href="#cb1-108" tabindex="-1"></a><span class="fu">## Choosing an AquaCrop version</span></span>
+<span id="cb1-109"><a href="#cb1-109" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" tabindex="-1"></a>The <span class="in">`version`</span> argument controls which AquaCrop executable is installed.</span>
+<span id="cb1-111"><a href="#cb1-111" tabindex="-1"></a></span>
+<span id="cb1-112"><a href="#cb1-112" tabindex="-1"></a>This allows exploratory projects to follow the latest release while</span>
+<span id="cb1-113"><a href="#cb1-113" tabindex="-1"></a>reproducible analyses remain tied to a specific AquaCrop version.</span>
+<span id="cb1-114"><a href="#cb1-114" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" tabindex="-1"></a><span class="fu">### Latest release</span></span>
+<span id="cb1-116"><a href="#cb1-116" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" tabindex="-1"></a>The default is:</span>
+<span id="cb1-118"><a href="#cb1-118" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-121"><a href="#cb1-121" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-122"><a href="#cb1-122" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-123"><a href="#cb1-123" tabindex="-1"></a>  <span class="at">version =</span> <span class="cn">NULL</span></span>
+<span id="cb1-124"><a href="#cb1-124" tabindex="-1"></a>)</span>
+<span id="cb1-125"><a href="#cb1-125" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-126"><a href="#cb1-126" tabindex="-1"></a></span>
+<span id="cb1-127"><a href="#cb1-127" tabindex="-1"></a><span class="in">`version = NULL`</span> resolves to the latest supported official AquaCrop</span>
+<span id="cb1-128"><a href="#cb1-128" tabindex="-1"></a>release for the selected platform.</span>
+<span id="cb1-129"><a href="#cb1-129" tabindex="-1"></a></span>
+<span id="cb1-130"><a href="#cb1-130" tabindex="-1"></a>This is the most convenient option for new projects.</span>
+<span id="cb1-131"><a href="#cb1-131" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" tabindex="-1"></a><span class="fu">### Pinned release</span></span>
+<span id="cb1-133"><a href="#cb1-133" tabindex="-1"></a></span>
+<span id="cb1-134"><a href="#cb1-134" tabindex="-1"></a>For reproducible work, specify the version explicitly:</span>
+<span id="cb1-135"><a href="#cb1-135" tabindex="-1"></a></span>
+<span id="cb1-136"><a href="#cb1-136" tabindex="-1"></a></span>
+<span id="cb1-137"><a href="#cb1-137" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-138"><a href="#cb1-138" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-139"><a href="#cb1-139" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-140"><a href="#cb1-140" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"7.1"</span></span>
+<span id="cb1-141"><a href="#cb1-141" tabindex="-1"></a>)</span>
+<span id="cb1-142"><a href="#cb1-142" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-143"><a href="#cb1-143" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" tabindex="-1"></a>Pinning the version makes the AquaCrop executable part of the recorded</span>
+<span id="cb1-145"><a href="#cb1-145" tabindex="-1"></a>computational environment.</span>
+<span id="cb1-146"><a href="#cb1-146" tabindex="-1"></a></span>
+<span id="cb1-147"><a href="#cb1-147" tabindex="-1"></a>This is useful for published studies, validation exercises, operational</span>
+<span id="cb1-148"><a href="#cb1-148" tabindex="-1"></a>workflows, and any analysis that must be reproduced later.</span>
+<span id="cb1-149"><a href="#cb1-149" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" tabindex="-1"></a><span class="fu">### Development version</span></span>
+<span id="cb1-151"><a href="#cb1-151" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" tabindex="-1"></a>Use <span class="in">`version = "dev"`</span> to build AquaCrop from the current development</span>
+<span id="cb1-153"><a href="#cb1-153" tabindex="-1"></a>source:</span>
+<span id="cb1-154"><a href="#cb1-154" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-157"><a href="#cb1-157" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-158"><a href="#cb1-158" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-159"><a href="#cb1-159" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"dev"</span></span>
+<span id="cb1-160"><a href="#cb1-160" tabindex="-1"></a>)</span>
+<span id="cb1-161"><a href="#cb1-161" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-162"><a href="#cb1-162" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" tabindex="-1"></a>This is intended for testing features that are not yet available in an</span>
+<span id="cb1-164"><a href="#cb1-164" tabindex="-1"></a>official release.</span>
+<span id="cb1-165"><a href="#cb1-165" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" tabindex="-1"></a>Unlike binary installation, the development version requires a working</span>
+<span id="cb1-167"><a href="#cb1-167" tabindex="-1"></a>Fortran toolchain.</span>
+<span id="cb1-168"><a href="#cb1-168" tabindex="-1"></a></span>
+<span id="cb1-169"><a href="#cb1-169" tabindex="-1"></a>Internally, <span class="in">`init_aquacrop()`</span> delegates installation to</span>
+<span id="cb1-170"><a href="#cb1-170" tabindex="-1"></a><span class="in">`install_binaries()`</span>, which uses <span class="in">`install_source()`</span> when</span>
+<span id="cb1-171"><a href="#cb1-171" tabindex="-1"></a><span class="in">`version = "dev"`</span>.</span>
+<span id="cb1-172"><a href="#cb1-172" tabindex="-1"></a></span>
+<span id="cb1-173"><a href="#cb1-173" tabindex="-1"></a><span class="in">`init_aquacrop()`</span> only exposes the arguments needed for normal project</span>
+<span id="cb1-174"><a href="#cb1-174" tabindex="-1"></a>initialization. More specialized build options can be passed directly to</span>
+<span id="cb1-175"><a href="#cb1-175" tabindex="-1"></a><span class="in">`install_binaries()`</span> or <span class="in">`install_source()`</span>.</span>
+<span id="cb1-176"><a href="#cb1-176" tabindex="-1"></a></span>
+<span id="cb1-177"><a href="#cb1-177" tabindex="-1"></a>For example:</span>
+<span id="cb1-178"><a href="#cb1-178" tabindex="-1"></a></span>
+<span id="cb1-179"><a href="#cb1-179" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-181"><a href="#cb1-181" tabindex="-1"></a><span class="fu">install_binaries</span>(</span>
+<span id="cb1-182"><a href="#cb1-182" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"dev"</span>,</span>
+<span id="cb1-183"><a href="#cb1-183" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-184"><a href="#cb1-184" tabindex="-1"></a>  <span class="at">compiler =</span> <span class="st">"gfortran"</span>,</span>
+<span id="cb1-185"><a href="#cb1-185" tabindex="-1"></a>  <span class="at">keep_source =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-186"><a href="#cb1-186" tabindex="-1"></a>)</span>
+<span id="cb1-187"><a href="#cb1-187" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-188"><a href="#cb1-188" tabindex="-1"></a></span>
+<span id="cb1-189"><a href="#cb1-189" tabindex="-1"></a>See <span class="co">[</span><span class="ot">Installing AquaCrop from source</span><span class="co">](#installing-aquacrop-from-source)</span></span>
+<span id="cb1-190"><a href="#cb1-190" tabindex="-1"></a>for the required build tools.</span>
+<span id="cb1-191"><a href="#cb1-191" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" tabindex="-1"></a><span class="fu">## Binary caching</span></span>
+<span id="cb1-193"><a href="#cb1-193" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" tabindex="-1"></a>Official AquaCrop binaries are stored in the package cache:</span>
+<span id="cb1-195"><a href="#cb1-195" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb1-197"><a href="#cb1-197" tabindex="-1"></a>rappdirs<span class="sc">::</span><span class="fu">user_cache_dir</span>(<span class="st">"aquacropr"</span>)</span>
+<span id="cb1-198"><a href="#cb1-198" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-199"><a href="#cb1-199" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" tabindex="-1"></a>If the same version is requested again, <span class="in">`aquacropr`</span> reuses the cached</span>
+<span id="cb1-201"><a href="#cb1-201" tabindex="-1"></a>archive instead of downloading it again.</span>
+<span id="cb1-202"><a href="#cb1-202" tabindex="-1"></a></span>
+<span id="cb1-203"><a href="#cb1-203" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-205"><a href="#cb1-205" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-206"><a href="#cb1-206" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/project_a"</span>,</span>
+<span id="cb1-207"><a href="#cb1-207" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"7.1"</span></span>
+<span id="cb1-208"><a href="#cb1-208" tabindex="-1"></a>)</span>
+<span id="cb1-209"><a href="#cb1-209" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-211"><a href="#cb1-211" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/project_b"</span>,</span>
+<span id="cb1-212"><a href="#cb1-212" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"7.1"</span></span>
+<span id="cb1-213"><a href="#cb1-213" tabindex="-1"></a>)</span>
+<span id="cb1-214"><a href="#cb1-214" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-215"><a href="#cb1-215" tabindex="-1"></a></span>
+<span id="cb1-216"><a href="#cb1-216" tabindex="-1"></a>The first call downloads the binary when needed. The second project can</span>
+<span id="cb1-217"><a href="#cb1-217" tabindex="-1"></a>reuse the local copy.</span>
+<span id="cb1-218"><a href="#cb1-218" tabindex="-1"></a></span>
+<span id="cb1-219"><a href="#cb1-219" tabindex="-1"></a>Versions are cached independently, so several AquaCrop releases can</span>
+<span id="cb1-220"><a href="#cb1-220" tabindex="-1"></a>coexist on the same machine.</span>
+<span id="cb1-221"><a href="#cb1-221" tabindex="-1"></a></span>
+<span id="cb1-222"><a href="#cb1-222" tabindex="-1"></a>Use <span class="in">`force = TRUE`</span> to bypass the cached installation and request a fresh</span>
+<span id="cb1-223"><a href="#cb1-223" tabindex="-1"></a>one:</span>
+<span id="cb1-224"><a href="#cb1-224" tabindex="-1"></a></span>
+<span id="cb1-225"><a href="#cb1-225" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-227"><a href="#cb1-227" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-228"><a href="#cb1-228" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-229"><a href="#cb1-229" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"7.1"</span>,</span>
+<span id="cb1-230"><a href="#cb1-230" tabindex="-1"></a>  <span class="at">force =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-231"><a href="#cb1-231" tabindex="-1"></a>)</span>
+<span id="cb1-232"><a href="#cb1-232" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-233"><a href="#cb1-233" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" tabindex="-1"></a>This is useful when repairing an installation or refreshing the</span>
+<span id="cb1-235"><a href="#cb1-235" tabindex="-1"></a>executable.</span>
+<span id="cb1-236"><a href="#cb1-236" tabindex="-1"></a></span>
+<span id="cb1-237"><a href="#cb1-237" tabindex="-1"></a><span class="fu">## Reinitializing a project</span></span>
+<span id="cb1-238"><a href="#cb1-238" tabindex="-1"></a></span>
+<span id="cb1-239"><a href="#cb1-239" tabindex="-1"></a>If <span class="in">`path`</span> already contains a complete AquaCrop project,</span>
+<span id="cb1-240"><a href="#cb1-240" tabindex="-1"></a><span class="in">`init_aquacrop()`</span> leaves the existing input files unchanged.</span>
+<span id="cb1-241"><a href="#cb1-241" tabindex="-1"></a></span>
+<span id="cb1-242"><a href="#cb1-242" tabindex="-1"></a>It checks the project structure and installs the executable only when it</span>
+<span id="cb1-243"><a href="#cb1-243" tabindex="-1"></a>is missing.</span>
+<span id="cb1-244"><a href="#cb1-244" tabindex="-1"></a></span>
+<span id="cb1-245"><a href="#cb1-245" tabindex="-1"></a>Two arguments allow this behavior to be overridden.</span>
+<span id="cb1-246"><a href="#cb1-246" tabindex="-1"></a></span>
+<span id="cb1-247"><a href="#cb1-247" tabindex="-1"></a><span class="in">`force = TRUE`</span> reinstalls the AquaCrop executable.</span>
+<span id="cb1-248"><a href="#cb1-248" tabindex="-1"></a></span>
+<span id="cb1-249"><a href="#cb1-249" tabindex="-1"></a><span class="in">`overwrite = TRUE`</span> reruns project initialization. Missing directories are</span>
+<span id="cb1-250"><a href="#cb1-250" tabindex="-1"></a>recreated, bundled simulation templates are restored to <span class="in">`SIMUL/`</span>, and</span>
+<span id="cb1-251"><a href="#cb1-251" tabindex="-1"></a><span class="in">`README.txt`</span> is rewritten.</span>
+<span id="cb1-252"><a href="#cb1-252" tabindex="-1"></a></span>
+<span id="cb1-253"><a href="#cb1-253" tabindex="-1"></a>Existing user input files such as <span class="in">`.PLU`</span>, <span class="in">`.CRO`</span>, <span class="in">`.SOL`</span>, and <span class="in">`.PRM`</span></span>
+<span id="cb1-254"><a href="#cb1-254" tabindex="-1"></a>files are not deleted.</span>
+<span id="cb1-255"><a href="#cb1-255" tabindex="-1"></a></span>
+<span id="cb1-256"><a href="#cb1-256" tabindex="-1"></a></span>
+<span id="cb1-257"><a href="#cb1-257" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-258"><a href="#cb1-258" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-259"><a href="#cb1-259" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-260"><a href="#cb1-260" tabindex="-1"></a>  <span class="at">force =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-261"><a href="#cb1-261" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-262"><a href="#cb1-262" tabindex="-1"></a>)</span>
+<span id="cb1-263"><a href="#cb1-263" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-264"><a href="#cb1-264" tabindex="-1"></a></span>
+<span id="cb1-265"><a href="#cb1-265" tabindex="-1"></a>This is useful after an incomplete initialization or when the project</span>
+<span id="cb1-266"><a href="#cb1-266" tabindex="-1"></a>needs to be prepared again for another platform.</span>
+<span id="cb1-267"><a href="#cb1-267" tabindex="-1"></a></span>
+<span id="cb1-268"><a href="#cb1-268" tabindex="-1"></a><span class="fu">## RStudio project behavior</span></span>
+<span id="cb1-269"><a href="#cb1-269" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" tabindex="-1"></a>By default, <span class="in">`use_rproject = TRUE`</span>.</span>
+<span id="cb1-271"><a href="#cb1-271" tabindex="-1"></a></span>
+<span id="cb1-272"><a href="#cb1-272" tabindex="-1"></a>When <span class="in">`init_aquacrop()`</span> is called from an active interactive RStudio</span>
+<span id="cb1-273"><a href="#cb1-273" tabindex="-1"></a>session, it can create and open an <span class="in">`.Rproj`</span> file through</span>
+<span id="cb1-274"><a href="#cb1-274" tabindex="-1"></a><span class="in">`rstudioapi::openProject()`</span>.</span>
+<span id="cb1-275"><a href="#cb1-275" tabindex="-1"></a></span>
+<span id="cb1-276"><a href="#cb1-276" tabindex="-1"></a>Opening the project changes the active RStudio session. This is useful</span>
+<span id="cb1-277"><a href="#cb1-277" tabindex="-1"></a>for interactive work, but less suitable inside scripts that are expected</span>
+<span id="cb1-278"><a href="#cb1-278" tabindex="-1"></a>to continue running after initialization.</span>
+<span id="cb1-279"><a href="#cb1-279" tabindex="-1"></a></span>
+<span id="cb1-280"><a href="#cb1-280" tabindex="-1"></a>For scripted workflows, use:</span>
+<span id="cb1-281"><a href="#cb1-281" tabindex="-1"></a></span>
+<span id="cb1-282"><a href="#cb1-282" tabindex="-1"></a></span>
+<span id="cb1-283"><a href="#cb1-283" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-284"><a href="#cb1-284" tabindex="-1"></a>proj_dir <span class="ot">&lt;-</span> <span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-285"><a href="#cb1-285" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-286"><a href="#cb1-286" tabindex="-1"></a>  <span class="at">use_rproject =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-287"><a href="#cb1-287" tabindex="-1"></a>)</span>
+<span id="cb1-288"><a href="#cb1-288" tabindex="-1"></a></span>
+<span id="cb1-289"><a href="#cb1-289" tabindex="-1"></a><span class="fu">setwd</span>(proj_dir)</span>
+<span id="cb1-290"><a href="#cb1-290" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-291"><a href="#cb1-291" tabindex="-1"></a></span>
+<span id="cb1-292"><a href="#cb1-292" tabindex="-1"></a>This is the recommended pattern for batch scripts, CI pipelines,</span>
+<span id="cb1-293"><a href="#cb1-293" tabindex="-1"></a>containers, servers, and other non-interactive workflows.</span>
+<span id="cb1-294"><a href="#cb1-294" tabindex="-1"></a></span>
+<span id="cb1-295"><a href="#cb1-295" tabindex="-1"></a>Outside an active RStudio session, the RStudio-specific branch is</span>
+<span id="cb1-296"><a href="#cb1-296" tabindex="-1"></a>skipped. No <span class="in">`.Rproj`</span> file is created.</span>
+<span id="cb1-297"><a href="#cb1-297" tabindex="-1"></a></span>
+<span id="cb1-298"><a href="#cb1-298" tabindex="-1"></a>The AquaCrop project itself does not depend on RStudio.</span>
+<span id="cb1-299"><a href="#cb1-299" tabindex="-1"></a></span>
+<span id="cb1-300"><a href="#cb1-300" tabindex="-1"></a><span class="fu">## Selecting the target platform</span></span>
+<span id="cb1-301"><a href="#cb1-301" tabindex="-1"></a></span>
+<span id="cb1-302"><a href="#cb1-302" tabindex="-1"></a>The operating system is detected automatically.</span>
+<span id="cb1-303"><a href="#cb1-303" tabindex="-1"></a></span>
+<span id="cb1-304"><a href="#cb1-304" tabindex="-1"></a></span>
+<span id="cb1-305"><a href="#cb1-305" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-306"><a href="#cb1-306" tabindex="-1"></a><span class="fu">init_aquacrop</span>(<span class="at">path =</span> <span class="st">"~/my_project"</span>)</span>
+<span id="cb1-307"><a href="#cb1-307" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-308"><a href="#cb1-308" tabindex="-1"></a></span>
+<span id="cb1-309"><a href="#cb1-309" tabindex="-1"></a>In most cases, no <span class="in">`os`</span> argument is needed.</span>
+<span id="cb1-310"><a href="#cb1-310" tabindex="-1"></a></span>
+<span id="cb1-311"><a href="#cb1-311" tabindex="-1"></a>The target platform can also be selected explicitly from <span class="in">`"windows"`</span>,</span>
+<span id="cb1-312"><a href="#cb1-312" tabindex="-1"></a><span class="in">`"linux"`</span>, or <span class="in">`"macos"`</span>.</span>
+<span id="cb1-313"><a href="#cb1-313" tabindex="-1"></a></span>
+<span id="cb1-314"><a href="#cb1-314" tabindex="-1"></a></span>
+<span id="cb1-315"><a href="#cb1-315" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-316"><a href="#cb1-316" tabindex="-1"></a><span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-317"><a href="#cb1-317" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-318"><a href="#cb1-318" tabindex="-1"></a>  <span class="at">os =</span> <span class="st">"windows"</span></span>
+<span id="cb1-319"><a href="#cb1-319" tabindex="-1"></a>)</span>
+<span id="cb1-320"><a href="#cb1-320" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-321"><a href="#cb1-321" tabindex="-1"></a></span>
+<span id="cb1-322"><a href="#cb1-322" tabindex="-1"></a>This is useful when preparing a project on one operating system for</span>
+<span id="cb1-323"><a href="#cb1-323" tabindex="-1"></a>execution on another.</span>
+<span id="cb1-324"><a href="#cb1-324" tabindex="-1"></a></span>
+<span id="cb1-325"><a href="#cb1-325" tabindex="-1"></a>For example, a project can be organized on Linux or macOS while</span>
+<span id="cb1-326"><a href="#cb1-326" tabindex="-1"></a>installing the Windows AquaCrop executable that will later be used on a</span>
+<span id="cb1-327"><a href="#cb1-327" tabindex="-1"></a>Windows machine.</span>
+<span id="cb1-328"><a href="#cb1-328" tabindex="-1"></a></span>
+<span id="cb1-329"><a href="#cb1-329" tabindex="-1"></a>The project directory structure remains the same across platforms.</span>
+<span id="cb1-330"><a href="#cb1-330" tabindex="-1"></a></span>
+<span id="cb1-331"><a href="#cb1-331" tabindex="-1"></a><span class="fu">## Installing AquaCrop from source {#installing-aquacrop-from-source}</span></span>
+<span id="cb1-332"><a href="#cb1-332" tabindex="-1"></a></span>
+<span id="cb1-333"><a href="#cb1-333" tabindex="-1"></a>When <span class="in">`version = "dev"`</span> is requested, <span class="in">`install_binaries()`</span> delegates the</span>
+<span id="cb1-334"><a href="#cb1-334" tabindex="-1"></a>build to <span class="in">`install_source()`</span>.</span>
+<span id="cb1-335"><a href="#cb1-335" tabindex="-1"></a></span>
+<span id="cb1-336"><a href="#cb1-336" tabindex="-1"></a>The source installation performs the main steps automatically:</span>
+<span id="cb1-337"><a href="#cb1-337" tabindex="-1"></a></span>
+<span id="cb1-338"><a href="#cb1-338" tabindex="-1"></a><span class="ss">1. </span>detect the Fortran compiler;</span>
+<span id="cb1-339"><a href="#cb1-339" tabindex="-1"></a><span class="ss">2. </span>download the AquaCrop source;</span>
+<span id="cb1-340"><a href="#cb1-340" tabindex="-1"></a><span class="ss">3. </span>compile the executable;</span>
+<span id="cb1-341"><a href="#cb1-341" tabindex="-1"></a><span class="ss">4. </span>install it in the requested directory; and</span>
+<span id="cb1-342"><a href="#cb1-342" tabindex="-1"></a><span class="ss">5. </span>remove temporary build files.</span>
+<span id="cb1-343"><a href="#cb1-343" tabindex="-1"></a></span>
+<span id="cb1-344"><a href="#cb1-344" tabindex="-1"></a>Compiler detection uses:</span>
+<span id="cb1-345"><a href="#cb1-345" tabindex="-1"></a></span>
+<span id="cb1-346"><a href="#cb1-346" tabindex="-1"></a><span class="in">```text</span></span>
+<span id="cb1-347"><a href="#cb1-347" tabindex="-1"></a><span class="in">R CMD config FC</span></span>
+<span id="cb1-348"><a href="#cb1-348" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-349"><a href="#cb1-349" tabindex="-1"></a></span>
+<span id="cb1-350"><a href="#cb1-350" tabindex="-1"></a>This retrieves the Fortran compiler configured for the current R</span>
+<span id="cb1-351"><a href="#cb1-351" tabindex="-1"></a>installation.</span>
+<span id="cb1-352"><a href="#cb1-352" tabindex="-1"></a></span>
+<span id="cb1-353"><a href="#cb1-353" tabindex="-1"></a>A compiler can also be supplied directly when calling</span>
+<span id="cb1-354"><a href="#cb1-354" tabindex="-1"></a><span class="in">`install_binaries()`</span> or <span class="in">`install_source()`</span>.</span>
+<span id="cb1-355"><a href="#cb1-355" tabindex="-1"></a></span>
+<span id="cb1-356"><a href="#cb1-356" tabindex="-1"></a>Temporary source files are removed after a successful build unless</span>
+<span id="cb1-357"><a href="#cb1-357" tabindex="-1"></a><span class="in">`keep_source = TRUE`</span>.</span>
+<span id="cb1-358"><a href="#cb1-358" tabindex="-1"></a></span>
+<span id="cb1-359"><a href="#cb1-359" tabindex="-1"></a><span class="fu">### Linux</span></span>
+<span id="cb1-360"><a href="#cb1-360" tabindex="-1"></a></span>
+<span id="cb1-361"><a href="#cb1-361" tabindex="-1"></a>A working <span class="in">`make`</span> installation and a compatible Fortran compiler are</span>
+<span id="cb1-362"><a href="#cb1-362" tabindex="-1"></a>required.</span>
+<span id="cb1-363"><a href="#cb1-363" tabindex="-1"></a></span>
+<span id="cb1-364"><a href="#cb1-364" tabindex="-1"></a>For example:</span>
+<span id="cb1-365"><a href="#cb1-365" tabindex="-1"></a></span>
+<span id="cb1-366"><a href="#cb1-366" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb1-367"><a href="#cb1-367" tabindex="-1"></a><span class="fu">sudo</span> apt-get install make gfortran</span>
+<span id="cb1-368"><a href="#cb1-368" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-369"><a href="#cb1-369" tabindex="-1"></a></span>
+<span id="cb1-370"><a href="#cb1-370" tabindex="-1"></a>or:</span>
+<span id="cb1-371"><a href="#cb1-371" tabindex="-1"></a></span>
+<span id="cb1-372"><a href="#cb1-372" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb1-373"><a href="#cb1-373" tabindex="-1"></a><span class="fu">sudo</span> dnf install make gcc-gfortran</span>
+<span id="cb1-374"><a href="#cb1-374" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-375"><a href="#cb1-375" tabindex="-1"></a></span>
+<span id="cb1-376"><a href="#cb1-376" tabindex="-1"></a><span class="fu">### macOS</span></span>
+<span id="cb1-377"><a href="#cb1-377" tabindex="-1"></a></span>
+<span id="cb1-378"><a href="#cb1-378" tabindex="-1"></a>A Fortran compiler must be installed separately.</span>
+<span id="cb1-379"><a href="#cb1-379" tabindex="-1"></a></span>
+<span id="cb1-380"><a href="#cb1-380" tabindex="-1"></a>The <span class="in">`clang`</span> compiler provided with Xcode does not include Fortran</span>
+<span id="cb1-381"><a href="#cb1-381" tabindex="-1"></a>support.</span>
+<span id="cb1-382"><a href="#cb1-382" tabindex="-1"></a></span>
+<span id="cb1-383"><a href="#cb1-383" tabindex="-1"></a>For R-based workflows, a compatible <span class="in">`gfortran`</span> installation should be</span>
+<span id="cb1-384"><a href="#cb1-384" tabindex="-1"></a>used.</span>
+<span id="cb1-385"><a href="#cb1-385" tabindex="-1"></a></span>
+<span id="cb1-386"><a href="#cb1-386" tabindex="-1"></a><span class="fu">### Windows</span></span>
+<span id="cb1-387"><a href="#cb1-387" tabindex="-1"></a></span>
+<span id="cb1-388"><a href="#cb1-388" tabindex="-1"></a>A compatible Rtools installation provides the build tools required for</span>
+<span id="cb1-389"><a href="#cb1-389" tabindex="-1"></a>source compilation, including <span class="in">`make`</span> and <span class="in">`gfortran`</span>.</span>
+<span id="cb1-390"><a href="#cb1-390" tabindex="-1"></a></span>
+<span id="cb1-391"><a href="#cb1-391" tabindex="-1"></a>Compiler requirements can change with the development source. Users</span>
+<span id="cb1-392"><a href="#cb1-392" tabindex="-1"></a>building <span class="in">`version = "dev"`</span> should therefore ensure that their local</span>
+<span id="cb1-393"><a href="#cb1-393" tabindex="-1"></a>toolchain is compatible with the current AquaCrop source.</span>
+<span id="cb1-394"><a href="#cb1-394" tabindex="-1"></a></span>
+<span id="cb1-395"><a href="#cb1-395" tabindex="-1"></a><span class="fu">## Project structure</span></span>
+<span id="cb1-396"><a href="#cb1-396" tabindex="-1"></a></span>
+<span id="cb1-397"><a href="#cb1-397" tabindex="-1"></a>A successful call to <span class="in">`init_aquacrop()`</span> creates the following workspace:</span>
+<span id="cb1-398"><a href="#cb1-398" tabindex="-1"></a></span>
+<span id="cb1-399"><a href="#cb1-399" tabindex="-1"></a><span class="in">```text</span></span>
+<span id="cb1-400"><a href="#cb1-400" tabindex="-1"></a><span class="in">my_project/</span></span>
+<span id="cb1-401"><a href="#cb1-401" tabindex="-1"></a><span class="in">├── my_project.Rproj</span></span>
+<span id="cb1-402"><a href="#cb1-402" tabindex="-1"></a><span class="in">├── aquacrop[.exe]</span></span>
+<span id="cb1-403"><a href="#cb1-403" tabindex="-1"></a><span class="in">├── README.txt</span></span>
+<span id="cb1-404"><a href="#cb1-404" tabindex="-1"></a><span class="in">├── CAL/</span></span>
+<span id="cb1-405"><a href="#cb1-405" tabindex="-1"></a><span class="in">├── CLIMATE/</span></span>
+<span id="cb1-406"><a href="#cb1-406" tabindex="-1"></a><span class="in">├── CROP/</span></span>
+<span id="cb1-407"><a href="#cb1-407" tabindex="-1"></a><span class="in">├── LIST/</span></span>
+<span id="cb1-408"><a href="#cb1-408" tabindex="-1"></a><span class="in">├── MANAGEMENT/</span></span>
+<span id="cb1-409"><a href="#cb1-409" tabindex="-1"></a><span class="in">├── OBS/</span></span>
+<span id="cb1-410"><a href="#cb1-410" tabindex="-1"></a><span class="in">├── OUTP/</span></span>
+<span id="cb1-411"><a href="#cb1-411" tabindex="-1"></a><span class="in">├── PARAM/</span></span>
+<span id="cb1-412"><a href="#cb1-412" tabindex="-1"></a><span class="in">├── SIMUL/</span></span>
+<span id="cb1-413"><a href="#cb1-413" tabindex="-1"></a><span class="in">└── SOIL/</span></span>
+<span id="cb1-414"><a href="#cb1-414" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-415"><a href="#cb1-415" tabindex="-1"></a></span>
+<span id="cb1-416"><a href="#cb1-416" tabindex="-1"></a>The <span class="in">`.Rproj`</span> file is only created when the RStudio integration is used.</span>
+<span id="cb1-417"><a href="#cb1-417" tabindex="-1"></a></span>
+<span id="cb1-418"><a href="#cb1-418" tabindex="-1"></a>The directories group AquaCrop files by role.</span>
+<span id="cb1-419"><a href="#cb1-419" tabindex="-1"></a></span>
+<span id="cb1-420"><a href="#cb1-420" tabindex="-1"></a><span class="in">`CAL/`</span> contains growing-season calendar files.</span>
+<span id="cb1-421"><a href="#cb1-421" tabindex="-1"></a></span>
+<span id="cb1-422"><a href="#cb1-422" tabindex="-1"></a><span class="in">`CLIMATE/`</span> contains rainfall, temperature, reference</span>
+<span id="cb1-423"><a href="#cb1-423" tabindex="-1"></a>evapotranspiration, climate descriptor, and atmospheric carbon dioxide</span>
+<span id="cb1-424"><a href="#cb1-424" tabindex="-1"></a>files.</span>
+<span id="cb1-425"><a href="#cb1-425" tabindex="-1"></a></span>
+<span id="cb1-426"><a href="#cb1-426" tabindex="-1"></a><span class="in">`CROP/`</span> contains crop parameter files.</span>
+<span id="cb1-427"><a href="#cb1-427" tabindex="-1"></a></span>
+<span id="cb1-428"><a href="#cb1-428" tabindex="-1"></a><span class="in">`SOIL/`</span> contains soil profiles, initial soil-water conditions, and</span>
+<span id="cb1-429"><a href="#cb1-429" tabindex="-1"></a>groundwater files.</span>
+<span id="cb1-430"><a href="#cb1-430" tabindex="-1"></a></span>
+<span id="cb1-431"><a href="#cb1-431" tabindex="-1"></a><span class="in">`MANAGEMENT/`</span> contains field-management and irrigation inputs.</span>
+<span id="cb1-432"><a href="#cb1-432" tabindex="-1"></a></span>
+<span id="cb1-433"><a href="#cb1-433" tabindex="-1"></a><span class="in">`LIST/`</span> contains project master files.</span>
+<span id="cb1-434"><a href="#cb1-434" tabindex="-1"></a></span>
+<span id="cb1-435"><a href="#cb1-435" tabindex="-1"></a><span class="in">`OBS/`</span> contains observed data used for comparison or model evaluation.</span>
+<span id="cb1-436"><a href="#cb1-436" tabindex="-1"></a></span>
+<span id="cb1-437"><a href="#cb1-437" tabindex="-1"></a><span class="in">`OUTP/`</span> contains simulation outputs.</span>
+<span id="cb1-438"><a href="#cb1-438" tabindex="-1"></a></span>
+<span id="cb1-439"><a href="#cb1-439" tabindex="-1"></a><span class="in">`PARAM/`</span> contains AquaCrop program parameters.</span>
+<span id="cb1-440"><a href="#cb1-440" tabindex="-1"></a></span>
+<span id="cb1-441"><a href="#cb1-441" tabindex="-1"></a><span class="in">`SIMUL/`</span> contains simulation settings.</span>
+<span id="cb1-442"><a href="#cb1-442" tabindex="-1"></a></span>
+<span id="cb1-443"><a href="#cb1-443" tabindex="-1"></a>The AquaCrop executable is installed at the project root.</span>
+<span id="cb1-444"><a href="#cb1-444" tabindex="-1"></a></span>
+<span id="cb1-445"><a href="#cb1-445" tabindex="-1"></a><span class="fu">## Why `aquacropr` uses this structure</span></span>
+<span id="cb1-446"><a href="#cb1-446" tabindex="-1"></a></span>
+<span id="cb1-447"><a href="#cb1-447" tabindex="-1"></a>The project layout follows AquaCrop conventions while making input types</span>
+<span id="cb1-448"><a href="#cb1-448" tabindex="-1"></a>explicit.</span>
+<span id="cb1-449"><a href="#cb1-449" tabindex="-1"></a></span>
+<span id="cb1-450"><a href="#cb1-450" tabindex="-1"></a>The official standalone traditionally groups many inputs in a common</span>
+<span id="cb1-451"><a href="#cb1-451" tabindex="-1"></a><span class="in">`DATA/`</span> directory. This works well for interactive use, but becomes less</span>
+<span id="cb1-452"><a href="#cb1-452" tabindex="-1"></a>convenient when projects contain many sites, crops, climate datasets, or</span>
+<span id="cb1-453"><a href="#cb1-453" tabindex="-1"></a>simulation configurations.</span>
+<span id="cb1-454"><a href="#cb1-454" tabindex="-1"></a></span>
+<span id="cb1-455"><a href="#cb1-455" tabindex="-1"></a><span class="in">`aquacropr`</span> separates these inputs into dedicated directories:</span>
+<span id="cb1-456"><a href="#cb1-456" tabindex="-1"></a></span>
+<span id="cb1-457"><a href="#cb1-457" tabindex="-1"></a><span class="in">```text</span></span>
+<span id="cb1-458"><a href="#cb1-458" tabindex="-1"></a><span class="in">CAL/</span></span>
+<span id="cb1-459"><a href="#cb1-459" tabindex="-1"></a><span class="in">CLIMATE/</span></span>
+<span id="cb1-460"><a href="#cb1-460" tabindex="-1"></a><span class="in">CROP/</span></span>
+<span id="cb1-461"><a href="#cb1-461" tabindex="-1"></a><span class="in">MANAGEMENT/</span></span>
+<span id="cb1-462"><a href="#cb1-462" tabindex="-1"></a><span class="in">SOIL/</span></span>
+<span id="cb1-463"><a href="#cb1-463" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-464"><a href="#cb1-464" tabindex="-1"></a></span>
+<span id="cb1-465"><a href="#cb1-465" tabindex="-1"></a>The AquaCrop file formats themselves are unchanged.</span>
+<span id="cb1-466"><a href="#cb1-466" tabindex="-1"></a></span>
+<span id="cb1-467"><a href="#cb1-467" tabindex="-1"></a>The difference is organizational.</span>
+<span id="cb1-468"><a href="#cb1-468" tabindex="-1"></a></span>
+<span id="cb1-469"><a href="#cb1-469" tabindex="-1"></a>Predictable paths make files easier to generate, inspect, automate, and</span>
+<span id="cb1-470"><a href="#cb1-470" tabindex="-1"></a>version-control from R. They also match the relative-path conventions</span>
+<span id="cb1-471"><a href="#cb1-471" tabindex="-1"></a>used by the package.</span>
+<span id="cb1-472"><a href="#cb1-472" tabindex="-1"></a></span>
+<span id="cb1-473"><a href="#cb1-473" tabindex="-1"></a>Core AquaCrop directories such as <span class="in">`LIST/`</span>, <span class="in">`PARAM/`</span>, <span class="in">`SIMUL/`</span>, and</span>
+<span id="cb1-474"><a href="#cb1-474" tabindex="-1"></a><span class="in">`OUTP/`</span> remain part of the project.</span>
+<span id="cb1-475"><a href="#cb1-475" tabindex="-1"></a></span>
+<span id="cb1-476"><a href="#cb1-476" tabindex="-1"></a>The result is an AquaCrop-compatible workspace organized for scripted</span>
+<span id="cb1-477"><a href="#cb1-477" tabindex="-1"></a>and reproducible workflows.</span>
+<span id="cb1-478"><a href="#cb1-478" tabindex="-1"></a></span>
+<span id="cb1-479"><a href="#cb1-479" tabindex="-1"></a><span class="fu">## Reproducible project setup</span></span>
+<span id="cb1-480"><a href="#cb1-480" tabindex="-1"></a></span>
+<span id="cb1-481"><a href="#cb1-481" tabindex="-1"></a>For exploratory work, the latest supported release is convenient:</span>
+<span id="cb1-482"><a href="#cb1-482" tabindex="-1"></a></span>
+<span id="cb1-483"><a href="#cb1-483" tabindex="-1"></a></span>
+<span id="cb1-484"><a href="#cb1-484" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-485"><a href="#cb1-485" tabindex="-1"></a>proj_dir <span class="ot">&lt;-</span> <span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-486"><a href="#cb1-486" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-487"><a href="#cb1-487" tabindex="-1"></a>  <span class="at">use_rproject =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-488"><a href="#cb1-488" tabindex="-1"></a>)</span>
+<span id="cb1-489"><a href="#cb1-489" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-490"><a href="#cb1-490" tabindex="-1"></a></span>
+<span id="cb1-491"><a href="#cb1-491" tabindex="-1"></a>For reproducible analyses, pin the AquaCrop version:</span>
+<span id="cb1-492"><a href="#cb1-492" tabindex="-1"></a></span>
+<span id="cb1-493"><a href="#cb1-493" tabindex="-1"></a></span>
+<span id="cb1-494"><a href="#cb1-494" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb1-495"><a href="#cb1-495" tabindex="-1"></a>proj_dir <span class="ot">&lt;-</span> <span class="fu">init_aquacrop</span>(</span>
+<span id="cb1-496"><a href="#cb1-496" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"~/my_project"</span>,</span>
+<span id="cb1-497"><a href="#cb1-497" tabindex="-1"></a>  <span class="at">version =</span> <span class="st">"7.1"</span>,</span>
+<span id="cb1-498"><a href="#cb1-498" tabindex="-1"></a>  <span class="at">use_rproject =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-499"><a href="#cb1-499" tabindex="-1"></a>)</span>
+<span id="cb1-500"><a href="#cb1-500" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-501"><a href="#cb1-501" tabindex="-1"></a></span>
+<span id="cb1-502"><a href="#cb1-502" tabindex="-1"></a>This makes the executable version explicit alongside the R package,</span>
+<span id="cb1-503"><a href="#cb1-503" tabindex="-1"></a>scripts, and input data used to construct the simulation.</span>
+<span id="cb1-504"><a href="#cb1-504" tabindex="-1"></a></span>
+<span id="cb1-505"><a href="#cb1-505" tabindex="-1"></a><span class="in">`aquacropr`</span> does not replace AquaCrop. It manages the project,</span>
+<span id="cb1-506"><a href="#cb1-506" tabindex="-1"></a>executable, files, and simulation workflow around it.</span>
+<span id="cb1-507"><a href="#cb1-507" tabindex="-1"></a></span>
+<span id="cb1-508"><a href="#cb1-508" tabindex="-1"></a>Once initialized, the same workspace can be populated programmatically</span>
+<span id="cb1-509"><a href="#cb1-509" tabindex="-1"></a>with climate, crop, soil, management, and calendar inputs and then passed</span>
+<span id="cb1-510"><a href="#cb1-510" tabindex="-1"></a>to <span class="in">`run_aquacrop()`</span>.</span>
+<span id="cb1-511"><a href="#cb1-511" tabindex="-1"></a></span>
+<span id="cb1-512"><a href="#cb1-512" tabindex="-1"></a><span class="fu">## Next steps</span></span>
+<span id="cb1-513"><a href="#cb1-513" tabindex="-1"></a></span>
+<span id="cb1-514"><a href="#cb1-514" tabindex="-1"></a>Project initialization normally needs to be performed only once.</span>
+<span id="cb1-515"><a href="#cb1-515" tabindex="-1"></a></span>
+<span id="cb1-516"><a href="#cb1-516" tabindex="-1"></a>The usual workflow is then to:</span>
+<span id="cb1-517"><a href="#cb1-517" tabindex="-1"></a></span>
+<span id="cb1-518"><a href="#cb1-518" tabindex="-1"></a><span class="ss">1. </span>work from the project root or pass <span class="in">`base_path`</span> explicitly;</span>
+<span id="cb1-519"><a href="#cb1-519" tabindex="-1"></a><span class="ss">2. </span>prepare the required AquaCrop input files;</span>
+<span id="cb1-520"><a href="#cb1-520" tabindex="-1"></a><span class="ss">3. </span>write the project master file;</span>
+<span id="cb1-521"><a href="#cb1-521" tabindex="-1"></a><span class="ss">4. </span>run AquaCrop; and</span>
+<span id="cb1-522"><a href="#cb1-522" tabindex="-1"></a><span class="ss">5. </span>read and analyse the simulation outputs.</span>
+<span id="cb1-523"><a href="#cb1-523" tabindex="-1"></a></span>
+<span id="cb1-524"><a href="#cb1-524" tabindex="-1"></a>The rest of the <span class="in">`aquacropr`</span> workflow builds on the project structure</span>
+<span id="cb1-525"><a href="#cb1-525" tabindex="-1"></a>created by <span class="in">`init_aquacrop()`</span>.</span></code></pre></div>
+  </main>
 </div>
 
 
@@ -326,7 +602,7 @@ with the input file formats expected by the AquaCrop executable.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

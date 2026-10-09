@@ -106,7 +106,7 @@ for single station OBS file generation.
 
 Other batch operations:
 [`write_gwt_batch()`](https://mwaongo.github.io/aquacropr/reference/write_gwt_batch.md),
-[`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md),
+[`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md),
 [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md),
 [`write_off_batch()`](https://mwaongo.github.io/aquacropr/reference/write_off_batch.md),
 [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md),

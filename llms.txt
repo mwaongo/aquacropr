@@ -288,7 +288,7 @@ read_cal("CAL/wakanda.CAL")          # onset parameters
 | Crop | [`write_cro()`](https://mwaongo.github.io/aquacropr/reference/write_cro.md) | — |
 | Soil profile | [`write_sol()`](https://mwaongo.github.io/aquacropr/reference/write_sol.md) | [`write_sol_batch()`](https://mwaongo.github.io/aquacropr/reference/write_sol_batch.md) |
 | Management | [`write_man()`](https://mwaongo.github.io/aquacropr/reference/write_man.md) | [`write_man_batch()`](https://mwaongo.github.io/aquacropr/reference/write_man_batch.md) |
-| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | `write_irr_batch()` |
+| Irrigation | [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md) | [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md) |
 | Irr. schedule | [`create_irr_schedule()`](https://mwaongo.github.io/aquacropr/reference/create_irr_schedule.md) | — |
 | Calendar (onset) | [`write_cal()`](https://mwaongo.github.io/aquacropr/reference/write_cal.md) | [`write_cal_batch()`](https://mwaongo.github.io/aquacropr/reference/write_cal_batch.md) |
 | Project file | [`write_prm()`](https://mwaongo.github.io/aquacropr/reference/write_prm.md) | [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md) |
@@ -369,7 +369,7 @@ read_cal("CAL/wakanda.CAL")          # onset parameters
 - [`round_to()`](https://mwaongo.github.io/aquacropr/reference/round_to.md)
   : Round to Nearest Multiple
 - [`run_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/run_aquacrop.md)
-  : Run AquaCrop simulation
+  : Run an AquaCrop simulation
 - [`salinity_to_ece()`](https://mwaongo.github.io/aquacropr/reference/salinity_to_ece.md)
   : Convert Salinity Level to ECe Value
 - [`st_grid()`](https://mwaongo.github.io/aquacropr/reference/st_grid.md)
@@ -399,7 +399,7 @@ read_cal("CAL/wakanda.CAL")          # onset parameters
   : Write AquaCrop Groundwater Table (.GWT) Files for Multiple Stations
 - [`write_irr()`](https://mwaongo.github.io/aquacropr/reference/write_irr.md)
   : Write AquaCrop Irrigation File
-- [`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md)
+- [`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md)
   : Write AquaCrop Irrigation (.IRR) Files for Multiple Stations
 - [`write_man()`](https://mwaongo.github.io/aquacropr/reference/write_man.md)
   : Write AquaCrop Management File
@@ -441,7 +441,7 @@ read_cal("CAL/wakanda.CAL")          # onset parameters
 
 - [Regional Crop Simulations Using
   aquacropr](https://mwaongo.github.io/aquacropr/articles/regionalsim.md):
-- [Getting Started: Initializing an AquaCrop
-  Project](https://mwaongo.github.io/aquacropr/articles/settingup.md):
-- [Onset of the Growing Season: Methods, Limitations, and Sahelian
-  Realities](https://mwaongo.github.io/aquacropr/articles/sowingdate.md):
+- [UNKNOWN
+  TITLE](https://mwaongo.github.io/aquacropr/articles/settingup.md):
+- [Sowing Dates: Extensible Onset Detection in
+  aquacropr](https://mwaongo.github.io/aquacropr/articles/sowingdate.md):

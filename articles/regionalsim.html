@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">aquacropr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,8 +34,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/regionalsim.html">Regional Crop Simulations Using aquacropr</a></li>
-    <li><a class="dropdown-item" href="../articles/settingup.html">Getting Started: Initializing an AquaCrop Project</a></li>
-    <li><a class="dropdown-item" href="../articles/sowingdate.html">Onset of the Growing Season: Methods, Limitations, and Sahelian Realities</a></li>
+    <li><a class="dropdown-item" href="../articles/settingup.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/sowingdate.html">Sowing Dates: Extensible Onset Detection in aquacropr</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -82,19 +82,32 @@ binary, ensuring full scientific validity.</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Project setup</strong> — Initialise the AquaCrop directory
-structure</li>
+structure with <code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code>
+</li>
 <li>
-<strong><code>process_climate</code></strong> — Preprocess ERA5
-climate data and build the simulation grid</li>
+<strong>Climate preprocessing</strong> — Preprocess ERA5 climate
+data and build the simulation grid (custom
+<code>terra</code>/<code>sf</code> code; not an <code>aquacropr</code>
+function)</li>
 <li>
-<strong><code>process_soil</code></strong> — Extract soil properties
-from HWSD</li>
+<strong>Soil properties extraction</strong> — Extract soil
+properties from HWSD (custom code)</li>
 <li>
-<strong><code>write_inputs</code></strong> — Write all AquaCrop
-input files in batch</li>
+<strong>Writing AquaCrop input files</strong> — Write all AquaCrop
+input files in batch, using <code><a href="../reference/write_climate.html">write_climate()</a></code>,
+<code><a href="../reference/write_cro.html">write_cro()</a></code>, <code><a href="../reference/write_sol_batch.html">write_sol_batch()</a></code>,
+<code><a href="../reference/write_man_batch.html">write_man_batch()</a></code>, <code><a href="../reference/write_irr_batch.html">write_irr_batch()</a></code>,
+<code><a href="../reference/write_cal_batch.html">write_cal_batch()</a></code>, and <code><a href="../reference/write_prm_batch.html">write_prm_batch()</a></code>
+</li>
 <li>
-<strong><code>run_aquacrop</code></strong> — Launch simulations</li>
+<strong><code><a href="../reference/run_aquacrop.html">run_aquacrop()</a></code></strong> — Launch
+simulations</li>
 </ol>
+<p>Only steps 1, 4, and 5 call <code>aquacropr</code> functions
+directly. Steps 2 and 3 are preprocessing you write yourself with
+<code>terra</code>/<code>sf</code> (and, for soils, a couple of small
+helper functions defined in this vignette) — shown here as a complete,
+reproducible example, not as package functionality.</p>
 <div class="section level3">
 <h3 id="project-folder-structure">Project folder structure<a class="anchor" aria-label="anchor" href="#project-folder-structure"></a>
 </h3>
@@ -112,21 +125,72 @@ input files in batch</li>
 ├── DATA/
 │   ├── climate/             # Masked GeoTIFFs + final CSV
 │   ├── soil/                # Soil CSV per grid cell
-│   └── shapefiles/          # ERA5 grid (pts_grid.shp)
+│   └── shapefiles/          # pts_grid.shp + grids0p25_bfa_clip.gpkg
 ├── SRC/
-│   └── hwsdb_helpers.R      # HWSD utility functions
+│   └── hwsdb_helpers.R      # HWSD utility functions used in this vignette
 ├── CLIMATE/                 # .PLU .Tnx .ETo .CLI (generated)
 ├── CROP/                    # .CRO (generated)
 ├── SOIL/                    # .SOL .SW0 (generated)
 ├── MANAGEMENT/              # .MAN .IRR (generated)
 ├── CAL/                     # .CAL onset calendars (optional)
 ├── LIST/                    # .PRM project files (generated)
-└── RESULTS/                 # AquaCrop outputs (generated)</code></pre>
+└── OUTP/                    # AquaCrop outputs (generated)</code></pre>
+<blockquote>
+<p><strong>Only <code>CLIMATE/</code>, <code>CAL/</code>,
+<code>CROP/</code>, <code>LIST/</code>, <code>MANAGEMENT/</code>,
+<code>OBS/</code>, <code>OUTP/</code>, <code>PARAM/</code>,
+<code>SIMUL/</code>, and <code>SOIL/</code> are created automatically by
+<code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code>.</strong> <code>RAWDATA/</code>,
+<code>DATA/</code>, and <code>SRC/</code> are this pipeline’s own
+preprocessing folders – create them yourself (e.g.
+<code><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create()</a></code>, or by placing raw inputs there) before Step
+2.</p>
+<p><strong>If you download a pre-built example project rather than
+starting from raw inputs:</strong> some example archives carry extra
+standalone scripts under <code>SRC/</code> (e.g. an older
+<code>process_climate.R</code>, <code>process_soil.R</code>,
+<code>write_input_and_run.R</code> trio) left over from earlier package
+versions. Only <code>hwsdb_helpers.R</code> is required by this vignette
+– the rest may predate a package rename or a
+<code>site_name</code>/<code>station_name</code> argument change and are
+not guaranteed to run against the current <code>aquacropr</code>. Treat
+the code chunks in this vignette, not files incidentally bundled in a
+downloaded project, as the source of truth.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="download-the-example-dataset">Download the example dataset<a class="anchor" aria-label="anchor" href="#download-the-example-dataset"></a>
+</h3>
+<p>The raw ERA5 NetCDF files, the HWSD soil raster, and the Burkina Faso
+boundary shapefile referenced throughout this vignette are too large to
+ship inside the <code>aquacropr</code> package. They are bundled as
+<code>TEST.zip</code> and hosted on <a href="https://osf.io" class="external-link">OSF</a>
+(Open Science Framework).</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">osf_url</span>  <span class="op">&lt;-</span> <span class="st">"&lt;OSF_DIRECT_DOWNLOAD_URL&gt;"</span>  <span class="co"># e.g. https://osf.io/&lt;id&gt;/download</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"TEST.zip"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="va">osf_url</span>, destfile <span class="op">=</span> <span class="va">zip_path</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">zip_path</span>, exdir <span class="op">=</span> <span class="st">"my-project"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>This populates <code>RAWDATA/</code> (and, if you download the
+pre-processed archive rather than only the raw inputs,
+<code>DATA/</code> and <code>SRC/</code> as well) inside the project
+created in Step 1. Re-running Steps 2-3 from scratch is also fully
+supported – the archive is a convenience, not a requirement.</p>
+<blockquote>
+<p><strong>File size.</strong> The full archive is on the order of 1 GB,
+driven mostly by the raw ERA5 NetCDFs and the HWSD raster. If you are
+hosting your own copy, consider trimming
+<code>RAWDATA/shapefiles/</code> down to the administrative level this
+vignette actually reads (<code>bfa_admbnda_adm0_igb_20200323.*</code>) –
+the finer admin levels are not used by any step here and add unnecessary
+download size.</p>
+</blockquote>
 </div>
 <div class="section level3">
 <h3 id="required-packages">Required packages<a class="anchor" aria-label="anchor" href="#required-packages"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mwaongo/aquacropr" class="external-link">aquacropr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
@@ -145,10 +209,26 @@ input files in batch</li>
 <p><code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> creates the standard AquaCrop folder
 structure and downloads the official FAO binary for your operating
 system. Run this once per project.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"my-project"</span>, version <span class="op">=</span> <span class="st">"7.2"</span><span class="op">)</span></span></code></pre></div>
-<p>This opens a new RStudio project with a <code>readme.txt</code>
-explaining the directory layout.</p>
+<p>This pipeline processes many grid cells in batch, so it is written as
+a script rather than interactive RStudio work – pass
+<code>use_rproject = FALSE</code> (see the “Getting Started” vignette
+for why) and capture the returned path so every later step can use
+it:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">proj_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/init_aquacrop.html">init_aquacrop</a></span><span class="op">(</span></span>
+<span>  path         <span class="op">=</span> <span class="st">"my-project"</span>,</span>
+<span>  version      <span class="op">=</span> <span class="st">"7.2"</span>,</span>
+<span>  use_rproject <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="va">proj_dir</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/init_aquacrop.html">init_aquacrop()</a></code> writes a <code>README.txt</code>
+describing the directory layout, but does <strong>not</strong> itself
+change the R session’s working directory – that is what
+<code>setwd(proj_dir)</code> above is for. Every relative path used from
+here on (<code>RAWDATA/...</code>, <code>DATA/...</code>,
+<code>CLIMATE/...</code>) assumes the working directory is now
+<code>proj_dir</code>.</p>
 <hr>
 </div>
 <div class="section level2">
@@ -161,7 +241,7 @@ CSV ready for AquaCrop.</p>
 <div class="section level3">
 <h3 id="load-the-national-boundary-shapefile">Load the national boundary shapefile<a class="anchor" aria-label="anchor" href="#load-the-national-boundary-shapefile"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="st">"RAWDATA/shapefiles/bfa_admbnda_adm0_igb_20200323.shp"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -170,7 +250,7 @@ CSV ready for AquaCrop.</p>
 <p>A generic function processes all four variables identically. It reads
 the NetCDF, clips it to the shapefile extent, masks pixels outside the
 country boundary, and writes the result as a GeoTIFF.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">process_raster</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">var_name</span>, <span class="va">shp</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">input_file</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"RAWDATA/climate/BF_%s_day.nc"</span>, <span class="va">var_name</span><span class="op">)</span></span>
 <span>  <span class="va">output_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"DATA/climate/BF_%s_day_msk.tif"</span>, <span class="va">var_name</span><span class="op">)</span></span>
@@ -202,7 +282,7 @@ files.</p>
 <p>Valid pixel coordinates from the masked TX raster define grid cell
 centres. Each pixel becomes an <code>sf</code> point identified by a
 station name (<code>grid_001</code>, <code>grid_002</code>, …).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu">rast</span><span class="op">(</span><span class="st">"DATA/climate/BF_TX_day_msk.tif"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span>xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">drop_na</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -217,7 +297,7 @@ station name (<code>grid_001</code>, <code>grid_002</code>, …).</p>
 <p>Visualise the grid over the country boundary. Run the block below
 once in your R session (outside the vignette) to produce the figure
 file:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">pts_grid</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">pts</span><span class="op">)</span> <span class="op">+</span></span>
@@ -226,15 +306,41 @@ file:</p>
 <span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title    <span class="op">=</span> <span class="st">"ERA5 Grid (0.25 deg) - Burkina Faso"</span>,</span>
 <span>    subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%d simulation cells"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> </span></code></pre></div>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="figures/grids_bf.png"></p>
+</div>
+<div class="section level3">
+<h3 id="clip-the-grid-to-the-national-boundary">Clip the grid to the national boundary<a class="anchor" aria-label="anchor" href="#clip-the-grid-to-the-national-boundary"></a>
+</h3>
+<p><code><a href="../reference/st_grid.html">st_grid()</a></code> builds a <em>square</em> cell centred on every
+point, so cells along the border extend past the actual national outline
+– a border-adjacent grid cell can cover territory that isn’t Burkina
+Faso at all. Clip the cell polygons (not just the centre points, which
+are already inside the boundary because they came from the masked
+raster) against <code>shp</code>, and save the result as a single-file
+GeoPackage instead of a four-file shapefile bundle:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">grid_bfa</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="st">"DATA/shapefiles/pts_grid.shp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">grid_bfa_clip</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="va">grid_bfa</span>, <span class="va">shp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">station</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">grid_bfa_clip</span>, <span class="st">"DATA/shapefiles/grids0p25_bfa_clip.gpkg"</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p><code><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection()</a></code> will warn
+<code>attribute variables are assumed to be spatially constant throughout all geometries</code>
+– expected here, since <code>station</code> is a per-cell identifier,
+not a field that varies continuously in space. From this point on,
+<code>grids0p25_bfa_clip.gpkg</code> – not <code>pts_grid.shp</code> –
+is the grid used downstream (Step 3).</p>
+</blockquote>
 </div>
 <div class="section level3">
 <h3 id="build-the-climate-data-frame">Build the climate data frame<a class="anchor" aria-label="anchor" href="#build-the-climate-data-frame"></a>
 </h3>
 <p>Each raster is pivoted to long format. Band indices map to actual
 dates from the 1981–2020 time sequence.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date</a></span><span class="op">(</span></span>
 <span>  from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1981-01-01"</span><span class="op">)</span>,</span>
 <span>  to   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>,</span>
@@ -242,7 +348,7 @@ dates from the 1981–2020 time sequence.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>A helper function avoids repeating the same pivot logic for each
 variable:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pivot_raster</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tif_path</span>, <span class="va">value_name</span>, <span class="va">prefix_to_remove</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">rast</span><span class="op">(</span><span class="va">tif_path</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span>xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -264,7 +370,7 @@ variable:</p>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">date</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Apply to each variable and join:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tn_df</span>  <span class="op">&lt;-</span> <span class="fu">pivot_raster</span><span class="op">(</span><span class="st">"DATA/climate/BF_TN_day_msk.tif"</span>,  <span class="st">"tmin"</span>, <span class="st">"t2m_"</span><span class="op">)</span></span>
 <span><span class="va">tx_df</span>  <span class="op">&lt;-</span> <span class="fu">pivot_raster</span><span class="op">(</span><span class="st">"DATA/climate/BF_TX_day_msk.tif"</span>,  <span class="st">"tmax"</span>, <span class="st">"t2m_"</span><span class="op">)</span></span>
 <span><span class="va">pcp_df</span> <span class="op">&lt;-</span> <span class="fu">pivot_raster</span><span class="op">(</span><span class="st">"DATA/climate/BF_PCP_day_msk.tif"</span>, <span class="st">"rain"</span>, <span class="st">"tp_"</span><span class="op">)</span></span>
@@ -381,7 +487,7 @@ HWSD numeric code (1–12) to one of three text formats:</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">num_to_usda</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">texture</span> <span class="op">=</span> <span class="fl">1</span>, <span class="va">to</span> <span class="op">=</span> <span class="st">"abr"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">to</span> <span class="op">==</span> <span class="st">"abr"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -418,7 +524,7 @@ HWSD numeric code (1–12) to one of three text formats:</p>
 <p><strong><code>.get_mode(x)</code></strong> returns the dominant
 (modal) texture value within a grid cell. Ties are broken by returning
 the first encountered value.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">.get_mode</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">u</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span>  <span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tabulate.html" class="external-link">tabulate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">u</span><span class="op">)</span><span class="op">)</span></span>
@@ -430,8 +536,8 @@ the first encountered value.</p>
 <div class="section level3">
 <h3 id="extraction-and-export">Extraction and export<a class="anchor" aria-label="anchor" href="#extraction-and-export"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">grid_shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">"DATA/shapefiles/pts_grid.shp"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">grid_shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">"DATA/shapefiles/grids0p25_bfa_clip.gpkg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">soilc</span>   <span class="op">&lt;-</span> <span class="fu">rast</span><span class="op">(</span><span class="st">"RAWDATA/soil/hwsd_wa_usda_all_layers.tif"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">crop</span><span class="op">(</span><span class="va">grid_shp</span><span class="op">)</span></span>
 <span><span class="va">soil_df</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu">extract</span><span class="op">(</span><span class="va">soilc</span>, <span class="va">grid_shp</span>, fun <span class="op">=</span> <span class="va">.get_mode</span><span class="op">)</span></span>
@@ -504,12 +610,13 @@ for every grid cell, with no manual editing required.</p>
 </h3>
 <p>The climate CSV is split by station; each subset is written into the
 four AquaCrop climate files required per site.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datal</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"DATA/climate/climate_grid_data.csv"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_split.html" class="external-link">group_split</a></span><span class="op">(</span><span class="va">station</span>, .keep <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tic</span><span class="op">(</span><span class="st">"Writing climate files"</span><span class="op">)</span></span>
-<span><span class="fu">walk</span><span class="op">(</span><span class="va">datal</span>, <span class="va">write_climate</span>, path <span class="op">=</span> <span class="st">"CLIMATE/"</span><span class="op">)</span></span>
+<span><span class="co"># quiet = TRUE: write_climate() otherwise prints six lines per grid cell</span></span>
+<span><span class="fu">walk</span><span class="op">(</span><span class="va">datal</span>, <span class="va">write_climate</span>, path <span class="op">=</span> <span class="st">"CLIMATE/"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">toc</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># → CLIMATE/grid_XXX.PLU   (rainfall)</span></span>
 <span><span class="co"># → CLIMATE/grid_XXX.Tnx   (min/max temperature)</span></span>
@@ -522,7 +629,7 @@ four AquaCrop climate files required per site.</p>
 <p>Default parameters are built in for all AquaCrop crops. Override
 individual parameters via <code>params = list(...)</code>, using the
 AquaCrop variable identifier as the name.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_cro.html">write_cro</a></span><span class="op">(</span></span>
 <span>  path      <span class="op">=</span> <span class="st">"CROP/"</span>,</span>
 <span>  crop_name <span class="op">=</span> <span class="st">"maize90days"</span>,</span>
@@ -539,7 +646,7 @@ AquaCrop variable identifier as the name.</p>
 <p>HWSD data are converted to a list of parameters per station.
 <code>NA</code> texture values (undefined pixels) are replaced by
 <code>"impermeable"</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">params_list</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"DATA/soil/hwsd_grids.csv"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>texture <span class="op">=</span> <span class="fu">replace_na</span><span class="op">(</span><span class="va">texture</span>, <span class="st">"impermeable"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_split.html" class="external-link">group_split</a></span><span class="op">(</span><span class="va">station</span>, .keep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -567,7 +674,7 @@ AquaCrop variable identifier as the name.</p>
 </h3>
 <p>Field management parameters are applied uniformly across all grid
 cells.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_man_batch.html">write_man_batch</a></span><span class="op">(</span></span>
 <span>  site_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  params    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -580,12 +687,20 @@ cells.</p>
 <span><span class="co"># → MANAGEMENT/grid_XXX.MAN</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="irrigation-files--irr">4.5 Irrigation files (<code>.IRR</code>)<a class="anchor" aria-label="anchor" href="#irrigation-files--irr"></a>
+<h3 id="irrigation-files--irr-optional">4.5 Irrigation files (<code>.IRR</code>) — optional<a class="anchor" aria-label="anchor" href="#irrigation-files--irr-optional"></a>
 </h3>
 <p><code><a href="../reference/create_irr_schedule.html">create_irr_schedule()</a></code> builds the schedule data frame
 defining trigger thresholds and application depths for successive crop
-periods, which is then passed to <code>write_irr_batch()</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+periods, which is then passed to <code><a href="../reference/write_irr_batch.html">write_irr_batch()</a></code>.</p>
+<blockquote>
+<p>This step is optional and independent of the rest of the pipeline:
+the example dataset in <a href="#download-the-example-dataset">Download
+the example dataset</a> was validated as a purely rainfed run (no
+<code>.IRR</code>, no <code>.CAL</code> – Option A below). Sections 4.5
+and 4.6 show how to add irrigation or onset-based planting on top of the
+same grid; test on a handful of cells first if you enable either.</p>
+</blockquote>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">schedule</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_irr_schedule.html">create_irr_schedule</a></span><span class="op">(</span></span>
 <span>  from_day        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,   <span class="fl">41</span>,  <span class="fl">116</span><span class="op">)</span>,</span>
 <span>  time_crit       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,   <span class="fl">7</span>,   <span class="fl">999</span><span class="op">)</span>,   <span class="co"># interval (days) per period</span></span>
@@ -626,8 +741,8 @@ periods, which is then passed to <code>write_irr_batch()</code>.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">write_irr_batch</span><span class="op">(</span></span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_irr_batch.html">write_irr_batch</a></span><span class="op">(</span></span>
 <span>  path        <span class="op">=</span> <span class="st">"MANAGEMENT/"</span>,</span>
 <span>  site_name   <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method      <span class="op">=</span> <span class="fl">1</span>,    <span class="co"># 1 = sprinkler</span></span>
@@ -645,7 +760,7 @@ rainfall onset. <code><a href="../reference/write_cal_batch.html">write_cal_batc
 criterion; <code><a href="../reference/find_onset.html">find_onset()</a></code> is then called internally by
 <code><a href="../reference/write_prm_batch.html">write_prm_batch()</a></code> to derive site-specific planting dates
 from the climate record.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_cal_batch.html">write_cal_batch</a></span><span class="op">(</span></span>
 <span>  site_name     <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  onset         <span class="op">=</span> <span class="st">"rainfall"</span>,</span>
@@ -662,7 +777,7 @@ from the climate record.</p>
 </h3>
 <p><strong>Option A — Fixed planting date</strong> (DOY 161, 10 June)
 applied uniformly:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plsch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fl">1981</span><span class="op">:</span><span class="fl">2020</span>, planting_doy <span class="op">=</span> <span class="fl">161</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/write_prm_batch.html">write_prm_batch</a></span><span class="op">(</span></span>
@@ -675,7 +790,7 @@ applied uniformly:</p>
 <span><span class="co"># → LIST/grid_XXX.PRM</span></span></code></pre></div>
 <p><strong>Option B — Onset-based planting date</strong> derived from
 rainfall calendars (requires step 4.6):</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_prm_batch.html">write_prm_batch</a></span><span class="op">(</span></span>
 <span>  site_name     <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  crop_name     <span class="op">=</span> <span class="st">"maize90days"</span>,</span>
@@ -697,18 +812,21 @@ onset, use Option B together with <code><a href="../reference/write_cal_batch.ht
 <h2 id="step-5-running-the-simulations">Step 5 — Running the simulations<a class="anchor" aria-label="anchor" href="#step-5-running-the-simulations"></a>
 </h2>
 <p><code><a href="../reference/run_aquacrop.html">run_aquacrop()</a></code> automatically discovers all
-<code>.PRM</code> files in <code>LIST/</code> and runs AquaCrop for each
-site × year combination.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code>.PRM</code> files in <code>LIST/</code> and runs them as a single
+AquaCrop batch. Each <code>.PRM</code> becomes one run inside one
+combined output file – <strong>not</strong> one output file per grid
+cell.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tic</span><span class="op">(</span><span class="st">"Full AquaCrop simulation"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/run_aquacrop.html">run_aquacrop</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">toc</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
-<p><strong>Test on a subset first.</strong> For ~100 grid cells × 40
-years, runtime can range from minutes to hours. Validate the full
-pipeline on a few stations before launching the complete run:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">walk</span><span class="op">(</span><span class="va">datal</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="va">write_climate</span>, path <span class="op">=</span> <span class="st">"CLIMATE/"</span><span class="op">)</span></span>
+<p><strong>Test on a subset first.</strong> For the ~427 grid cells
+produced by the 0.25° grid over Burkina Faso × 40 years, runtime can
+range from minutes to hours. Validate the full pipeline on a few
+stations before launching the complete run:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">walk</span><span class="op">(</span><span class="va">datal</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="va">write_climate</span>, path <span class="op">=</span> <span class="st">"CLIMATE/"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/run_aquacrop.html">run_aquacrop</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </blockquote>
 <hr>
@@ -718,16 +836,35 @@ pipeline on a few stations before launching the complete run:</p>
 </h2>
 <p>All climate and calendar input files can be read back into tidy data
 frames for inspection, post-processing, or visualisation.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Climate inputs</span></span>
 <span><span class="fu"><a href="../reference/read_cli.html">read_climate</a></span><span class="op">(</span><span class="st">"CLIMATE/grid_001.CLI"</span><span class="op">)</span>   <span class="co"># master file + all data</span></span>
 <span><span class="fu"><a href="../reference/read_plu.html">read_plu</a></span><span class="op">(</span><span class="st">"CLIMATE/grid_001.PLU"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/read_tnx.html">read_tnx</a></span><span class="op">(</span><span class="st">"CLIMATE/grid_001.Tnx"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/read_eto.html">read_eto</a></span><span class="op">(</span><span class="st">"CLIMATE/grid_001.ETo"</span><span class="op">)</span>       <span class="co"># alias: read_et0()</span></span>
 <span></span>
-<span><span class="co"># Onset calendar</span></span>
+<span><span class="co"># Onset calendar (only if Step 4.6 / Option B was used)</span></span>
 <span><span class="fu"><a href="../reference/read_cal.html">read_cal</a></span><span class="op">(</span><span class="st">"CAL/grid_001.CAL"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="reading-simulation-results">Reading simulation results<a class="anchor" aria-label="anchor" href="#reading-simulation-results"></a>
+</h3>
+<p>AquaCrop writes <strong>one combined seasonal-output file for the
+whole batch</strong> – not one file per grid cell. With <code>n</code>
+grid cells, <code>OUTP/</code> contains a single
+<code>ProjectPRMseason.OUT</code> holding one row per grid cell (more if
+<code>crop_duration</code> spans multiple growing seasons),
+distinguished by the trailing <code>prm_file</code> column that
+<code><a href="../reference/read_season_out.html">read_season_out()</a></code> parses out for you:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">season</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_season_out.html">read_season_out</a></span><span class="op">(</span><span class="st">"OUTP/ProjectPRMseason.OUT"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># One row per grid cell (per season); prm_file identifies the source .PRM</span></span>
+<span><span class="va">season</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">prm_file</span><span class="op">)</span></span></code></pre></div>
+<p><code>ListProjectsLoaded.OUT</code> in the same folder reports which
+<code>.PRM</code> files, if any, failed to load (missing input files,
+bad paths) – check it first if <code>season</code> looks incomplete.</p>
 <hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="summary-of-generated-files">Summary of generated files<a class="anchor" aria-label="anchor" href="#summary-of-generated-files"></a>
@@ -756,8 +893,11 @@ frames for inspection, post-processing, or visualisation.</p>
 </tr>
 <tr class="odd">
 <td><code>DATA/shapefiles/</code></td>
-<td><code>pts_grid.shp</code></td>
-<td>Spatial ERA5 grid</td>
+<td>
+<code>pts_grid.shp</code>, <code>grids0p25_bfa_clip.gpkg</code>
+</td>
+<td>Raw square grid, then clipped to the national boundary (used
+downstream)</td>
 </tr>
 <tr class="even">
 <td><code>CLIMATE/</code></td>
@@ -781,7 +921,7 @@ frames for inspection, post-processing, or visualisation.</p>
 <td>
 <code>grid_XXX.MAN</code>, <code>grid_XXX.IRR</code>
 </td>
-<td>Field management + irrigation</td>
+<td>Field management + irrigation (optional)</td>
 </tr>
 <tr class="even">
 <td><code>CAL/</code></td>
@@ -794,9 +934,12 @@ frames for inspection, post-processing, or visualisation.</p>
 <td>Simulation project files</td>
 </tr>
 <tr class="even">
-<td><code>RESULTS/</code></td>
-<td><code>grid_XXX_YYYY.*</code></td>
-<td>AquaCrop simulation outputs</td>
+<td><code>OUTP/</code></td>
+<td>
+<code>ProjectPRMseason.OUT</code>,
+<code>ListProjectsLoaded.OUT</code>
+</td>
+<td>Combined simulation outputs for all grid cells (see below)</td>
 </tr>
 </tbody>
 </table>
@@ -864,7 +1007,7 @@ frames for inspection, post-processing, or visualisation.</p>
 <tr class="even">
 <td>Irrigation</td>
 <td><code><a href="../reference/write_irr.html">write_irr()</a></code></td>
-<td><code>write_irr_batch()</code></td>
+<td><code><a href="../reference/write_irr_batch.html">write_irr_batch()</a></code></td>
 <td>—</td>
 </tr>
 <tr class="odd">
@@ -892,11 +1035,11 @@ frames for inspection, post-processing, or visualisation.</p>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -916,12 +1059,12 @@ frames for inspection, post-processing, or visualisation.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] digest_0.6.39     desc_1.4.3        R6_2.6.1          fastmap_1.2.0    </span></span>
-<span><span class="co">#&gt;  [5] xfun_0.57         cachem_1.1.0      knitr_1.51        htmltools_0.5.9  </span></span>
-<span><span class="co">#&gt;  [9] rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      </span></span>
-<span><span class="co">#&gt; [13] pkgdown_2.2.0     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2</span></span>
-<span><span class="co">#&gt; [17] compiler_4.6.0    tools_4.6.0       ragg_1.5.2        evaluate_1.0.5   </span></span>
-<span><span class="co">#&gt; [21] bslib_0.11.0      yaml_2.3.12       jsonlite_2.0.0    rlang_1.2.0      </span></span>
-<span><span class="co">#&gt; [25] fs_2.1.0</span></span></code></pre>
+<span><span class="co">#&gt;  [5] xfun_0.61         cachem_1.1.0      knitr_1.52        htmltools_0.5.9  </span></span>
+<span><span class="co">#&gt;  [9] rmarkdown_2.32    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      </span></span>
+<span><span class="co">#&gt; [13] pkgdown_2.2.1     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2</span></span>
+<span><span class="co">#&gt; [17] compiler_4.6.1    tools_4.6.1       ragg_1.5.2        bslib_0.12.0     </span></span>
+<span><span class="co">#&gt; [21] evaluate_1.0.5    yaml_2.3.12       otel_0.2.0        jsonlite_2.0.0   </span></span>
+<span><span class="co">#&gt; [25] rlang_1.3.0       fs_2.1.0</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -934,7 +1077,7 @@ frames for inspection, post-processing, or visualisation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

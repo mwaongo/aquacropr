@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://mwaongo.github.io/aquacropr/404.html</loc></url>
-<url><loc>https://mwaongo.github.io/aquacropr/LICENSE-text.html</loc></url>
+<url><loc>https://mwaongo.github.io/aquacropr/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://mwaongo.github.io/aquacropr/CONTRIBUTING.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/LICENSE.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/articles/index.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/articles/regionalsim.html</loc></url>
@@ -39,7 +40,6 @@
 <url><loc>https://mwaongo.github.io/aquacropr/reference/is_tnx.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/params_df2list.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/path_to_file.html</loc></url>
-<url><loc>https://mwaongo.github.io/aquacropr/reference/pipe.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/read_cal.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/read_cli.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/read_day_out.html</loc></url>
@@ -63,7 +63,7 @@
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_gwt.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_gwt_batch.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_irr.html</loc></url>
-<url><loc>https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.html</loc></url>
+<url><loc>https://mwaongo.github.io/aquacropr/reference/write_irr_batch.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_man.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_man_batch.html</loc></url>
 <url><loc>https://mwaongo.github.io/aquacropr/reference/write_obs.html</loc></url>

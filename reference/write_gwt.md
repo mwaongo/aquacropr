@@ -12,7 +12,7 @@ write_gwt(
   site_name,
   code,
   gwt_data = NULL,
-  path = "MANAGEMENT/",
+  path = "SOIL/",
   start_day = 1,
   start_month = 1,
   start_year = 1901,
@@ -67,7 +67,7 @@ write_gwt(
 
 - path:
 
-  Output directory path for GWT files. Default: "MANAGEMENT/".
+  Output directory path for GWT files. Default: "SOIL/".
 
 - start_day:
 

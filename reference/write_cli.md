@@ -8,9 +8,9 @@ concentration file for the simulation scenario.
 
 ``` r
 write_cli(
-  path = "weather/",
+  path = "CLIMATE/",
   site_name = "station",
-  eol = "windows",
+  eol = NULL,
   scenario = "hist",
   check_files = TRUE
 )
@@ -21,7 +21,7 @@ write_cli(
 - path:
 
   Directory path where climate files are located and where .CLI will be
-  written. Default = "weather/"
+  written. Default = "CLIMATE/"
 
 - site_name:
 
@@ -31,7 +31,8 @@ write_cli(
 - eol:
 
   End-of-line character style for the output file. Options: "windows",
-  "unix", "linux", or "macOS". Default = "windows"
+  "linux", or "macos". If `NULL` (default), eol is auto-detected from
+  the host operating system, matching the other AquaCrop file writers.
 
 - scenario:
 

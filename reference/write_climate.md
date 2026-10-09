@@ -18,7 +18,8 @@ write_climate(
   scenario = "hist",
   eol = NULL,
   syear = NULL,
-  eyear = NULL
+  eyear = NULL,
+  quiet = FALSE
 )
 ```
 
@@ -120,6 +121,12 @@ write_climate(
   and
   [`write_tnx`](https://mwaongo.github.io/aquacropr/reference/write_tnx.md)
   for details.
+
+- quiet:
+
+  Logical. If `TRUE`, suppress the progress messages. Each call
+  otherwise reports six lines, which is noisy when writing files for
+  many stations at once. Default = `FALSE`.
 
 ## Value
 

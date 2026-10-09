@@ -104,7 +104,7 @@ for complete parameter reference
 
 Other batch operations:
 [`write_gwt_batch()`](https://mwaongo.github.io/aquacropr/reference/write_gwt_batch.md),
-[`write_irrig_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irrig_batch.md),
+[`write_irr_batch()`](https://mwaongo.github.io/aquacropr/reference/write_irr_batch.md),
 [`write_obs_batch()`](https://mwaongo.github.io/aquacropr/reference/write_obs_batch.md),
 [`write_off_batch()`](https://mwaongo.github.io/aquacropr/reference/write_off_batch.md),
 [`write_prm_batch()`](https://mwaongo.github.io/aquacropr/reference/write_prm_batch.md),

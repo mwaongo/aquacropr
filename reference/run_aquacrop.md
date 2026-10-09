@@ -1,8 +1,9 @@
-# Run AquaCrop simulation
+# Run an AquaCrop simulation
 
-Execute AquaCrop in the current directory. The directory must contain
-the AquaCrop executable (aquacrop.exe on Windows, aquacrop on
-Linux/macOS).
+Executes the AquaCrop executable in the current working directory. The
+directory must contain the AquaCrop executable (`aquacrop.exe` on
+Windows, `aquacrop` on Linux/macOS) together with a valid AquaCrop
+project structure.
 
 ## Usage
 
@@ -14,33 +15,32 @@ run_aquacrop(verbose = TRUE)
 
 - verbose:
 
-  Logical. Print messages (default: TRUE).
+  Logical. Should progress messages be printed? Defaults to `TRUE`.
 
 ## Value
 
-Invisibly returns the exit status (0 = success, non-zero = error).
+Invisibly returns the AquaCrop exit status (`0` indicates success).
 
 ## Details
 
-This function must be run from a directory containing the AquaCrop
-executable. The directory should also contain the standard AquaCrop
-folder structure (CLIMATE/, CROP/, SOIL/, MANAGEMENT/, LIST/, OUTP/,
-etc.).
+Before execution, all files in the `OUTP/` directory are removed to
+prevent mixing outputs from previous simulations. Temporary files
+created by AquaCrop (`AllDone.OUT` and `ListProjectsLoaded.OUT`) are
+automatically removed after execution.
 
-The OUTP/ directory is cleaned before running to avoid mixing results
-from different runs. Temporary files (AllDone.OUT,
-ListProjectsLoaded.OUT) are removed after execution.
+## See also
+
+[`init_aquacrop()`](https://mwaongo.github.io/aquacropr/reference/init_aquacrop.md),
+[`install_binaries()`](https://mwaongo.github.io/aquacropr/reference/install_binaries.md)
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize project and run
 init_aquacrop("~/my-project")
 setwd("~/my-project")
-run_aquacrop()
 
-# Silent mode
+run_aquacrop()
 run_aquacrop(verbose = FALSE)
 } # }
 ```
