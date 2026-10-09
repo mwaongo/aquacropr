@@ -257,10 +257,12 @@
 #' @param scenario Character. Climate scenario identifier.
 #'   Default: \code{"hist"}.
 #' @param eol Character. End-of-line style: \code{"windows"}, \code{"linux"},
-#'   or \code{"macos"}. Default: \code{"windows"}.
+#'   or \code{"macos"}. If \code{NULL} (default), eol is auto-detected.
 #' @param use_standalone Logical. Whether paths are formatted for AquaCrop
 #'   standalone mode. Default: \code{TRUE}.
 #' @param base_path Character. Base absolute path. Default: \code{getwd()}.
+#' @param update_list Logical. If \code{TRUE} (default), \code{ListProjects.txt}
+#'   is (re)written in \code{path} from the \code{.PRM} files it contains.
 #'
 #' @return Invisibly returns the output file path.
 #'
@@ -283,14 +285,16 @@ write_prm <- function(
     obs_path             = NULL,
     simulation_start_doy = NULL,
     scenario             = "hist",
-    eol                  = "windows",
+    eol                  = NULL,
     use_standalone       = TRUE,
-    base_path            = getwd()
+    base_path            = getwd(),
+    update_list          = TRUE
 ) {
   stopifnot(
     is.character(path)         && length(path)         == 1,
     is.character(site_name)    && length(site_name)    == 1,
-    is.logical(use_standalone) && length(use_standalone) == 1
+    is.logical(use_standalone) && length(use_standalone) == 1,
+    is.logical(update_list)    && length(update_list)    == 1
   )
 
   if (is.null(crop_name) != is.null(crop_path)) {
@@ -399,6 +403,9 @@ write_prm <- function(
       base_path            = base_path
     )
   }
+
+  # Refresh the project list AquaCrop reads from LIST/
+  if (update_list) .write_list_projects(path = path, eol = eol)
 
   invisible(output_file)
 }

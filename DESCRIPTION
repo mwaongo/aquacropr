@@ -2,7 +2,8 @@ Type: Package
 Package: aquacropr
 Language: en-GB
 Title: R Interface to the FAO AquaCrop Crop Water Productivity Model (v7.0+)
-Version: 0.2.0
+Version: 0.3.1
+Date: 2026-09-05
 Authors@R: c(
     person("Moussa", "Waongo",
            role  = "aut",
@@ -19,6 +20,7 @@ Description: R interface to AquaCrop v7.0 and higher, the FAO crop water
     and crop yield assessment.
 License: MIT + file LICENSE
 Encoding: UTF-8
+LazyData: true
 Depends:
     R (>= 4.1)
 Imports:
@@ -32,16 +34,15 @@ Imports:
     rappdirs,
     readr,
     rlang,
+    sf,
     stringr,
     tibble,
-    withr,
-    utils
+    utils,
+    withr
 Suggests:
-    gh,
     knitr,
     rmarkdown,
     rstudioapi,
-    sf,
     testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

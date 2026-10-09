@@ -197,7 +197,7 @@ read_season_out <- function(file, intermediate = FALSE) {
 .find_day_header <- function(lines) {
   n_tok <- vapply(
     lines,
-    \(l) length(strsplit(trimws(l), "\\s+")[[1L]]),
+    function(l) length(strsplit(trimws(l), "\\s+")[[1L]]),
     integer(1L)
   )
   lines[[which.max(n_tok)]]
@@ -239,7 +239,7 @@ read_season_out <- function(file, intermediate = FALSE) {
 
   df <- as.data.frame(mat, stringsAsFactors = FALSE)
   names(df) <- col_names
-  df[] <- lapply(df, \(x) suppressWarnings(as.double(x))) # fix 2: no NA here
+  df[] <- lapply(df, function(x) suppressWarnings(as.double(x))) # fix 2: no NA here
   tibble::as_tibble(df)
 }
 
@@ -354,7 +354,7 @@ read_day_out <- function(
   df[int_present] <- lapply(df[int_present], as.integer)
 
   # 8. Sentinel -> NA (column-wise — %in% on a whole tibble is unreliable)
-  df[] <- lapply(df, \(x) replace(x, x %in% na, NA))
+  df[] <- lapply(df, function(x) replace(x, x %in% na, NA))
 
   # 9. Append prm_file
   tibble::add_column(

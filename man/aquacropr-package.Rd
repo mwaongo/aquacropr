@@ -4,7 +4,7 @@
 \name{aquacropr-package}
 \alias{aquacropr}
 \alias{aquacropr-package}
-\title{aquacropr: R interface to the FAO AquaCrop crop water productivity model (v7.0+)}
+\title{aquacropr: R Interface to the FAO AquaCrop Crop Water Productivity Model (v7.0+)}
 \description{
 R interface to AquaCrop v7.0 and higher, the FAO crop water productivity model. Streamlines reading, writing, and managing AquaCrop input/output files for batch simulations, climate scenario analysis, and crop yield assessment.
 }
@@ -12,7 +12,17 @@ R interface to AquaCrop v7.0 and higher, the FAO crop water productivity model. 
 Useful links:
 \itemize{
   \item \url{https://github.com/mwaongo/aquacropr}
+  \item \url{https://mwaongo.github.io/aquacropr/}
   \item Report bugs at \url{https://github.com/mwaongo/aquacropr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Ousmane Ouedraogo \email{oousmane@proton.me} (\href{https://orcid.org/0000-0002-6349-4146}{ORCID})
+
+Authors:
+\itemize{
+  \item Moussa Waongo \email{waongomoussa@gmail.com} (\href{https://orcid.org/0009-0007-6665-5623}{ORCID})
 }
 
 }

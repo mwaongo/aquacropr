@@ -22,6 +22,20 @@
 
 #' @keywords internal
 get_os <- function() {
+  # The OS cannot change within a session; detecting it once matters because
+  # the climate writers call this for every file they produce.
+  cached <- .aquacropr_cache$os
+  if (!is.null(cached)) return(cached)
+
+  os <- .detect_os()
+  .aquacropr_cache$os <- os
+  os
+}
+
+
+#' Uncached Operating System Detection
+#' @noRd
+.detect_os <- function() {
   # Try Sys.info() first (most reliable)
   sysinf <- Sys.info()
 
@@ -50,6 +64,18 @@ get_os <- function() {
 }
 
 
+#' AquaCrop Executable Filename for an OS
+#'
+#' @param os Character. One of "windows", "linux", "macos". Defaults to
+#'   the detected current OS via get_os().
+#' @return Character. "aquacrop.exe" on Windows, "aquacrop" otherwise.
+#'
+#' @noRd
+.aquacrop_exe_name <- function(os = get_os()) {
+  if (os == "windows") "aquacrop.exe" else "aquacrop"
+}
+
+
 #' Get End-of-Line Character
 #'
 #' @description
@@ -69,7 +95,7 @@ get_os <- function() {
 #' @noRd
 .get_eol <- function(eol = NULL) {
     if (is.null(eol)) eol <- get_os()
-    eol <- match.arg(eol, choices = c("windows", "linux", "macos"))
+    eol <- match.arg(tolower(eol), choices = c("windows", "linux", "macos"))
 
     sep <- ifelse(
       test = eol %in% c("linux", "macos"),

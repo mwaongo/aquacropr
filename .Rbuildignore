@@ -12,3 +12,5 @@ paper.md
 ^\.positai$
 ^\.claude$
 ^\.github$
+^CONTRIBUTING\.md$
+^CODE_OF_CONDUCT\.md$

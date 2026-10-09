@@ -549,7 +549,7 @@ find_onset <- function(
       plu_years <- read_plu(
         fs::path(base_path, climate_path, paste0(site_name, ".PLU"))
       ) |>
-        dplyr::pull(year) |>
+        dplyr::pull("year") |>
         unique() |>
         sort()
       years <- as.integer(plu_years)
@@ -570,14 +570,14 @@ find_onset <- function(
       fs::path(base_path, climate_path, paste0(site_name, ".PLU"))
     ) |>
       dplyr::mutate(
-        doy = lubridate::yday(lubridate::make_date(year, month, day))
+        doy = lubridate::yday(lubridate::make_date(.data$year, .data$month, .data$day))
       )
   } else {
     clim_data <- read_tnx(
       fs::path(base_path, climate_path, paste0(site_name, ".Tnx"))
     ) |>
       dplyr::mutate(
-        doy = lubridate::yday(lubridate::make_date(year, month, day))
+        doy = lubridate::yday(lubridate::make_date(.data$year, .data$month, .data$day))
       )
   }
 
@@ -603,7 +603,7 @@ find_onset <- function(
       fs::path(base_path, climate_path, paste0(site_name, ".ETo"))
     ) |>
       dplyr::mutate(
-        doy = lubridate::yday(lubridate::make_date(year, month, day))
+        doy = lubridate::yday(lubridate::make_date(.data$year, .data$month, .data$day))
       )
   }
 
